@@ -3,7 +3,7 @@
 // You can separate your code out into modules to
 // keep code clean.
 
-class MyClass {
+class smallChart {
   constructor() {
 
   }
@@ -13,4 +13,4 @@ class MyClass {
   }
 }
 
-module.exports = MyClass;
+module.exports = smallChart;

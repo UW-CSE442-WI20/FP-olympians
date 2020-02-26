@@ -1,13 +1,17 @@
 
 
 // You can require libraries
-const d3 = require('d3')
+const d3 = require('d3');
 
 // You can include local JS files:
-const MyClass = require('./my-class');
-const myClassInstance = new MyClass();
-myClassInstance.sayHi();
+// const MyClass = require('./my-class');
+// const myClassInstance = new MyClass();
+// myClassInstance.sayHi();
 
+ const BigChart = require('./bigChart');
+ const SmallChart = require('./smallChart');
+ const bigChartInstance = new BigChart();
+ const smallChartInstance = new SmallChart();
 
 // You can load JSON files directly via require.
 // Note this does not add a network request, it adds
@@ -21,4 +25,3 @@ d3.csv('carbon-emissions.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
   })
-
