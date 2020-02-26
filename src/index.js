@@ -17,7 +17,7 @@ const exampleData = require('./example-data.json');
 
 // Anything you put in the static folder will be available
 // over the network, e.g.
-d3.csv('carbon-emissions.csv')
+d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
   })
