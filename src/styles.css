@@ -111,7 +111,7 @@ main {
   padding: 0;
 }
 
-bigchart {
+#bigchart {
   display: inline-block;
   width: 1400px;
   height: 380px;
@@ -124,7 +124,7 @@ bigchart {
   background-color: pink;
 }
 
-smallchart {
+#smallchart {
   display: inline-block;
   width: 1400px;
   height: 460px;
