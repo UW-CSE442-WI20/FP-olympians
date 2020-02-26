@@ -1,0 +1,143 @@
+html {
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 1em;
+    line-height: 1.5;
+    height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard {
+  display: grid;
+
+  grid-template-areas:
+    "sidebar header"
+    "sidebar content"
+    "footer footer";
+
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-gap: 1px;
+  height: 100vh;
+}
+
+header {
+  grid-area: header;
+  background-color: beige;
+}
+
+h1 {
+  text-align: center;
+  color: black;
+}
+
+sidebar {
+  grid-area: sidebar;
+  background-color: gray;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5rem;
+	padding: 0.5rem;
+  padding-top: 5rem;
+  color: white;
+}
+
+.dropdown select{
+  position: relative;
+	/* width: fill; */
+  width: 90%;
+  height: 50px;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 14px;
+  /* padding: 0.5rem; */
+}
+
+.buttons {
+  margin: 0.5rem;
+  margin-top: 2rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  display: block;
+  width: 90%;
+  background-color: black;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 8px 8px;
+  margin: 2px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  transition-duration: 0.4s;
+  opacity: 0.9;
+}
+
+.button:hover {
+  background-color: pink;
+  color: black;
+  opacity: 1;
+}
+
+main {
+  grid-area: content;
+  background-color: beige;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+bigchart {
+  display: inline-block;
+  width: 1400px;
+  height: 380px;
+  padding: 5px;
+  border: 1px solid gray;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: pink;
+}
+
+smallchart {
+  display: inline-block;
+  width: 1400px;
+  height: 460px;
+  padding: 5px;
+  border: 1px solid gray;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: pink;
+}
+
+footer {
+  grid-area: footer;
+  background-color: beige;
+}

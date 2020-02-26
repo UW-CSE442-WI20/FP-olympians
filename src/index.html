@@ -2,10 +2,62 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Title</title>
+    <title>Looking Forward to the 2020 Olympic Games</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <h1>My Webpage</h1>
     <script src="./index.js"></script>
+
+    <div class="dashboard">
+      <header>
+        <!-- Header content -->
+        <h1>Looking Forward to the 2020 Olympic Games</h1>
+      </header>
+
+      <sidebar>
+        <!-- Sidebar -->
+        <div class="dropdown">
+          Sport:
+          <select id="select-sport">
+            <option value="0">Swimming</option>
+            <option value="1">Gymnastics</option>
+            <option value="2">Diving</option>
+            <option value="3">Basketball</option>
+            <option value="4">Rowing</option>
+            <option value="5">Soccer</option>
+            <option value="6">Archery</option>
+            <option value="7">Tennis</option>
+          </select>
+          Ranking Method:
+          <select id="select-rank">
+            <option value="0">Rank by Medal</option>
+            <option value="1">Rank by Athletes</option>
+          </select>
+        </div>
+        <div class="buttons">
+          <button type="button" name="male" class="button">Male</button>
+          <button type="button" name="female" class="button">Female</button>
+          <button type="button" name="both" class="button">Both</button>
+        </div>
+      </sidebar>
+
+      <main>
+        <!-- Main content -->
+        <div class="container">
+          <bigchart>
+            <!-- Big chart content -->
+          </bigchart>
+
+          <smallchart>
+            <!-- Small chart content -->
+          </smallchart>
+        </div>
+      </main>
+
+      <footer>
+        <!-- Footer content -->
+      </footer>
+    </div>
+
   </body>
 </html>
