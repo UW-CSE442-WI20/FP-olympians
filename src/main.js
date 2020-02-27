@@ -1,16 +1,20 @@
 
 
 // You can require libraries
-const d3 = require('d3')
+const d3 = require('d3');
 
 // Global variables
 var entriesBySport = null
 
 // You can include local JS files:
-const MyClass = require('./my-class');
-const myClassInstance = new MyClass();
-myClassInstance.sayHi();
+// const MyClass = require('./my-class');
+// const myClassInstance = new MyClass();
+// myClassInstance.sayHi();
 
+ const BigChart = require('./bigChart');
+ const SmallChart = require('./smallChart');
+ const bigChartInstance = new BigChart();
+ const smallChartInstance = new SmallChart();
 
 // You can load JSON files directly via require.
 // Note this does not add a network request, it adds
@@ -46,7 +50,11 @@ function initializeData(data) {
 d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
+<<<<<<< HEAD:src/index.js
     initializeData(data);
     initializeDropdowns();
   });
 
+=======
+  })
+>>>>>>> e0b4339151355c2d4ba1a1b2780f0afc96ade0d7:src/main.js
