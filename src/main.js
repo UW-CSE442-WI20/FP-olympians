@@ -4,22 +4,30 @@
 const d3 = require('d3');
 
 // Global variables
-var entriesBySport = null
+var entriesBySport = null;
 
-// You can include local JS files:
-// const MyClass = require('./my-class');
-// const myClassInstance = new MyClass();
-// myClassInstance.sayHi();
+// Include local JS files:
+const BigChart = require('./bigChart');
+const SmallChart = require('./smallChart');
+const bigChartInstance = new BigChart();
+const smallChartInstance = new SmallChart();
 
- const BigChart = require('./bigChart');
- const SmallChart = require('./smallChart');
- const bigChartInstance = new BigChart();
- const smallChartInstance = new SmallChart();
+// create svg for smallChart
+const smallsvg = d3.select('#smallchart')
+           .append('svg')
+           .attr('width', 1200)
+           .attr('height', 460);
 
-// You can load JSON files directly via require.
-// Note this does not add a network request, it adds
-// the data directly to your JavaScript bundle.
-const exampleData = require('./example-data.json');
+// create svg for bigChart
+const bigsvg = d3.select('#bigchart')
+          .append('svg')
+          .attr('width', 1200)
+          .attr('height', 380);
+
+// draw small chart elements here
+var topRanks = [1,2,3];  // Basic Test Example
+// draw the three top rank elements
+smallChartInstance.drawTopRanks(smallsvg, topRanks);
 
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
@@ -50,7 +58,11 @@ function initializeData(data) {
 d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
-
     initializeData(data);
     initializeDropdowns();
   });
+
+  // You can load JSON files directly via require.
+  // Note this does not add a network request, it adds
+  // the data directly to your JavaScript bundle.
+  // const exampleData = require('./example-data.json');

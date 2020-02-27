@@ -1,31 +1,32 @@
-
-
 // You can separate your code out into modules to
 // keep code clean.
+const d3 = require('d3');
 
-// Todo: implement the small chart with a ctor?
+class smallChart {
 
-// class smallChart {
-// 	// create a chart object that takes in certain parameters
-// 	constructor() {
+  constructor() {
+  }
 
-// 	}
-// }
-
-const d3 = require("d3");
-
-function createSmallChart() {
-	var margin = {top: 10, right: 30, bottom: 30, left: 60},
-	    width = 460 - margin.left - margin.right,
-	    height = 400 - margin.top - margin.bottom;
-
-	var svg = d3.select('#smallchart')
-		.append("svg")
-	    	.attr("width", width + margin.left + margin.right)
-	    	.attr("height", height + margin.top + margin.bottom)
-	  	.append("g")
-	    	.attr("transform",
-	        	  "translate(" + margin.left + "," + margin.top + ")");
+  // Draw the top rank elements onto the small chart
+  // given the current topRanks
+  drawTopRanks(smallsvg, topRanks) {
+    // draw a rectangle element for each result
+    for (var i = 0; i < topRanks.length; i++) {
+      // g will contain all of the components in this rank rectangle element
+      var g = smallsvg.append("g");
+      g.append("rect")
+          .attr("x", 0)
+          .attr("y", 110 * (i+1))
+          .attr("width", 900)
+          .attr("height", 100)
+          .style("fill", "White");
+      g.append("text")
+          .attr("x", 400)
+          .attr("y", 30 + 110 * (i+1))
+          .style("fill", "Black")
+          .text("Look it's result " + topRanks[i]);
+      }
+  }
 }
 
 module.exports = smallChart;
