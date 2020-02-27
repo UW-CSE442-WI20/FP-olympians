@@ -50,11 +50,7 @@ function initializeData(data) {
 d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
-<<<<<<< HEAD:src/index.js
+
     initializeData(data);
     initializeDropdowns();
   });
-
-=======
-  })
->>>>>>> e0b4339151355c2d4ba1a1b2780f0afc96ade0d7:src/main.js
