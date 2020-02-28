@@ -127,7 +127,6 @@ main {
 #smallchart {
   display: inline-block;
   width: 1400px;
-  height: 460px;
   padding: 5px;
   border: 1px solid gray;
   margin-top: 0.25rem;

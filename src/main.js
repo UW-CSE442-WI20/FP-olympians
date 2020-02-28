@@ -13,21 +13,13 @@ const bigChartInstance = new BigChart();
 const smallChartInstance = new SmallChart();
 
 // create svg for smallChart
-const smallsvg = d3.select('#smallchart')
-           .append('svg')
-           .attr('width', 1200)
-           .attr('height', 460);
+const smallChartDiv = d3.select('#smallchart')
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
           .append('svg')
           .attr('width', 1200)
           .attr('height', 380);
-
-// draw small chart elements here
-var topRanks = [1,2,3];  // Basic Test Example
-// draw the three top rank elements
-smallChartInstance.drawTopRanks(smallsvg, topRanks);
 
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
@@ -60,6 +52,10 @@ d3.csv('olympics.csv')
     console.log('Dynamically loaded CSV data', data);
     initializeData(data);
     initializeDropdowns();
+    // draw small chart elements here
+	var topRanks = [1,2,3];  // Basic Test Example
+	// draw the three top rank elements
+	smallChartInstance.drawTopRanks(smallChartDiv, topRanks, data);
   });
 
   // You can load JSON files directly via require.
