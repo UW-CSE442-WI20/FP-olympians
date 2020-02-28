@@ -8,12 +8,13 @@ var entriesBySport = null;
 
 // Include local JS files:
 const BigChart = require('./bigChart');
-const SmallChart = require('./smallChart');
+const RankRow = require('./rankRow');
 const bigChartInstance = new BigChart();
-const smallChartInstance = new SmallChart();
+
 
 // create svg for smallChart
 const smallChartDiv = d3.select('#smallchart')
+const smallChartInstance = new RankRow(smallChartDiv);
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
@@ -55,7 +56,7 @@ d3.csv('olympics.csv')
     // draw small chart elements here
 	var topRanks = [1,2,3];  // Basic Test Example
 	// draw the three top rank elements
-	smallChartInstance.drawTopRanks(smallChartDiv, topRanks, data);
+	// smallChartInstance.drawTopRanks(smallChartDiv, topRanks, data);
   });
 
   // You can load JSON files directly via require.
