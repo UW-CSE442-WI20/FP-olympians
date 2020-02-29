@@ -1,58 +1,32 @@
-// You can separate your code out into modules to
-// keep code clean.
 const d3 = require('d3');
 
+// This class provides functions to create and update the
+// small charts for a single rank item.
 class threeSmallCharts {
 
   constructor() {
-    this.firstChart;
-    this.secondChart;
-    this.thirdChart;
-  };
-
-  // firstDiv, secondDiv, thirdDiv) {
-  //   this.firstChartSvg = firstDiv
-  //       .append('svg')
-  //       .attr('width', 300)
-  //       .attr('height', 300)
-  //       .style("display","table-row")
-  //       .attr("fill", "Black");
-  //   this.secondChartSvg = secondDiv
-  //       .append('svg')
-  //       .attr('width', 300)
-  //       .attr('height', 300)
-  //       .style("display","table-row")
-  //       .attr("fill", "Black");
-  //   this.thirdChartSvg = thirdDiv
-  //       .append('svg')
-  //       .attr('width', 300)
-  //       .attr('height', 300)
-  //       .style("display","table-row")
-  //       .attr("fill", "Black");
-  // }
+    this.firstChart;  // medal count chart
+    this.secondChart; // athlete count chart
+    this.thirdChart;  // medal/athlete ratio chart
+  }
 
   initializeCharts(initDiv) {
     // first chart
-    this.firstChart = initDiv.append('svg')
-      .attr('width', 80)
-      .attr('height', 80)
-      .style("margin", "10px")
-      .style("display","table-row")
-      .style("background-color", "Blue");
+    this.firstChart = this.createSmallSVG(initDiv);
     // second chart
-    this.secondChart = initDiv.append('svg')
-      .attr('width', 80)
-      .attr('height', 80)
-      .style("margin", "10px")
-      .style("display","table-row")
-      .style("background-color", "Yellow");
+    this.secondChart = this.createSmallSVG(initDiv);
     // third chart
-    this.thirdChart = initDiv.append('svg')
-      .attr('width', 80)
-      .attr('height', 80)
-      .style("margin", "10px")
+    this.thirdChart = this.createSmallSVG(initDiv);
+  }
+
+  // Create an initial svg for a small chart
+  createSmallSVG(initDiv) {
+    return initDiv.append('svg')
+      .attr('width', 120)
+      .attr('height', 90)
+      .style("margin", "5px")
       .style("display","table-row")
-      .style("background-color", "Red");
+      .style("background-color", "White");
   }
 
   // Draw the top rank elements onto the small chart

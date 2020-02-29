@@ -1,12 +1,13 @@
-// You can separate your code out into modules to
-// keep code clean.
 const d3 = require('d3');
 const ThreeSmallCharts = require("./threeSmallCharts");
 
+// This class contains functions to create and update the rank rows,
+// which display the top results data.
 class rankRows {
 
   constructor(rowDiv, numRows) {
-    // div elements for top results rows
+    // all the div elements for all of the rank rows
+    // (1 div per row)
     this.topDivs = [];
     for (var i = 0; i < numRows; i++) {
       newDiv = rowDiv.append("div")
@@ -15,16 +16,35 @@ class rankRows {
         .style("width", "800px")
         .style("height", "100px")
         .style("margin", "8px")
-        .style("background-color", "Gray");
+        .style("background-color", "Gray")
+        .style("display","flex")
+        .style("flex-direction","row")
+        .style("justify-content","space-between");
       this.topDivs.push(newDiv);
+    }
+
+    // create text labels for each row
+    for (var i = 0; i < numRows; i++) {
+      this.topDivs[i].append("div")
+        .attr("width", "200px")
+        .attr("height", "50px")
+        .style("padding", "5px")
+      .append("text")
+        .attr("x", "0")
+        .attr("y", "0")
+        .style('color', 'White')
+        .text("Country Name, Rank " + (i+1));
     }
 
     // instance to create and update small charts
     const detailChartsInstance = new ThreeSmallCharts();
 
-    // add the three small charts
+    // add the three small charts to each rank row
     for (var i = 0; i < numRows; i++) {
-      detailChartsInstance.initializeCharts(this.topDivs[i]);
+      var chartDiv = this.topDivs[i].append("div")
+        .attr("width", "200px")
+        .attr("height", "100px");
+      detailChartsInstance.initializeCharts(chartDiv); //(this.topDivs[i]);
     }
 
     // this.firstDiv = rowDiv.append("div").style("background-color", "Black").style("display","table");

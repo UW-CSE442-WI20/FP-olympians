@@ -3,6 +3,7 @@ html {
     font-size: 1em;
     line-height: 1.5;
     height: 100%;
+    width: 100%;
 }
 
 body {
@@ -15,13 +16,15 @@ body {
 
   grid-template-areas:
     "sidebar header"
-    "sidebar content"
-    "footer footer";
+    "sidebar content";
+    /* "footer footer"; */
 
   grid-template-columns: 200px 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
+  /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
+  width: 100vw;
 }
 
 header {
@@ -113,10 +116,9 @@ main {
 
 #bigchart {
   display: inline-block;
-  width: 1400px;
+  /* width: 1000px; */
   height: 380px;
   padding: 5px;
-  border: 1px solid gray;
   margin-top: 0.5rem;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
@@ -126,9 +128,8 @@ main {
 
 #smallchart {
   display: inline-block;
-  width: 1400px;
+  /* width: 1000px; */
   padding: 5px;
-  border: 1px solid gray;
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
