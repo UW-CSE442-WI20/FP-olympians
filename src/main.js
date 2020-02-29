@@ -75,7 +75,20 @@ function initializeData(data) {
 		.rollup(function(v) { return d3.sum(v, function(d) { return d.Medal.length > 0 ? 1 : 0})})
 		.entries(data);
 
-
+	entriesBySportThenCountryThenYear = d3.nest()
+		.key(function(d) {
+			return d.Sport;
+		})
+		.sortKeys(d3.ascending)
+		.key(function(d) {
+			return d.Team;
+		})
+		.sortKeys(d3.ascending)
+		.key(function(d) {
+			return d.Year;
+		})
+		.sortKeys(d3.ascending)
+		.entries(data)
 	
 
 	// const countByYearByCountry = _.countBy(yearByCountry, function(item) {
