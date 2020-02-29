@@ -3,14 +3,34 @@
 const d3 = require('d3');
 const ThreeSmallCharts = require("./threeSmallCharts");
 
-class rankRow {
-  // rowSvg; // supposedly private field
+class rankRows {
 
-  constructor(rowDiv) {
-    this.firstDiv = rowDiv.append("div").style("background-color", "Black").style("display","table");
-    this.secondDiv = rowDiv.append("div").style("background-color", "Blue").style("display","table");
-    this.thirdDiv = rowDiv.append("div").style("background-color", "Green").style("display","table");
-    this.smallCharts = new ThreeSmallCharts(this.firstDiv, this.secondDiv, this.thirdDiv);
+  constructor(rowDiv, numRows) {
+    // div elements for top results rows
+    this.topDivs = [];
+    for (var i = 0; i < numRows; i++) {
+      newDiv = rowDiv.append("div")
+        .style("top", 0)
+        .style("left", 100 * numRows)
+        .style("width", "800px")
+        .style("height", "100px")
+        .style("margin", "8px")
+        .style("background-color", "Gray");
+      this.topDivs.push(newDiv);
+    }
+
+    // instance to create and update small charts
+    const detailChartsInstance = new ThreeSmallCharts();
+
+    // add the three small charts
+    for (var i = 0; i < numRows; i++) {
+      detailChartsInstance.initializeCharts(this.topDivs[i]);
+    }
+
+    // this.firstDiv = rowDiv.append("div").style("background-color", "Black").style("display","table");
+    // this.secondDiv = rowDiv.append("div").style("background-color", "Blue").style("display","table");
+    // this.thirdDiv = rowDiv.append("div").style("background-color", "Green").style("display","table");
+    // this.smallCharts = new ThreeSmallCharts(this.firstDiv, this.secondDiv, this.thirdDiv);
   }
 
   // draw
@@ -25,7 +45,7 @@ class rankRow {
     // draw a rectangle element for each result
     // for (var i = 0; i < topRanks.length; i++) {
     //   // create the svg for country row
-    //   var smallsvg = smallchartdiv 
+    //   var smallsvg = smallchartdiv
     //     .append('svg')
     //     .attr('width', 1200)
     //     .attr('height', 460)
@@ -56,4 +76,4 @@ class rankRow {
   }
 }
 
-module.exports = rankRow;
+module.exports = rankRows;

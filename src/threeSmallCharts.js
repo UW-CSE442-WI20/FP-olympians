@@ -4,25 +4,55 @@ const d3 = require('d3');
 
 class threeSmallCharts {
 
-  constructor(firstDiv, secondDiv, thirdDiv) {
-    this.firstChartSvg = firstDiv
-        .append('svg')
-        .attr('width', 300)
-        .attr('height', 300)
-        .style("display","table-row")
-        .attr("fill", "Black");
-    this.secondChartSvg = secondDiv
-        .append('svg')
-        .attr('width', 300)
-        .attr('height', 300)
-        .style("display","table-row")
-        .attr("fill", "Black");
-    this.thirdChartSvg = thirdDiv
-        .append('svg')
-        .attr('width', 300)
-        .attr('height', 300)
-        .style("display","table-row")
-        .attr("fill", "Black");
+  constructor() {
+    this.firstChart;
+    this.secondChart;
+    this.thirdChart;
+  };
+
+  // firstDiv, secondDiv, thirdDiv) {
+  //   this.firstChartSvg = firstDiv
+  //       .append('svg')
+  //       .attr('width', 300)
+  //       .attr('height', 300)
+  //       .style("display","table-row")
+  //       .attr("fill", "Black");
+  //   this.secondChartSvg = secondDiv
+  //       .append('svg')
+  //       .attr('width', 300)
+  //       .attr('height', 300)
+  //       .style("display","table-row")
+  //       .attr("fill", "Black");
+  //   this.thirdChartSvg = thirdDiv
+  //       .append('svg')
+  //       .attr('width', 300)
+  //       .attr('height', 300)
+  //       .style("display","table-row")
+  //       .attr("fill", "Black");
+  // }
+
+  initializeCharts(initDiv) {
+    // first chart
+    this.firstChart = initDiv.append('svg')
+      .attr('width', 80)
+      .attr('height', 80)
+      .style("margin", "10px")
+      .style("display","table-row")
+      .style("background-color", "Blue");
+    // second chart
+    this.secondChart = initDiv.append('svg')
+      .attr('width', 80)
+      .attr('height', 80)
+      .style("margin", "10px")
+      .style("display","table-row")
+      .style("background-color", "Yellow");
+    // third chart
+    this.thirdChart = initDiv.append('svg')
+      .attr('width', 80)
+      .attr('height', 80)
+      .style("margin", "10px")
+      .style("display","table-row")
+      .style("background-color", "Red");
   }
 
   // Draw the top rank elements onto the small chart
@@ -35,7 +65,7 @@ class threeSmallCharts {
     // draw a rectangle element for each result
     // for (var i = 0; i < topRanks.length; i++) {
     //   // create the svg for country row
-    //   var smallsvg = smallchartdiv 
+    //   var smallsvg = smallchartdiv
     //     .append('svg')
     //     .attr('width', 1200)
     //     .attr('height', 460)

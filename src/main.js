@@ -8,13 +8,14 @@ var entriesBySport = null;
 
 // Include local JS files:
 const BigChart = require('./bigChart');
-const RankRow = require('./rankRow');
+const RankRows = require('./rankRows');
 const bigChartInstance = new BigChart();
 
 
-// create svg for smallChart
-const smallChartDiv = d3.select('#smallchart')
-const smallChartInstance = new RankRow(smallChartDiv);
+// create svg for smallChart (the rank rows area)
+const rankRowsDiv = d3.select('#smallchart');
+// create all of the rank rows
+const rankRows = new RankRows(rankRowsDiv, 3); // 3 is number of results to display
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
