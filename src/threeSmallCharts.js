@@ -29,6 +29,58 @@ class threeSmallCharts {
       .style("background-color", "White");
   }
 
+  // Draws the total bronze/silver/medals won by the given country
+  // in the given year for the given sport.
+  // Will update based on year. Will be called once per country.
+  // Data needed: year (determined by bigchart), country, sport (determined by dropdown),
+  // medal counts (athlete rows for that year which can then be used to count the medals)
+  // Input will preferably be all the rows for that country for the given sport, plus the year.
+  // We can then filter based on year inside this method.
+  generateMedalCountsChart(firstChart, data, year) {
+    console.log("generating medal counts chart (first of three small charts)")
+    console.log(data)
+
+    const containsYear = (groups, year) => {
+      return _.find(d3.values(groups), function (item) {
+        return item.key === year;
+      });
+    }
+
+    const getMedalCount = (year, medal) => {
+      var numMedals = 0;
+      data.forEach(function (item) {
+        if (item.Medal === medal && item.Year === year) numMedals++;
+      });
+      return numMedals;
+    }
+
+    data.forEach(function (item) {
+      var bronze = getMedalCount(item.Year, 'Bronze');
+      var silver = getMedalCount(item.Year, 'Silver');
+      var gold = getMedalCount(item.Year, 'Gold');
+
+
+      if (containsYear(groupData, item.Year) === undefined) {
+        var medalMap = [];
+        for (let i = 1; i <= bronze; i++) {
+          medalMap.push({grpName: 'Bronze', grpValue: i, grpEvent: bronzeEvents[i - 1]});
+        }
+        for (let i = 1; i <= silver; i++) {
+          medalMap.push({grpName: 'Silver', grpValue: i, grpEvent: silverEvents[i - 1]});
+        }
+        for (let i = 1; i <= gold; i++) {
+          medalMap.push({grpName: 'Gold', grpValue: i, grpEvent: goldEvents[i - 1]});
+        }
+
+        groupData.push(new Object(
+            {
+              key: item.Year, values: medalMap
+            }))
+      }
+    });
+  }
+
+
   // Draw the top rank elements onto the small chart
   // given the current topRanks
   // topranks is the array with the ids of top ranked groups in data
