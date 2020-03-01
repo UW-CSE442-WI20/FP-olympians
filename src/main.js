@@ -7,6 +7,7 @@ const _ = require("underscore");
 // Global variables
 var entriesBySport = null;
 var entriesBySportByYearMedalCount = null;
+var currSport = null;
 
 // Include local JS files:
 const BigChart = require('./bigChart');
@@ -15,11 +16,11 @@ const bigChartInstance = new BigChart();
 
 
 // create svg for smallChart (the entire rank rows area)
-const rankRowsDiv = d3.select('#smallchart');
+const rankRowsDiv = d3.select('#rankings');
 
 // create all of the rank rows (3 is number of results to display)
 // ** will want to add data as a parameter
-const rankRows = new RankRows(rankRowsDiv, 3);
+const rankRows = new RankRows(rankRowsDiv, 10);
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
@@ -35,7 +36,8 @@ function initializeDropdowns() {
 	}
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
-	   var currSport = document.getElementById('select-sport');
+	    currSport = document.getElementById('select-sport');
+      console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
 	    bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
   })
 }
@@ -83,6 +85,71 @@ function initializeData(data) {
 		.sortKeys(d3.ascending)
 		.entries(data)
 
+// DO THIS ONE
+
+    entriesBySportByYearByCountryRatio = d3.nest()
+  		.key(function(d) {
+  			return d.Sport;
+  		})
+  		.key(function(d) {
+  			return d.Year;
+  		})
+      .key(function(d) {
+        return d.Team;
+      })
+      .sortKeys(d3.ascending)
+  		// .rollup(function(v) {
+      //   if (d3.sum(v, function(d) { return 1; }) === 0) {
+      //       // if there are 0 athletes for that sport-year-country, immediately return 0
+      //       return 0;
+      //   }
+      //   return d3.sum(v, function(d) {
+      //       // return the sum of the medals / the total number of athletes who participated that year
+      //       // Tricky part: counting distinct athletes
+      //       return d.Medal.length > 0 ? 1.0 : 0.0;
+      //     })
+      //     //  /
+      //      // d3.sum(v, function(d) {
+      //         // return the sum of the medals / the total number of athletes who participated that year
+      //         // Tricky part: counting distinct athletes
+      //       //   var num_athlete = 0.0;
+      //       //   if (!athleteNames.contains(d.Name)) {
+      //       //     num_athlete = 1.0;
+      //       //     athleteNames.add(d.Name);
+      //       //   }
+      //       //   return num_athlete;
+      //       // })
+      //     })
+  		.entries(data);
+      console.log("ratio nesting", entriesBySportByYearByCountryRatio)
+
+      // will need to put all this in a function that gets updated/called when the sport and year change
+      currSport = "Swimming" // hard coded temporarily
+      currYear = "2000" // hard coded temporarily
+      yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
+          console.log("searching for sport ", currSport);
+          console.log("considering ", item.key);
+          return item.key === currSport;
+      });
+      console.log(yearsData);
+      countries = _.find(d3.values(yearsData.values), function (item) {
+          console.log("searching for year ", currYear);
+          console.log("considering ", item.key);
+          return item.key === currYear;
+      });
+      console.log("countries", countries.values);
+      var athleteNames = [];
+      countries.values.forEach(function(d) {
+        console.log("country:", d.values);
+        var countryName = d.key;
+        var athletes = d.values;
+        console.log("country name:", countryName);
+        console.log("athletes:", athletes);
+        // TODO: Within this country: for each athlete row, count the number of
+        //        distinct athletes as well as the number of medals won.
+        //        Compute the medal:athlete ratio.
+        //        Store back in a map of some sort: country -> medal:athlete ratio.
+      })
 
 	// const countByYearByCountry = _.countBy(yearByCountry, function(item) {
 	// 	console.log(item);

@@ -117,7 +117,7 @@ class bigChart {
       .range([0, width-margin]);
 
     var yScale = d3.scaleLinear()
-      .domain([0, 80])
+      .domain([0, 30])
       .range([height-margin, 0]);
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);

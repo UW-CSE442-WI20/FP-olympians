@@ -1,5 +1,5 @@
 const d3 = require('d3');
-const ThreeSmallCharts = require("./threeSmallCharts");
+// const ThreeSmallCharts = require("./threeSmallCharts");
 
 // This class contains functions to create and update the rank rows,
 // which display the top results data.
@@ -12,40 +12,52 @@ class rankRows {
     for (var i = 0; i < numRows; i++) {
       newDiv = rowDiv.append("div")
         .style("top", 0)
-        .style("left", 100 * numRows)
-        .style("width", "800px")
-        .style("height", "100px")
+        .style("left", 0)
+        .style("width", "100px")
+        .style("height", "80px")
         .style("margin", "8px")
-        .style("background-color", "Gray")
+        .style("background-color", "Pink")
         .style("display","flex")
-        .style("flex-direction","row")
-        .style("justify-content","space-between");
+        .style("flex-direction","column")
+        .style("justify-content","space-between")
+        .attr("id", "placehere" + i);
       this.topDivs.push(newDiv);
+    }
+
+    for (var i = 0; i < numRows; i++) {
+      // add image to each row here
+      var elem = document.createElement("img");
+      elem.setAttribute("src", "flag_AUS.png");
+      //elem.setAttribute("src", "https://stillmed.olympic.org/media/Images/OlympicOrg/Countries/A/Afghanistan/CNO-AFG.jpg?interpolation=lanczos-none&resize=253:*");
+      elem.setAttribute("height", "60");
+      elem.setAttribute("width", "90");
+      elem.setAttribute("alt", "AUS flag");
+      document.getElementById("placehere" + i).appendChild(elem);
     }
 
     // create text labels for each row
     for (var i = 0; i < numRows; i++) {
       this.topDivs[i].append("div")
-        .attr("width", "200px")
-        .attr("height", "50px")
+        .attr("width", "100px")
+        .attr("height", "40px")
         .style("padding", "5px")
       .append("text")
         .attr("x", "0")
         .attr("y", "0")
         .style('color', 'White')
-        .text("Country Name, Rank " + (i+1));
+        .text("Country" + (i+1));
     }
 
     // instance to create and update small charts
-    const detailChartsInstance = new ThreeSmallCharts();
+  //  const detailChartsInstance = new ThreeSmallCharts();
 
     // add the three small charts to each rank row
-    for (var i = 0; i < numRows; i++) {
-      var chartDiv = this.topDivs[i].append("div")
-        .attr("width", "200px")
-        .attr("height", "100px");
-      detailChartsInstance.initializeCharts(chartDiv); //(this.topDivs[i]);
-    }
+    // for (var i = 0; i < numRows; i++) {
+    //   var chartDiv = this.topDivs[i].append("div")
+    //     .attr("width", "20px")
+    //     .attr("height", "40px");
+    //   detailChartsInstance.initializeCharts(chartDiv); //(this.topDivs[i]);
+    // }
 
     // this.firstDiv = rowDiv.append("div").style("background-color", "Black").style("display","table");
     // this.secondDiv = rowDiv.append("div").style("background-color", "Blue").style("display","table");
