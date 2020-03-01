@@ -2,12 +2,22 @@
 
 // You can require libraries
 const d3 = require('d3');
+<<<<<<< HEAD
 const _ = require("underscore");
 
 // Global variables
 var entriesBySport = null;
 var entriesBySportByYearMedalCount = null;
 var currSport = null;
+=======
+const _ = require("underscore")
+
+// Global variables
+var entriesBySport = null;
+var entriesByCountryThenSport = null;
+var entriesBySportThenCountryThenYear = null;
+var entriesBySportByYearMedalCount = null;
+>>>>>>> origin/master
 
 // Include local JS files:
 const BigChart = require('./bigChart');
@@ -28,6 +38,17 @@ const bigsvg = d3.select('#bigchart')
           .attr('width', "1000")
           .attr('height', 380);
 
+<<<<<<< HEAD
+=======
+
+// draw small chart elements here
+var topRanks = [1,2,3];  // Basic Test Example
+// draw the three top rank elements
+smallChartInstance.drawTopRanks(smallsvg, topRanks);
+
+// bigChartInstance.drawChart(bigsvg);
+
+>>>>>>> origin/master
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
 	console.log(entriesBySport);
@@ -36,10 +57,16 @@ function initializeDropdowns() {
 	}
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
+<<<<<<< HEAD
 	    currSport = document.getElementById('select-sport');
       console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
 	    bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
   })
+=======
+	var currSport = document.getElementById('select-sport');
+	bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
+	})
+>>>>>>> origin/master
 }
 
 function initializeData(data) {
@@ -49,6 +76,15 @@ function initializeData(data) {
 		d.Year = +d.Year;
 		d.Order = +d.Order;
 	})
+
+  entriesByCountryThenSport = d3.nest()
+    .key(function(d) {
+      return d.Team;
+    })
+    .key(function(d) {
+      return d.Sport;
+    })
+    .entries(data);
 
 	entriesBySport = d3.nest()
 		.key(function(d) {

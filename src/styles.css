@@ -137,6 +137,11 @@ main {
   background-color: pink;
 }
 
+.line {
+  stroke-width: 3;
+  fill: none;
+}
+
 footer {
   grid-area: footer;
   background-color: beige;
