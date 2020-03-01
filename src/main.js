@@ -6,6 +6,8 @@ const _ = require("underscore")
 
 // Global variables
 var entriesBySport = null;
+var entriesByCountryThenSport = null;
+var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
 
 // Include local JS files:
@@ -55,6 +57,15 @@ function initializeData(data) {
 		d.Order = +d.Order;
 	})
 
+  entriesByCountryThenSport = d3.nest()
+    .key(function(d) {
+      return d.Team;
+    })
+    .key(function(d) {
+      return d.Sport;
+    })
+    .entries(data);
+
 	entriesBySport = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -68,7 +79,7 @@ function initializeData(data) {
 		})
 		.key(function(d) {
 			return d.Team;
-		}) 
+		})
 		.key(function(d) {
 			return d.Year;
 		}).sortKeys(d3.ascending)
@@ -89,7 +100,24 @@ function initializeData(data) {
 		})
 		.sortKeys(d3.ascending)
 		.entries(data)
-	
+
+  // entriesBySportByYearMedalRankings = d3.nest()
+  //   .key(function(d) {
+  //     return d.Sport;
+  //   })
+  //   .key(function(d) {
+  //     return d.Year;
+  //   })
+  //   .sortKeys(d3.ascending)
+  //   .key(function(d) {
+  //     return d.Team;
+  //   })
+  //   .rollup(function(v) { return d3.sum(v, function(d) { return d.Medal.length > 0 ? 1 : 0 })})
+  //   .entries(data)
+
+
+
+
 
 	// const countByYearByCountry = _.countBy(yearByCountry, function(item) {
 	// 	console.log(item);
@@ -112,7 +140,7 @@ function createRanking(sport) {
 	console.log("**********************")
 	console.log("passing into bigchart DrawChart");
 	bigChartInstance.drawChart(bigsvg, currSportOnly);
-	// 
+	//
 	// console.log(yearByCountry);
 	// // go over each year and give a ranking on who had the most medals that year
 	// console.log(typeof(yearByCountry));
