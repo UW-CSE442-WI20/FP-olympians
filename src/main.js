@@ -2,22 +2,17 @@
 
 // You can require libraries
 const d3 = require('d3');
-<<<<<<< HEAD
 const _ = require("underscore");
-
-// Global variables
-var entriesBySport = null;
-var entriesBySportByYearMedalCount = null;
-var currSport = null;
-=======
-const _ = require("underscore")
 
 // Global variables
 var entriesBySport = null;
 var entriesByCountryThenSport = null;
 var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
->>>>>>> origin/master
+var entriesBySportByYearByCountryRatio = null;
+var currSport = "Archery";
+var currYear = "2012";
+var topCountryToRatio = null;  // top 10 results for ranking
 
 // Include local JS files:
 const BigChart = require('./bigChart');
@@ -27,10 +22,13 @@ const bigChartInstance = new BigChart();
 
 // create svg for smallChart (the entire rank rows area)
 const rankRowsDiv = d3.select('#rankings');
+var rankRows = null;
 
-// create all of the rank rows (3 is number of results to display)
+// create all of the rank rows (10 is number of results to display)
 // ** will want to add data as a parameter
-const rankRows = new RankRows(rankRowsDiv, 10);
+function initializeRankChart() {
+  rankRows = new RankRows(rankRowsDiv, topCountryToRatio);
+}
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
@@ -38,17 +36,13 @@ const bigsvg = d3.select('#bigchart')
           .attr('width', "1000")
           .attr('height', 380);
 
-<<<<<<< HEAD
-=======
-
 // draw small chart elements here
 var topRanks = [1,2,3];  // Basic Test Example
 // draw the three top rank elements
-smallChartInstance.drawTopRanks(smallsvg, topRanks);
+//smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
 
 // bigChartInstance.drawChart(bigsvg);
 
->>>>>>> origin/master
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
 	console.log(entriesBySport);
@@ -57,16 +51,24 @@ function initializeDropdowns() {
 	}
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
-<<<<<<< HEAD
-	    currSport = document.getElementById('select-sport');
-      console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
-	    bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
+
+	    currSportSelections = document.getElementById('select-sport');
+      currSport = entriesBySport[currSportSelections.value].key;
+      console.log("HERE", entriesBySport);
+      console.log(currSportSelections.value);
+      console.log("currSport is ", currSport);
+      console.log("currYear is ", currYear);
+      //console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
+      updateRanking(currSport, currYear);
+      rankRows.updateRankRows(rankRowsDiv, topCountryToRatio);
+	    //bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
   })
-=======
-	var currSport = document.getElementById('select-sport');
-	bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
-	})
->>>>>>> origin/master
+
+	var currSportSelections = document.getElementById('select-sport');
+  //console.log("currSport ", currSport);
+	//bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSportSelections.value].values);
+	// })
+
 }
 
 function initializeData(data) {
@@ -134,58 +136,8 @@ function initializeData(data) {
         return d.Team;
       })
       .sortKeys(d3.ascending)
-  		// .rollup(function(v) {
-      //   if (d3.sum(v, function(d) { return 1; }) === 0) {
-      //       // if there are 0 athletes for that sport-year-country, immediately return 0
-      //       return 0;
-      //   }
-      //   return d3.sum(v, function(d) {
-      //       // return the sum of the medals / the total number of athletes who participated that year
-      //       // Tricky part: counting distinct athletes
-      //       return d.Medal.length > 0 ? 1.0 : 0.0;
-      //     })
-      //     //  /
-      //      // d3.sum(v, function(d) {
-      //         // return the sum of the medals / the total number of athletes who participated that year
-      //         // Tricky part: counting distinct athletes
-      //       //   var num_athlete = 0.0;
-      //       //   if (!athleteNames.contains(d.Name)) {
-      //       //     num_athlete = 1.0;
-      //       //     athleteNames.add(d.Name);
-      //       //   }
-      //       //   return num_athlete;
-      //       // })
-      //     })
   		.entries(data);
-      console.log("ratio nesting", entriesBySportByYearByCountryRatio)
-
-      // will need to put all this in a function that gets updated/called when the sport and year change
-      currSport = "Swimming" // hard coded temporarily
-      currYear = "2000" // hard coded temporarily
-      yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
-          console.log("searching for sport ", currSport);
-          console.log("considering ", item.key);
-          return item.key === currSport;
-      });
-      console.log(yearsData);
-      countries = _.find(d3.values(yearsData.values), function (item) {
-          console.log("searching for year ", currYear);
-          console.log("considering ", item.key);
-          return item.key === currYear;
-      });
-      console.log("countries", countries.values);
-      var athleteNames = [];
-      countries.values.forEach(function(d) {
-        console.log("country:", d.values);
-        var countryName = d.key;
-        var athletes = d.values;
-        console.log("country name:", countryName);
-        console.log("athletes:", athletes);
-        // TODO: Within this country: for each athlete row, count the number of
-        //        distinct athletes as well as the number of medals won.
-        //        Compute the medal:athlete ratio.
-        //        Store back in a map of some sort: country -> medal:athlete ratio.
-      })
+      console.log("ratio nesting", entriesBySportByYearByCountryRatio);
 
 	// const countByYearByCountry = _.countBy(yearByCountry, function(item) {
 	// 	console.log(item);
@@ -195,6 +147,68 @@ function initializeData(data) {
 	// console.log("**********************")
 	// console.log(countByYearByCountry);
 	// console.log("**********************")
+}
+
+function updateRanking(currSport, currYear) {
+  // will need to put all this in a function that gets updated/called when the sport and year change
+  // currSport = "Swimming"; // hard coded temporarily
+  // currYear = "2000"; // hard coded temporarily
+  // get all the data for a given sport (currSport) across the years
+  yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
+      // console.log("searching for sport ", currSport);
+      // console.log("considering ", item.key);
+      return item.key === currSport;
+  });
+   console.log("yearsData", yearsData);
+  // get all the data for all the countries across a given year (currYear)
+  countries = _.find(d3.values(yearsData.values), function (item) {
+      // console.log("searching for year ", currYear);
+      // console.log("considering ", item.key);
+      return item.key === currYear;
+  });
+  // console.log("countries", countries.values);
+
+  // mapping for the flag tile ranking
+  var athleteNames = [];
+  var countryToRatio = [];
+  // Within each country: for each athlete row, count the number of
+  // distinct athletes as well as the number of medals won.
+  // Compute the medal:athlete ratio.
+  // Store back in a list of key:value objects: country -> medal:athlete ratio.
+  console.log("countries", countries);
+  if (countries == null) {
+    // no competition of this sport in currYear (ex. baseball dropped in 2012 and 2016)
+    console.log("No " + currSport + " in " + currYear);
+  } else {
+
+  countries.values.forEach(function(d) {
+    // console.log("country:", d.values);
+    var countryName = d.key;
+    var athletes = d.values;
+    // console.log("country name:", countryName);
+    // console.log("athletes:", athletes);
+    var num_medals = 0.0;
+    var num_athletes = 0.0;
+    athletes.forEach(function(a) {
+      if (!athleteNames.includes(a.Name)) {
+        athleteNames.push(a.Name);
+        num_athletes++;
+      }
+      if (a.Medal.length > 0) {
+        num_medals++;
+      }
+    })
+    // console.log("num_medals:", num_medals);
+    // console.log("num_athletes:", num_athletes);
+    var ratio = num_athletes === 0 ? 0 : num_medals / num_athletes;
+    // console.log("ratio:", ratio);
+    countryToRatio.push(new Object({key: countryName, value: ratio}));
+  })
+  countryToRatio.sort((a, b) => (a.value > b.value) ? -1 : 1);
+  // console.log("country to ratio mapping:", countryToRatio);
+  topCountryToRatio = countryToRatio.slice(0, 10);
+  // console.log("top ten country to ratio mappings:", topCountryToRatio);
+  }
 }
 
 // Function that returns sorted order of countries based on medals for that sport in 2016
@@ -234,8 +248,10 @@ d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
     initializeData(data);
-	initializeDropdowns();
-	createRanking("Archery");
+    updateRanking(currSport, currYear);
+    initializeRankChart();
+	  initializeDropdowns();
+	  //createRanking("Archery");
   });
 
   // You can load JSON files directly via require.
