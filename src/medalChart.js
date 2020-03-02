@@ -9,8 +9,7 @@ const _ = require("underscore");
 // Input will preferably be all the rows for that country for the given sport, plus the year.
 // We can then filter based on year inside this method.
 
-// TODO: Apply d3 force!!!
-// TODO: Add medal highlight for all of that athlete's medals, on mouse-click
+// TODO: Apply d3 force?
 module.exports =
 function generateMedalChart(data, medalsvg) {
     console.log("generating medal counts chart!")
@@ -214,7 +213,7 @@ function generateMedalChart(data, medalsvg) {
             return "translate(" + xSmallScale(d.key) + ",0)";
         });
 
-    var currSelectedAthlete = "Nathan Ghar-Jun Adrian";
+    var currSelectedAthlete = null;
 
     slice.selectAll("circle")
         .data(function (d) {

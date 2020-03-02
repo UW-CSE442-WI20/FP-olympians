@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
@@ -6,7 +5,6 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-
     <div class="dashboard">
       <header>
         <!-- Header content -->
@@ -15,7 +13,14 @@
 
       <sidebar>
         <!-- Sidebar -->
-        <div class="dropdown">
+        <!-- <h2>Rankings</h2> -->
+        <p id="ranking-info"></p>
+        <div id="rankings">
+          <!-- Rankings content -->
+          <!-- <h2>Rankings</h2> -->
+        </div>
+
+        <!-- <div class="dropdown">
           Sport:
           <select id="select-sport"></select>
           Ranking Method:
@@ -24,17 +29,23 @@
             <option value="1">By Athletes</option>
             <option value="1">By Medal:Athletes ratio</option>
           </select>
-        </div>
-        <div class="buttons">
+        </div> -->
+        <!-- <div class="buttons">
           <button type="button" name="male" class="button">Male</button>
           <button type="button" name="female" class="button">Female</button>
           <button type="button" name="both" class="button">Both</button>
-        </div>
+        </div> -->
       </sidebar>
 
       <main>
         <!-- Main content -->
         <div class="container">
+
+          <div class="dropdown">
+            Sport:
+            <select id="select-sport"></select>
+          </div>
+
           <div id="bigchart">
             <!-- Big chart content -->
           </div>

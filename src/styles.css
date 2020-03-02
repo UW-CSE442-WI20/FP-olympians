@@ -11,16 +11,26 @@ body {
   padding: 0;
 }
 
+h1 {
+  text-align: center;
+  color: black;
+}
+
+h2, p {
+  text-align: center;
+  color: white;
+}
+
 .dashboard {
   display: grid;
 
   grid-template-areas:
-    "sidebar header"
-    "sidebar content";
+    "header sidebar"
+    "content sidebar";
     /* "footer footer"; */
 
-  grid-template-columns: 200px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 210px;
+  grid-template-rows: 160px auto;
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
@@ -32,14 +42,24 @@ header {
   background-color: beige;
 }
 
-h1 {
-  text-align: center;
-  color: black;
-}
-
 sidebar {
   grid-area: sidebar;
-  background-color: gray;
+  background-color: black;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+#rankings {
+  /* display: inline-block; */
+  /* width: 1000px; */
+  /* height: 100%; */
+  padding: 1px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: black;
 }
 
 .dropdown {
@@ -51,7 +71,7 @@ sidebar {
   margin: 0.5rem;
 	padding: 0.5rem;
   padding-top: 5rem;
-  color: white;
+  color: black;
 }
 
 .dropdown select{
@@ -126,18 +146,12 @@ main {
   background-color: pink;
 }
 
-#smallchart {
-  display: inline-block;
-  /* width: 1000px; */
-  padding: 5px;
-  margin-top: 0.25rem;
-  margin-bottom: 0.5rem;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  background-color: pink;
+.line {
+  stroke-width: 3;
+  fill: none;
 }
 
-footer {
+/* footer {
   grid-area: footer;
   background-color: beige;
-}
+} */
