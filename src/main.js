@@ -7,6 +7,7 @@ const _ = require("underscore");
 // Global variables
 var entriesBySport = null;
 var entriesBySportByYearMedalCount = null;
+var currSport = null;
 
 // Include local JS files:
 const BigChart = require('./bigChart');
@@ -15,17 +16,25 @@ const bigChartInstance = new BigChart();
 
 
 // create svg for smallChart (the entire rank rows area)
-const rankRowsDiv = d3.select('#smallchart');
+//const rankRowsDiv = d3.select('#smallchart');
+// const bigChartDiv = d3.select('#bigchart');
+// const medalChartDiv = d3.select('#medalchart');
 
 // create all of the rank rows (3 is number of results to display)
 // ** will want to add data as a parameter
-const rankRows = new RankRows(rankRowsDiv, 3);
+//const rankRows = new RankRows(rankRowsDiv, 3);
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
           .append('svg')
           .attr('width', "1000")
           .attr('height', 380);
+
+// create svg for medalChart
+const medalsvg = d3.select('#medalchart')
+		.append('svg')
+		.attr("width", "1000")
+		.attr("height", 380);
 
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
@@ -35,8 +44,9 @@ function initializeDropdowns() {
 	}
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
-	   var currSport = document.getElementById('select-sport');
-	    bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values)
+	   currSport = document.getElementById('select-sport');
+	   console.log("curr sport:", currSport);
+	   bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg)
   })
 }
 
@@ -104,7 +114,7 @@ function createRanking(sport) {
 	console.log(currSportOnly);
 	console.log("**********************")
 	console.log("passing into bigchart DrawChart");
-	bigChartInstance.drawChart(bigsvg, currSportOnly);
+	bigChartInstance.drawChart(bigsvg, currSportOnly, sport, medalsvg);
 	//
 	// console.log(yearByCountry);
 	// // go over each year and give a ranking on who had the most medals that year
@@ -132,7 +142,7 @@ d3.csv('olympics.csv')
     console.log('Dynamically loaded CSV data', data);
     initializeData(data);
 	initializeDropdowns();
-	createRanking("Archery");
+	createRanking("Swimming");
   });
 
   // You can load JSON files directly via require.

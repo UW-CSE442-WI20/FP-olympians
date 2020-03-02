@@ -1,6 +1,9 @@
 // You can separate your code out into modules to
 // keep code clean.
 const d3 = require('d3');
+const _ = require("underscore");
+
+const generateMedalChart = require("./medalChart");
 
 class bigChart {
   constructor() {
@@ -70,7 +73,7 @@ class bigChart {
   //   this.drawChart(bigsvg, data);
   // }
 
-  drawChart(bigsvg, data) {
+  drawChart(bigsvg, data, currSport, medalsvg) {
     var margin = {top: 20, right: 20, bottom: 30, left: 50};
 
     // Set the width and height of the graph
@@ -132,7 +135,6 @@ class bigChart {
       .append('g')
       .attr("transform", `translate(${margin}, ${margin})`);
 
-
     /* Add line into SVG */
     var line = d3.line()
       .x(d => xScale(d.key))
@@ -173,7 +175,25 @@ class bigChart {
         .style('opacity', lineOpacity)
         .style("stroke-width", lineStroke);
         svg.select(".country-text").remove();
-      });
+      })
+        .on("click", function(d) {
+          // get the data for the selected athlete
+          console.log(d);
+          console.log("curr sport:", currSport);
+          var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function(item) {
+            // console.log("searching for ", currSport);
+            // console.log("considering ", item.key);
+            return item.key === currSport;
+          });
+          console.log(sportData);
+          var countryData = _.find(d3.values(sportData.values), function(item) {
+            // console.log("searching for ", d.key);
+            // console.log("considering ", item.key);
+            return item.key === d.key;
+          });
+          console.log(countryData);
+          generateMedalChart(countryData.values, medalsvg);
+        });
 
 
     /* Add Axis into SVG */
@@ -198,7 +218,7 @@ class bigChart {
   }
 
 
-  redraw(bigsvg, data) {
+  redraw(bigsvg, data, currSport) {
     let lines = d3.select('.lines');
     lines.selectAll('.line-group')
     .transition()
