@@ -35,8 +35,10 @@ class bigChart {
 
 
     // Set the width and height of the graph
+    var margin = { top: 30, right: 10, bottom: 10, left: 10 }
     this.width = parseInt(bigsvg.style("width"), 10);
     this.height = parseInt(bigsvg.style("height"), 10);
+
     // this.width = this.width - margin.left - margin.right;
     // this.height = this.height - margin.top - margin.bottom;
 
@@ -61,13 +63,14 @@ class bigChart {
 
 
     /* Scale */
+
     xScale = d3.scaleLinear()
       .domain([1980, 2016])
-      .range([0, this.width - this.margin]);
+      .range([0, this.width - margin.left - margin.right - 30]);
 
     yScale = d3.scaleLinear()
       .domain([0, 80])
-      .range([this.height - this.margin, 0]);
+      .range([0, this.height - margin.top - margin.bottom]);
 
 
     // delete all lines
@@ -75,8 +78,11 @@ class bigChart {
 
     /* Add SVG */
     svg = bigsvg
-
-    bigsvg.attr("transform", `translate(${this.margin / 2}, ${this.margin / 2})`)
+      .append("svg")
+      .attr("width", this.width + margin.left + margin.right)
+      .attr("height", this.height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
 
 
     /* Add line into SVG */
@@ -101,14 +107,24 @@ class bigChart {
     for (i = 1980; i <= 2016; i += 4) {
       dimensions.push(i);
     }
+
+
+    // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
+    //   return d != "name" && (y[d] = d3.scale.linear()
+    //       .domain(d3.extent(cars, function(p) { return +p[d]; }))
+    //       .range([height, 0]));
+    // }));
+
     console.log(dimensions);
 
-    svg.selectAll("parallelAxis")
+    svg.selectAll(".parallelAxis")
       .data(dimensions).enter()
       .append("g")
-      .attr("transform", function (d) { 
+      .attr('class', 'parallelAxis')
+      .attr("transform", function (d) {
         console.log(xScale(d));
-        return "translate(" + xScale(d) + ") "; })
+        return "translate(" + xScale(d) + ") ";
+      })
       // And I build the axis with the call function
       .each(function (d) {
         d3.select(this).call(yAxis);
@@ -116,7 +132,7 @@ class bigChart {
       // Add axis title
       .append("text")
       .style("text-anchor", "middle")
-      .attr("y", this.margin)
+      .attr("y", -10)
       .text(function (d) { return d; })
       .style("fill", "black")
 
@@ -130,8 +146,49 @@ class bigChart {
     //   .attr("fill", "#000")
     //   .text("Total values");
 
+    // svg.append("g")
+    //   .data(dimensions).enter()
+    //   // .attr("class", "brush")
+    // .each(function(d) {
+    //   console.log("xxxxxxxxxxxxxxxxx")
+    //   console.log(d);
+    //   // xScale(d), 0], [xScale(d) + 5, this.height
+    //   d3.select(this).call(d3.brush().extent([0, 0], [100, 200]))})
+    // .on("brushstart", this.brushstart).on("brush", brush));})
+    // .selectAll("rect")
+    //   .attr("x", -8)
+    //   .attr("width", 16);
+
+    svg.selectAll(".axisBrush")
+      .data(dimensions).enter()
+      .append("g")
+      .attr('class', 'axisBrush')
+      .each(function (d) {
+        // console.log("xxxxxxxxxxxxxxxxx")
+        // console.log(d);
+        // xScale(d), 0], [xScale(d) + 5, this.height
+        // d3.brushY().extent([0, 0], [100, 200])
+        d3.select(this).call(d3.brushY().extent([[xScale(d), 0], [xScale(d) + 16 , yScale(80)]])) //TODO: change 600 to be this.height
+      })
+
+      // .attr("width", 16)
+      // .attr("height", 10);
+    // .on("brushstart", this.brushstart).on("brush", brush));})
+    // .call(d3.brushY()                     // Add the brush feature using the d3.brush function
+    //   .extent([[0, 0], [400, 400]])
+
     this.redraw(bigsvg, data);
   }
+
+
+  brushstart() {
+    d3.event.sourceEvent.stopPropogation();
+  }
+
+  brush() {
+
+  }
+
 
 
   redraw(bigsvg, data) {
@@ -187,7 +244,7 @@ class bigChart {
           .text(d.key)
           .attr('class', 'country-text')
           .attr("x", (width - margin) / 2)
-          .attr("y", 30)
+          .attr("y", 15)
           .style('fill', color(d.key))
       })
       .on("mouseout", function (d) {
