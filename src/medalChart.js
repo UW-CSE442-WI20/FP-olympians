@@ -131,16 +131,6 @@ function generateMedalChart(data, medalsvg) {
     width = width - margin.left - margin.right;
     height = height - margin.top - margin.bottom;
 
-    // var smallWidth = 500;
-    // var smallHeight = 400;
-
-    // var smallMargin = {
-    //     left: 60,
-    //     top: 30,
-    //     right: 30,
-    //     bottom: 60
-    // };
-
     var innerWidth = width - margin.left - margin.right;
     var innerHeight = height - margin.top - margin.bottom;
 
@@ -200,22 +190,13 @@ function generateMedalChart(data, medalsvg) {
     });
     x1.domain(medalTypes).rangeRound([0, 30]);
 
-    var slice = medalsvg.selectAll(".slice")
-        .data(groupData)
-        .enter().append("g")
-        .attr("class", "g")
-        .attr("transform", function (d) {
-            console.log("d within slice:", d)
-            return "translate(" + xSmallScale(d.key) + ",0)";
-        });
-
-    var color = medalType => {
+    const color = medalType => {
         if (medalType === 'Bronze') return "#CD7F32";
         else if (medalType === 'Silver') return "#C0C0C0";
         else return "#D4AF37";
     }
 
-    var cxOffset = medalType => {
+    const cxOffset = medalType => {
         if (medalType === 'Bronze') {
             return 0.3;
         } else if (medalType === 'Silver') {
@@ -225,6 +206,16 @@ function generateMedalChart(data, medalsvg) {
         }
     }
 
+    var slice = medalsvg.selectAll(".slice")
+        .data(groupData)
+        .enter().append("g")
+        .attr("class", "g")
+        .attr("transform", function (d) {
+            return "translate(" + xSmallScale(d.key) + ",0)";
+        });
+
+    var currSelectedAthlete = "Nathan Ghar-Jun Adrian";
+
     slice.selectAll("circle")
         .data(function (d) {
             return d.values;
@@ -232,6 +223,9 @@ function generateMedalChart(data, medalsvg) {
         .enter().append("circle")
         .style("fill", function (d) {
             return color(d.grpName)
+        })
+        .style("stroke", function(d) {
+            return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         })
         .attr("cx", function (d) {
             return cxOffset(d.grpName) * xSmallScale.bandwidth();
@@ -264,6 +258,12 @@ function generateMedalChart(data, medalsvg) {
             medalsvg.select("#tooltip").remove();
             medalsvg.select("#tooltip").remove();
         })
+        .on("click", function(d) {
+            console.log("medal selected:", d);
+            currSelectedAthlete = d.grpAthlete;
+            console.log("d.grpAthlete...", d.grpAthlete)
+            redrawMedals(slice, currSelectedAthlete);
+        })
         .attr("cy", 0)
         .transition()
         .delay(function(d) {
@@ -273,10 +273,10 @@ function generateMedalChart(data, medalsvg) {
             return ySmallScale(d.grpValue - 1.5) - 30
         });
 
-    var simulation = d3.forceCenter(slice)
-    simulation.force('x', d3.forceX().x(function(d) {
-        return cxOffset(d.grpName) * xSmallScale.bandwidth();
-    }))
+    // var simulation = d3.forceCenter(slice)
+    // simulation.force('x', d3.forceX().x(function(d) {
+    //     return cxOffset(d.grpName) * xSmallScale.bandwidth();
+    // }))
 
     // now add titles to the axes
     medalsvg.append("text")
@@ -288,7 +288,12 @@ function generateMedalChart(data, medalsvg) {
         .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
         .attr("transform", "translate(" + (width / 2) + "," + (height - margin.bottom / 10) + ")") // centre below axis
         .text("Year Competed");
+}
 
-    // console.log("athlete chart here", data);
-
+function redrawMedals(slice, currSelectedAthlete) {
+    console.log("redrawing medals with selected athlete:", currSelectedAthlete);
+    slice.selectAll("circle")
+        .style("stroke", function(d) {
+            return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
+        });
 }
