@@ -16,7 +16,7 @@ h1 {
   color: black;
 }
 
-h2 {
+h2, p {
   text-align: center;
   color: white;
 }
@@ -47,10 +47,11 @@ sidebar {
   background-color: black;
   padding: 2px;
   display: flex;
+  flex-direction: column;
 }
 
 #rankings {
-  display: inline-block;
+  /* display: inline-block; */
   /* width: 1000px; */
   /* height: 100%; */
   padding: 1px;

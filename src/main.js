@@ -179,6 +179,7 @@ function updateRanking(currSport, currYear) {
   if (countries == null) {
     // no competition of this sport in currYear (ex. baseball dropped in 2012 and 2016)
     console.log("No " + currSport + " in " + currYear);
+    document.getElementById("ranking-info").innerHTML = "No " + currSport + " in " + currYear + "!!";
   } else {
 
   countries.values.forEach(function(d) {
@@ -208,6 +209,10 @@ function updateRanking(currSport, currYear) {
   // console.log("country to ratio mapping:", countryToRatio);
   topCountryToRatio = countryToRatio.slice(0, 10);
   // console.log("top ten country to ratio mappings:", topCountryToRatio);
+
+
+  // not sure the best place to update this: the Rankings Header
+  document.getElementById("ranking-info").innerHTML = currSport + " " + currYear + " Rankings";
   }
 }
 

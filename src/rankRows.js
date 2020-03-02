@@ -11,8 +11,9 @@ class rankRows {
     this.topDivs = [];
     for (var i = 0; i < topCountryToRatio.length; i++) {
       newDiv = rowDiv.append("div")
-        .style("top", 0)
-        .style("left", 0)
+        // .attr("id", "row" + i)
+        // .style("top", 0)
+        // .style("left", 0)
         .style("width", "190px")
         .style("height", "60px")
         .style("margin-top", "6px")
@@ -22,7 +23,7 @@ class rankRows {
         .style("flex-direction","row")
         .style("justify-content","flex-start")
         .style("align-items","center")
-        .attr("id", "placehere" + i);
+        .attr("id", "row" + i);
       this.topDivs.push(newDiv);
     }
 
@@ -30,19 +31,19 @@ class rankRows {
     for (var i = 0; i < topCountryToRatio.length; i++) {
       countryName = topCountryToRatio[i].key.replace(/ /g,"-");
       console.log(countryName);
-      d3.select("#placehere" + i).append("img")
+      d3.select("#row" + i).append("img")
           .attr("src","flags/" + countryName + "-flag.svg")
           .attr("id", "img" + i)
           .attr("width", 90)
           .attr("height", 60);
-      //d3.select("#placehere" + i).append("svg");
+      //d3.select("#row" + i).append("svg");
       // var elem = document.createElement("img");
       // elem.setAttribute("src", "flag_AUS.png");
       // //elem.setAttribute("src", "https://stillmed.olympic.org/media/Images/OlympicOrg/Countries/A/Afghanistan/CNO-AFG.jpg?interpolation=lanczos-none&resize=253:*");
       // elem.setAttribute("height", "60");
       // elem.setAttribute("width", "90");
       // elem.setAttribute("alt", "AUS flag");
-      // document.getElementById("placehere" + i).appendChild(elem);
+      // document.getElementById("row" + i).appendChild(elem);
     }
 
     // create text labels for each row
@@ -90,9 +91,10 @@ roundRank(rank) {
       return Number(Math.round(rank + 'e' + 2) + 'e-' + 2);
   }
 
+// Update the rank rows based on new year or new sport selection,
+// animate transitions as appropriate
 updateRankRows(rowDiv, topCountryToRatio) {
   // clear all previous data, transition
-  console.log("trying to updateRankRows");
 
   // replace image to each row here
   for (var i = 0; i < topCountryToRatio.length; i++) {
@@ -105,8 +107,16 @@ updateRankRows(rowDiv, topCountryToRatio) {
         .attr("height", 60);
   }
 
-  // update country labels for each row
+  // update rest of elements (how should these be looped correctly?)
   for (var i = 0; i < topCountryToRatio.length; i++) {
+    d3.select('#row' + i)
+      .style("position","absolute")
+      .style("top","90%")
+      .transition()
+      .delay(250)
+      .style("top", "" + (i+1)*9 + "%");
+
+    // update country labels for each row
     d3.select("#country" + i).remove();
     var nameDiv = d3.select("#mainDiv" + i).append("div")
             .attr("width", "90px")
@@ -143,8 +153,12 @@ updateRankRows(rowDiv, topCountryToRatio) {
     //     .text(topCountryToRatio[i].key);
     //
     // d3.select("#ratio" + i)
+    //     .style("position","absolute")
+    //     .style("left","0px")
     //     .transition()
+    //     .style("left","50px")
     //     .text(this.roundRank(topCountryToRatio[i].value));
+
   }
 }
 
