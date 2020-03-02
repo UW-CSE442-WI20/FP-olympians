@@ -17,7 +17,7 @@ var topCountryToRatio = null;  // top 10 results for ranking
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
-const bigChartInstance = new BigChart();
+// const bigChartInstance = new BigChart();
 
 
 // create svg for smallChart (the entire rank rows area)
@@ -69,9 +69,8 @@ function initializeDropdowns() {
 	select.addEventListener('change', function() {
 	   currSport = document.getElementById('select-sport');
 	   console.log("curr sport:", currSport);
-	   bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg)
-
-		currSportSelections = document.getElementById('select-sport');
+	   // bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
+	   currSportSelections = document.getElementById('select-sport');
       currSport = entriesBySport[currSportSelections.value].key;
       console.log("HERE", entriesBySport);
       console.log(currSportSelections.value);
@@ -246,7 +245,7 @@ function createRanking(sport) {
 	console.log(currSportOnly);
 	console.log("**********************")
 	console.log("passing into bigchart DrawChart");
-	bigChartInstance.drawChart(bigsvg, currSportOnly, sport, medalsvg);
+	// bigChartInstance.drawChart(bigsvg, currSportOnly, sport, medalsvg);
 	//
 	// console.log(yearByCountry);
 	// // go over each year and give a ranking on who had the most medals that year
@@ -273,11 +272,10 @@ d3.csv('olympics.csv')
   .then((data) => {
     console.log('Dynamically loaded CSV data', data);
     initializeData(data);
-	initializeDropdowns();
 	createRanking("Swimming");
     updateRanking(currSport, currYear);
     initializeRankChart();
-	  initializeDropdowns();
+    initializeDropdowns();
 	  //createRanking("Archery");
   });
 
