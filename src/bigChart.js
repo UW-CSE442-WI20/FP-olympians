@@ -1,8 +1,9 @@
-
-
 // You can separate your code out into modules to
 // keep code clean.
 const d3 = require('d3');
+const _ = require("underscore");
+
+const generateMedalChart = require("./medalChart");
 
 class bigChart {
   constructor() {
@@ -31,8 +32,8 @@ class bigChart {
     this.svg;
   }
 
-  drawChart(bigsvg, data) {
-
+  drawChart(bigsvg, data, currSport, medalsvg) {
+    var margin = {top: 20, right: 20, bottom: 30, left: 50};
 
     // Set the width and height of the graph
     var margin = { top: 30, right: 10, bottom: 10, left: 10 }
@@ -54,10 +55,10 @@ class bigChart {
 
     // /* Format Data */
     // var parseDate = d3.timeParse("%Y");
-    // data.forEach(function(d) { 
+    // data.forEach(function(d) {
     //   d.values.forEach(function(d) {
     //     d.date = parseDate(d.date);
-    //     d.price = +d.price;    
+    //     d.price = +d.price;
     //   });
     // });
 
@@ -84,7 +85,6 @@ class bigChart {
       .append("g")
       .attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
 
-
     /* Add line into SVG */
     this.line = d3.line()
       .x(d => xScale(d.key))
@@ -92,6 +92,58 @@ class bigChart {
 
     this.lines = svg.append('g')
       .attr('class', 'lines');
+
+    lines.selectAll("line")
+    .transition()
+    .style('opacity',0)
+    .remove();
+
+    lines.selectAll('.line-group')
+      .data(data).enter()
+      .append('g')
+      .attr('class', 'line-group')
+      .append('path')
+      .attr('class', 'line')
+      .attr('d', d => line(d.values))
+      // Draw color based on index? Or maybe based on country?
+      .style('stroke', (d, i) => color(d.key))
+      .style('opacity', lineOpacity)
+      .style('fill', 'none')
+      .on("mouseover", function(d) {
+        // change line opacity
+        d3.select(this)
+        .style('opacity', lineOpacityHover)
+        .style('stroke-width', lineStrokeHover);
+        // add text to show what country this is
+        svg.append("text")
+        .text(d.key)
+        .attr('class', 'country-text')
+        .style('fill', color(d.key))
+      })
+      .on("mouseout", function(d) {
+        d3.select(this)
+        .style('opacity', lineOpacity)
+        .style("stroke-width", lineStroke);
+        svg.select(".country-text").remove();
+      })
+        .on("click", function(d) {
+          // get the data for the selected athlete
+          console.log(d);
+          console.log("curr sport:", currSport);
+          var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function(item) {
+            // console.log("searching for ", currSport);
+            // console.log("considering ", item.key);
+            return item.key === currSport;
+          });
+          console.log(sportData);
+          var countryData = _.find(d3.values(sportData.values), function(item) {
+            // console.log("searching for ", d.key);
+            // console.log("considering ", item.key);
+            return item.key === d.key;
+          });
+          console.log(countryData);
+          generateMedalChart(countryData.values, medalsvg);
+        });
 
 
     /* Add Axis into SVG */
@@ -180,7 +232,6 @@ class bigChart {
     this.redraw(bigsvg, data);
   }
 
-
   brushstart() {
     d3.event.sourceEvent.stopPropogation();
   }
@@ -188,8 +239,6 @@ class bigChart {
   brush() {
 
   }
-
-
 
   redraw(bigsvg, data) {
 
@@ -253,8 +302,6 @@ class bigChart {
           .style("stroke-width", lineStroke);
         svg.select(".country-text").remove();
       });
-
-
   }
 
 }
