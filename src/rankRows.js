@@ -1,5 +1,4 @@
 const d3 = require('d3');
-// const ThreeSmallCharts = require("./threeSmallCharts");
 
 // This class contains functions to create and update the rank rows,
 // which display the top results data.
@@ -11,7 +10,7 @@ class rankRows {
     this.topDivs = [];
     for (var i = 0; i < topCountryToRatio.length; i++) {
       newDiv = rowDiv.append("div")
-        // .attr("id", "row" + i)
+        .attr("id", "row" + i)
         // .style("top", 0)
         // .style("left", 0)
         .style("width", "190px")
@@ -22,8 +21,7 @@ class rankRows {
         .style("display","flex")
         .style("flex-direction","row")
         .style("justify-content","flex-start")
-        .style("align-items","center")
-        .attr("id", "row" + i);
+        .style("align-items","center");
       this.topDivs.push(newDiv);
     }
 
@@ -36,14 +34,6 @@ class rankRows {
           .attr("id", "img" + i)
           .attr("width", 90)
           .attr("height", 60);
-      //d3.select("#row" + i).append("svg");
-      // var elem = document.createElement("img");
-      // elem.setAttribute("src", "flag_AUS.png");
-      // //elem.setAttribute("src", "https://stillmed.olympic.org/media/Images/OlympicOrg/Countries/A/Afghanistan/CNO-AFG.jpg?interpolation=lanczos-none&resize=253:*");
-      // elem.setAttribute("height", "60");
-      // elem.setAttribute("width", "90");
-      // elem.setAttribute("alt", "AUS flag");
-      // document.getElementById("row" + i).appendChild(elem);
     }
 
     // create text labels for each row
@@ -58,7 +48,7 @@ class rankRows {
         .attr("flex-direction", "column")
         .attr("justify-content", "center")
         .attr("align-content", "center");
-      var nameDiv = mainDiv.append("div")//this.topDivs[i].append("div")
+      var nameDiv = mainDiv.append("div")
         .attr("width", "90px")
         .attr("height", "20px")
         .attr("id", "country" + i)
@@ -70,7 +60,7 @@ class rankRows {
         .style("font-size", "12px")
         .attr("text-anchor", "center")  // centering doesn't work
         .text(topCountryToRatio[i].key);
-      var ratioDiv = mainDiv.append("div")//this.topDivs[i].append("div")
+      var ratioDiv = mainDiv.append("div")
         .attr("width", "90px")
         .attr("height", "20px")
         .attr("id", "ratio" + i)
@@ -159,48 +149,8 @@ updateRankRows(rowDiv, topCountryToRatio) {
     //     .style("left","50px")
     //     .text(this.roundRank(topCountryToRatio[i].value));
 
+    }
   }
-}
-
-  // Draw the top rank elements onto the small chart
-  // given the current topRanks
-  // topranks is the array with the ids of top ranked groups in data
-  // where id is one of the identifying features in the data object
-  // data is the dataset
-  //drawTopRanks(smallchartdiv, topRanks, data) {
-    // console.log(data.length)
-    // draw a rectangle element for each result
-    // for (var i = 0; i < topRanks.length; i++) {
-    //   // create the svg for country row
-    //   var smallsvg = smallchartdiv
-    //     .append('svg')
-    //     .attr('width', 1200)
-    //     .attr('height', 460)
-    //     .attr("fill", "Black");
-    //   // we will create 1 g for each small multiple graph
-    //   var g = smallsvg.append("g");
-    //   g.append("text")
-    //       .attr("x", 0)
-    //       .attr("y", 30 + 110)
-    //       .style("fill", "Black")
-    //       .text(data[i].Name);
-    //   g.append("rect")
-    //       .attr("x", 300)
-    //       .attr("width", 300)
-    //       .attr("height", 300)
-    //       .style("fill", "White");
-    //   g.append("rect")
-    //       .attr("x", 600)
-    //       .attr("width", 300)
-    //       .attr("height", 300)
-    //       .style("fill", "Green");
-    //   g.append("rect")
-    //       .attr("x", 900)
-    //       .attr("width", 300)
-    //       .attr("height", 300)
-    //       .style("fill", "Blue");
-    //   }
-  //}
 }
 
 module.exports = rankRows;
