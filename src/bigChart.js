@@ -75,7 +75,7 @@ class bigChart {
 
     yScale = d3.scaleLinear()
       .domain([0, 80])
-      .range([0, this.height - margin.top - margin.bottom]);
+      .range([this.height - margin.top - margin.bottom, 0]);
 
 
     // delete all lines
