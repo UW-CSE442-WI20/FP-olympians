@@ -25,17 +25,12 @@ class threeSmallCharts {
       .attr('width', 20)
       .attr('height', 40)
       .style("margin", "5px")
-<<<<<<< HEAD
-      //.style("display","table-row")
-      .style("background-color", "White");
-=======
       .style("display","table-row")
       .style("background-color", "Blue");
   }
 
   updateSVG1() {
     // draw and update medal count chart
->>>>>>> 0afeedb06eedb6bfe9068031860b88ec97dbbabc
   }
 
 
