@@ -70,7 +70,7 @@ class bigChart {
     /* Scale */
 
     xScale = d3.scaleLinear()
-      .domain([1980, 2016])
+      .domain([2000, 2020])
       .range([0, this.width - margin.left - margin.right - 30]);
 
     yScale = d3.scaleLinear()
@@ -109,7 +109,7 @@ class bigChart {
     //   .call(xAxis);
 
     dimensions = []
-    for (i = 1980; i <= 2016; i += 4) {
+    for (i = 2000; i <= 2020; i += 4) {
       dimensions.push(i);
     }
 
