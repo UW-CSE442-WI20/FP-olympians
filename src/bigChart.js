@@ -97,7 +97,7 @@ class bigChart {
     this.lines = svg.append('g')
       .attr('class', 'lines');
 
-    
+
 
     /* Add Axis into SVG */
     var xAxis = d3.axisBottom(xScale).ticks(5);
