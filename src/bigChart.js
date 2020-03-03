@@ -18,8 +18,6 @@ class bigChart {
     this.margin = 50;
 
     // getting scale of graph
-    this.xScale;
-    this.yScale;
 
     // getting color sceme
     this.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -33,7 +31,6 @@ class bigChart {
     // the svg containing the whole chart
     this.svg;
   }
-
 
   drawChart(bigsvg, data, currSport, medalsvg) {
     var margin = {top: 20, right: 20, bottom: 30, left: 50};
@@ -65,11 +62,11 @@ class bigChart {
 
 
     /* Scale */
-    this.xScale = d3.scaleTime()
+    xScale = d3.scaleLinear()
       .domain([1980, 2016])
       .range([0, this.width - this.margin]);
 
-    this.yScale = d3.scaleLinear()
+    yScale = d3.scaleLinear()
       .domain([0, 80])
       .range([this.height - this.margin, 0]);
 
@@ -80,12 +77,12 @@ class bigChart {
     /* Add SVG */
     svg = bigsvg
 
-    bigsvg.attr("transform",  `translate(${this.margin / 2}, ${this.margin / 2})`)
+    bigsvg.attr("transform", `translate(${this.margin / 2}, ${this.margin / 2})`)
 
     /* Add line into SVG */
     this.line = d3.line()
-      .x(d => this.xScale(d.key))
-      .y(d => this.yScale(d.value));
+      .x(d => xScale(d.key))
+      .y(d => yScale(d.value));
 
     this.lines = svg.append('g')
       .attr('class', 'lines');
@@ -144,22 +141,46 @@ class bigChart {
 
 
     /* Add Axis into SVG */
-    var xAxis = d3.axisBottom(this.xScale).ticks(5);
-    var yAxis = d3.axisLeft(this.yScale).ticks(5);
+    var xAxis = d3.axisBottom(xScale).ticks(5);
+    var yAxis = d3.axisLeft(yScale).ticks(5);
 
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", `translate(0, ${this.height - this.margin})`)
-      .call(xAxis);
+    // svg.append("g")
+    //   .attr("class", "x axis")
+    //   .attr("transform", `translate(0, ${this.height - this.margin})`)
+    //   .call(xAxis);
 
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-      .append('text')
-      .attr("y", 15)
-      .attr("transform", "rotate(-90)")
-      .attr("fill", "#000")
-      .text("Total values");
+    dimensions = []
+    for (i = 1980; i <= 2016; i += 4) {
+      dimensions.push(i);
+    }
+    console.log(dimensions);
+
+    svg.selectAll("parallelAxis")
+      .data(dimensions).enter()
+      .append("g")
+      .attr("transform", function (d) { 
+        console.log(xScale(d));
+        return "translate(" + xScale(d) + ") "; })
+      // And I build the axis with the call function
+      .each(function (d) {
+        d3.select(this).call(yAxis);
+      })
+      // Add axis title
+      .append("text")
+      .style("text-anchor", "middle")
+      .attr("y", this.margin)
+      .text(function (d) { return d; })
+      .style("fill", "black")
+
+
+    // svg.append("g")
+    //   .attr("class", "y axis")
+    //   .call(yAxis)
+    //   .append('text')
+    //   .attr("y", 15)
+    //   .attr("transform", "rotate(-90)")
+    //   .attr("fill", "#000")
+    //   .text("Total values");
 
     this.redraw(bigsvg, data);
   }
@@ -222,7 +243,7 @@ class bigChart {
         svg.append("text")
           .text(d.key)
           .attr('class', 'country-text')
-          .attr("x", (width-margin)/2)
+          .attr("x", (width - margin) / 2)
           .attr("y", 30)
           .style('fill', color(d.key))
       })

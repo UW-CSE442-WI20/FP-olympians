@@ -37,7 +37,6 @@ function initializeRankChart() {
   rankRows = new RankRows(rankRowsDiv, topCountryToRatio);
 }
 
-
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
           .append('svg')
@@ -106,6 +105,29 @@ function initializeData(data) {
       return d.Sport;
     })
     .entries(data);
+
+  entriesByCountry = d3.nest()
+    .key(function(d) {
+      return d.Team;
+    })
+    .entries(data);
+
+  // const myKeys = Object.keys(entriesByCountry) // returns [ 'keyA', 'keyB', 'keyC' ];
+  //
+  // myKeys.sort((a, b) => {
+  //
+  // // custom comparator, update this for your specific use case
+  //
+  // return entriesByCountry[b].values.length - entriesByCountry[a].values.length
+  //
+  // })
+  //
+  //
+  // myKeys.forEach((k) =>{
+  //
+  // const value = entriesByCountry[k];
+  // console.log("here are the countries", value)
+// })
 
 	entriesBySport = d3.nest()
 		.key(function(d) {
@@ -238,14 +260,16 @@ function updateRanking(currSport, currYear) {
 // Function that returns sorted order of countries based on medals for that sport in 2016
 function createRanking(sport) {
 
-	var currSportOnly = entriesBySportByYearMedalCount[0].values;
-
+	// var currSportOnly = entriesBySportByYearMedalCount[0].values;
+  // console.log("curr sport only:", currSportOnly)
 
 	console.log("**********************")
-	console.log(currSportOnly);
+	// console.log(currSportOnly);
+  console.log("in createRatings", entriesBySportThenCountryThenYear)
 	console.log("**********************")
 	console.log("passing into bigchart DrawChart");
 	// bigChartInstance.drawChart(bigsvg, currSportOnly, sport, medalsvg);
+
 	//
 	// console.log(yearByCountry);
 	// // go over each year and give a ranking on who had the most medals that year
