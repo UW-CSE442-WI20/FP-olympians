@@ -245,7 +245,7 @@ class bigChart {
         d3.select(this)
           .style('opacity', lineOpacity)
           .style("stroke-width", lineStroke);
-        svg.select(".country-text").remove();
+        svg.selectAll(".country-text").remove();
       })
       .on("click", function (d) {
         // get the data for the selected athlete
