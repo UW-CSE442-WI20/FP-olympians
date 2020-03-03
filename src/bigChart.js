@@ -171,8 +171,8 @@ class bigChart {
     console.log(data);
 
     var duration = 250;
-    var lineOpacity = "0.25";
-    var lineOpacityHover = "0.85";
+    var lineOpacity = "0.50";
+    var lineOpacityHover = "0.95";
     var otherLinesOpacityHover = "0.1";
     var lineStroke = "3px";
     var lineStrokeHover = "4.5px";
