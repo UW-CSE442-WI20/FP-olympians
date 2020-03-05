@@ -13,7 +13,7 @@ const _ = require("underscore");
 module.exports =
 function generateMedalChart(data, medalsvg) {
     console.log("generating medal counts chart!")
-    console.log(data);
+    console.log("DATA****", data);
 
     // test
     medalsvg.append('g')
@@ -170,12 +170,12 @@ function generateMedalChart(data, medalsvg) {
         .tickFormat(d3.format("Y"))
     const ySmallAxis = d3.axisLeft(ySmallScale)
 
-    // add title: athlete name and country
+    // add title: country name
     medalsvg.append("text")
         .attr("x", width / 2)
         .attr("y", height - innerHeight - 1.3 * margin["top"])
         .style("text-anchor", "middle")
-        .text(data[0].Name + "  (" + data[0].NOC + ")");
+        .text(data[0].values[0].Team);  // Country Name
 
     // add axis groups to medalsvg
     const xSmallAxisGroup = medalsvg.append("g")
@@ -283,10 +283,10 @@ function generateMedalChart(data, medalsvg) {
         .attr("transform", "translate(" + margin.left + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
         .text("Medals Won");
 
-    medalsvg.append("text")
-        .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-        .attr("transform", "translate(" + (width / 2) + "," + (height - margin.bottom / 10) + ")") // centre below axis
-        .text("Year Competed");
+    // medalsvg.append("text")
+    //     .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+    //     .attr("transform", "translate(" + (width / 2) + "," + (height - margin.bottom / 10) + ")") // centre below axis
+    //     .text("Year Competed");
 }
 
 function redrawMedals(slice, currSelectedAthlete) {
