@@ -43,6 +43,12 @@ header {
 }
 
 sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 210px;
+  overflow-y: scroll;
   grid-area: sidebar;
   background-color: black;
   padding: 2px;
@@ -51,9 +57,11 @@ sidebar {
 }
 
 #rankings {
-  /* display: inline-block; */
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
   /* width: 1000px; */
-  /* height: 100%; */
+
   padding: 1px;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;

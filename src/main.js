@@ -76,7 +76,8 @@ function initializeDropdowns() {
       console.log("currYear is ", currYear);
       //console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
       updateRanking(currSport, currYear);
-      rankRows.updateRankRows(rankRowsDiv, topCountryToRatio);
+      //rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
+        rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);  // TESTING
       bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
 	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
@@ -150,7 +151,7 @@ function initializeData(data) {
 			return d.Year;
     })
     .sortKeys(d3.ascending)
-    .rollup(function(v) { 
+    .rollup(function(v) {
       // console.log(v);
       return d3.sum(v, function(d) {
       // console.log(111111111)
@@ -311,7 +312,7 @@ d3.csv('olympics.csv')
     updateRanking(currSport, currYear);
     initializeRankChart();
     initializeDropdowns();
-    bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear);
+    bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
 	  //createRanking("Archery");
   });
 
