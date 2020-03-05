@@ -76,8 +76,8 @@ function initializeDropdowns() {
       console.log("currYear is ", currYear);
       //console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
       updateRanking(currSport, currYear);
-      //rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
-        rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);  // TESTING
+      rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
+      //  rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);  // TESTING
       bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
 	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
