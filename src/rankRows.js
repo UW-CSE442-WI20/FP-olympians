@@ -23,7 +23,7 @@ class rankRows {
       newDiv = rowDiv.append("div")
         .attr("id", "row" + countryName)
         .style("position", "absolute")
-        .style("top", (i+1)*10 + "%")
+        .style("top", (i)*10 + "%")
         // .style("left", 0)
         .style("width", "190px")
         .style("height", "60px")
@@ -131,7 +131,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
     .style("opacity", 0.5)
     .transition()  // slide up from bottom
     .delay(500)
-    .style("top", (i+1)*10 + "%")
+    .style("top", (i)*10 + "%")
     .style("opacity", 1.0);
 
   // add image
@@ -221,10 +221,10 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
           // perform swap
           d3.select('#row' + countryName)
             .style("position","absolute")
-            .style("top", (i+1)*10 + "%")
+            .style("top", (i)*10 + "%")
             .transition()
-            .delay(1000)
-            .style("top", (j+1)*10 + "%");
+            .delay(50)
+            .style("top", (j)*10 + "%");
           // update ratio label
           d3.select("#ratio" + countryName).remove();
           var ratioDiv = d3.select("#mainDiv" + countryName).append("div")
@@ -253,7 +253,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
         d3.select('#row' + this.previousRankings[i])
           .style("opacity", 1.0)
           .transition()
-          .delay(500)
+          .delay(50)
           .style("opacity", 0.0);
         d3.select('#row' + this.previousRankings[i])
           .remove();
@@ -263,7 +263,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
         rowDiv.append("div")
           .attr("id", "row" + countryName)  // new country
           .style("position", "absolute")
-          .style("top", (i+1)*10 + "%")
+          .style("top", (i)*10 + "%")
           // .style("left", 0)
           .style("width", "190px")
           .style("height", "60px")
@@ -276,7 +276,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
           .style("align-items","center")
           .style("opacity", 0.0)
           .transition()
-          .delay(2000)
+          .delay(100)
           .style("opacity", 1.0);
 
         // add image
