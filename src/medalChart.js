@@ -147,7 +147,7 @@ function generateMedalChart(data, medalsvg) {
 
     const getXDomain = () => {
         var domain = [];
-        for (let i = 1980; i <= 2020; i += 4) {
+        for (let i = 2000; i <= 2020; i += 4) {
             domain.push(i);
         }
         return domain;
@@ -166,7 +166,7 @@ function generateMedalChart(data, medalsvg) {
 
     const xSmallAxis = d3.axisBottom(xSmallScale)
         .tickPadding(30)
-        .tickValues(getTickValues(1980, 2020))
+        .tickValues(getTickValues(2000, 2020))
         .tickFormat(d3.format("Y"))
     const ySmallAxis = d3.axisLeft(ySmallScale)
 
@@ -226,9 +226,6 @@ function generateMedalChart(data, medalsvg) {
         .style("stroke", function(d) {
             return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         })
-        .attr("cx", function (d) {
-            return cxOffset(d.grpName) * xSmallScale.bandwidth();
-        })
         .attr("r", 10)
         .on("mouseover", function (d) {//Get this circle's x/y values, then augment for the tooltip
             //Create the tooltip label
@@ -263,10 +260,14 @@ function generateMedalChart(data, medalsvg) {
             console.log("d.grpAthlete...", d.grpAthlete)
             redrawMedals(slice, currSelectedAthlete);
         })
+        .attr("cx", cxOffset("Silver") * xSmallScale.bandwidth())
         .attr("cy", 0)
         .transition()
         .delay(function(d) {
-            return 50 * d.grpValue
+            return 50 * d.grpValue + 1000 * (cxOffset(d.grpName) - cxOffset("Silver"))
+        })
+        .attr("cx", function (d) {
+            return cxOffset(d.grpName) * xSmallScale.bandwidth();
         })
         .attr("cy", function (d) {
             return ySmallScale(d.grpValue - 1.5) - 30
@@ -290,9 +291,18 @@ function generateMedalChart(data, medalsvg) {
 }
 
 function redrawMedals(slice, currSelectedAthlete) {
+    const color = medalType => {
+        if (medalType === 'Bronze') return "#CD7F32";
+        else if (medalType === 'Silver') return "#C0C0C0";
+        else return "#D4AF37";
+    }
+
     console.log("redrawing medals with selected athlete:", currSelectedAthlete);
     slice.selectAll("circle")
-        .style("stroke", function(d) {
-            return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
+        // .style("stroke", function(d) {
+        //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
+        // })
+        .style("fill", function(d) {
+            return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
         });
 }
