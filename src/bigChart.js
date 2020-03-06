@@ -138,17 +138,7 @@ class bigChart {
       .style("text-anchor", "middle")
       .attr("y", -10)
       .text(function (d) { return d; })
-      .style("fill", "black")
-      // added to test ranking updates
-      .on("mouseover", function (d) {
-        // change line opacity
-        d3.select(this)
-          .style("fill", "blue");
-        // update rankings
-        //currYear = d.key;
-         // updateRanking(d.key, currSport);
-         // rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);  // TESTING
-      })
+      .style("fill", "black");
 
 
     svg.selectAll(".axisBrush")
