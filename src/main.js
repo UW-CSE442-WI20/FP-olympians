@@ -51,6 +51,12 @@ function initializeYearOptions() {
   rightYear.onclick = function() { updateCurrYear("right")};
   // initialize year label
   document.getElementById("year-window").innerHTML = yearOptions[currYearIndex];
+  // add in question mark
+  d3.select("#question-mark").append("img")
+    .attr("src","icon-question-mark.png")
+    .attr("id", "question-icon")
+    .attr("width", 20)
+    .attr("height", 20);
 }
 
 // Set up sport dropdown

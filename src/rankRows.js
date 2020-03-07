@@ -29,7 +29,7 @@ class rankRows {
         .style("height", "60px")
         .style("margin-top", "6px")
         .style("margin-bottom", "6px")
-        .style("background-color", "Gray")
+        .style("background-color", "#B0C4DE")
         .style("display","flex")
         .style("flex-direction","row")
         .style("justify-content","flex-start")
@@ -75,6 +75,7 @@ class rankRows {
         .attr("y", "10")
         .style('color', 'White')
         .style("font-size", "12px")
+        .style("font-weight", "bold")
         .attr("text-anchor", "center")  // centering doesn't work
         .text(topCountryToRatio[i].key);
       var ratioDiv = mainDiv.append("div")
@@ -85,7 +86,7 @@ class rankRows {
         .append("text")
         .attr("x", "40px")
         .attr("y", "10px")
-        .style('color', "Red")
+        .style('color', "#000080")
         .style("font-size", "12px")
         .style("font-weight", "bold")
         .attr("text-anchor", "center")  // centering doesn't work
@@ -123,7 +124,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
     .style("height", "60px")
     .style("margin-top", "6px")
     .style("margin-bottom", "6px")
-    .style("background-color", "Gray")
+    .style("background-color", "#B0C4DE")
     .style("display","flex")
     .style("flex-direction","row")
     .style("justify-content","flex-start")
@@ -163,6 +164,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
     .attr("y", "10")
     .style('color', 'White')
     .style("font-size", "12px")
+    .style("font-weight", "bold")
     .attr("text-anchor", "center")  // centering doesn't work
     .text(topCountryToRatio[i].key);
   // add ratio label
@@ -174,7 +176,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
     .append("text")
     .attr("x", "40px")
     .attr("y", "10px")
-    .style('color', "Red")
+    .style('color', "#000080")
     .style("font-size", "12px")
     .style("font-weight", "bold")
     .attr("text-anchor", "center")  // centering doesn't work
@@ -235,7 +237,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
             .append("text")
             .attr("x", "40px")
             .attr("y", "10px")
-            .style('color', "Red")
+            .style('color', "#000080")
             .style("font-size", "12px")
             .style("font-weight", "bold")
             .attr("text-anchor", "center")  // centering doesn't work
@@ -269,7 +271,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
           .style("height", "60px")
           .style("margin-top", "6px")
           .style("margin-bottom", "6px")
-          .style("background-color", "Gray")
+          .style("background-color", "#B0C4DE")
           .style("display","flex")
           .style("flex-direction","row")
           .style("justify-content","flex-start")
@@ -310,6 +312,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
           .attr("y", "10")
           .style('color', 'White')
           .style("font-size", "12px")
+          .style("font-weight", "bold")
           .attr("text-anchor", "center")  // centering doesn't work
           .text(topCountryToRatio[i].key);
         // add ratio label
@@ -321,7 +324,7 @@ updateRankRowsSport(rowDiv, topCountryToRatio) {
           .append("text")
           .attr("x", "40px")
           .attr("y", "10px")
-          .style('color', "Red")
+          .style('color', "#000080")
           .style("font-size", "12px")
           .style("font-weight", "bold")
           .attr("text-anchor", "center")  // centering doesn't work
