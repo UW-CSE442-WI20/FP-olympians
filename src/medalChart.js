@@ -304,7 +304,7 @@ function generateMedalChart(data, medalsvg) {
                     // Change tooltip text
                     tooltipContainer
                         .style("left", (d3.mouse(this)[0]) + "px")
-                        .style("top", (d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top - medalRadius) + "px")
+                        .style("top", (d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius) + "px")
                         .style("visibility", "visible")
                         .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "</p>");
                     // highlight current circle selected
