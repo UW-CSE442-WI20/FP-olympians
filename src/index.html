@@ -1,50 +1,54 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Looking Forward to the 2020 Olympic Games</title>
+    <title>Looking Forward to the 2020 Olympics</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="dashboard">
       <header>
         <!-- Header content -->
-        <h1>Looking Forward to the 2020 Olympic Games</h1>
+        <div class="dropdown">
+          Sport:
+          <select id="select-sport"></select>
+        </div>
+        <div>
+          <h1>Looking Forward to the 2020 Olympics</h1>
+        </div>
       </header>
 
       <sidebar>
         <!-- Sidebar -->
-        <!-- <h2>Rankings</h2> -->
-        <p id="ranking-info"></p>
-        <div id="rankings">
-          <!-- Rankings content -->
-          <!-- <h2>Rankings</h2> -->
+        <div id="rankingheader">
+          <div id="rank-title">
+            <p class="title" id="ranking-info"></p>
+            <div class="tooltip" id="question-mark">
+              <span class="tooltiptext">A country's ranking is determined by its medal to athlete ratio,
+                or the average number of medals per athlete.
+              </span>
+            </div>
+          </div>
+          <div id="year-selector">
+            <button class="button" id="left-year"><<</button>
+            <p class="selector" id="year-window"></p>
+            <button class="button" id="right-year">>></button>
+          </div>
         </div>
 
-        <!-- <div class="dropdown">
-          Sport:
-          <select id="select-sport"></select>
-          Ranking Method:
-          <select id="select-rank">
-            <option value="0">By Medal</option>
-            <option value="1">By Athletes</option>
-            <option value="1">By Medal:Athletes ratio</option>
-          </select>
-        </div> -->
-        <!-- <div class="buttons">
-          <button type="button" name="male" class="button">Male</button>
-          <button type="button" name="female" class="button">Female</button>
-          <button type="button" name="both" class="button">Both</button>
-        </div> -->
+        <div id="rankings">
+          <!-- Rankings content -->
+        </div>
+
       </sidebar>
 
       <main>
         <!-- Main content -->
         <div class="container">
 
-          <div class="dropdown">
+          <!-- <div class="dropdown">
             Sport:
             <select id="select-sport"></select>
-          </div>
+          </div> -->
 
           <div id="bigchart">
             <!-- Big chart content -->

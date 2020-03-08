@@ -1,6 +1,3 @@
-
-
-// You can require libraries
 const d3 = require('d3');
 const _ = require("underscore");
 
@@ -11,28 +8,19 @@ var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var currSport = "Archery";
-var currYear = "2012";
+var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
+var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
 const bigChartInstance = new BigChart();
 
-
-// create svg for smallChart (the entire rank rows area)
-//const rankRowsDiv = d3.select('#smallchart');
-// const bigChartDiv = d3.select('#bigchart');
-// const medalChartDiv = d3.select('#medalchart');
-
 const rankRowsDiv = d3.select('#rankings');
 var rankRows = null;
 
-// create all of the rank rows (10 is number of results to display)
-// ** will want to add data as a parameter
-
-//const rankRows = new RankRows(rankRowsDiv, 3);
-
+// instantiate rankRows
 function initializeRankChart() {
   rankRows = new RankRows(rankRowsDiv, topCountryToRatio);
 }
@@ -55,38 +43,49 @@ var topRanks = [1,2,3];  // Basic Test Example
 // draw the three top rank elements
 //smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
 
-// bigChartInstance.drawChart(bigsvg);
+// Set up year buttons
+function initializeYearOptions() {
+  var leftYear = document.getElementById("left-year");
+  var rightYear = document.getElementById("right-year");
+  leftYear.onclick = function() { updateCurrYear("left")};
+  rightYear.onclick = function() { updateCurrYear("right")};
+  // initialize year label
+  document.getElementById("year-window").innerHTML = yearOptions[currYearIndex];
+  // add in question mark
+  d3.select("#question-mark").append("img")
+    .attr("src","icon-question-mark.png")
+    .attr("id", "question-icon")
+    .attr("width", 20)
+    .attr("height", 20);
+}
 
-
+// Set up sport dropdown
 function initializeDropdowns() {
 	var select = document.getElementById("select-sport");
-	console.log(entriesBySport);
+  select.options = [];
   for (var index in entriesBySport) {
-  	select.options[select.options.length] = new Option(entriesBySport[index].key, index);
+    if (entriesBySport[index].key != "") {
+  	   select.options[select.options.length] = new Option(entriesBySport[index].key, index);
+    }
 	}
+  // default selection
+  select.options[0].selected = true;
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
-	   currSport = document.getElementById('select-sport');
-     console.log("curr sport:", currSport);
 	   currSportSelections = document.getElementById('select-sport');
-      currSport = entriesBySport[currSportSelections.value].key;
-      console.log("HERE", entriesBySport);
-      console.log(currSportSelections.value);
-      console.log("currSport is ", currSport);
-      console.log("currYear is ", currYear);
-      //console.log("curr sport:", entriesBySportByYearMedalCount[currSport.value].key);
-      updateRanking(currSport, currYear);
-      rankRows.updateRankRows(rankRowsDiv, topCountryToRatio);
-      bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
+     currSport = entriesBySport[currSportSelections.value].key;
+     console.log("HERE", entriesBySport);
+     console.log(currSportSelections.value);
+     console.log("currSport is ", currSport);
+     console.log("currYear is ", currYearIndex);
+     // update ranking based on sport selection
+     updateRanking(currSport, currYearIndex);
+     rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
+     // update big chart
+     bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
 	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
   })
-
-	var currSportSelections = document.getElementById('select-sport');
-  //console.log("currSport ", currSport);
-	//bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount[currSportSelections.value].values);
-	// })
-
 }
 
 function initializeData(data) {
@@ -136,7 +135,7 @@ function initializeData(data) {
 		.sortKeys(d3.ascending)
 		.entries(data);
 
-    console.log("figuring out medal count");
+  //console.log("figuring out medal count");
 	entriesBySportByYearMedalCount = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -150,11 +149,8 @@ function initializeData(data) {
 			return d.Year;
     })
     .sortKeys(d3.ascending)
-    .rollup(function(v) { 
-      // console.log(v);
+    .rollup(function(v) {
       return d3.sum(v, function(d) {
-      // console.log(111111111)
-      // console.log(d)
       return d.Medal.length > 0 ? 1 : 0})})
     .sortKeys(d3.ascending)
 		.entries(data);
@@ -175,50 +171,46 @@ function initializeData(data) {
 		.sortKeys(d3.ascending)
 		.entries(data)
 
-// DO THIS ONE
-
-    entriesBySportByYearByCountryRatio = d3.nest()
-  		.key(function(d) {
-  			return d.Sport;
-  		})
-  		.key(function(d) {
-  			return d.Year;
-  		})
-      .key(function(d) {
-        return d.Team;
-      })
-      .sortKeys(d3.ascending)
-  		.entries(data);
-      console.log("ratio nesting", entriesBySportByYearByCountryRatio);
-
-	// const countByYearByCountry = _.countBy(yearByCountry, function(item) {
-	// 	console.log(item);
-	// 	return item.Team;
-	// })
-
-	// console.log("**********************")
-	// console.log(countByYearByCountry);
-	// console.log("**********************")
+  entriesBySportByYearByCountryRatio = d3.nest()
+  	.key(function(d) {
+  		return d.Sport;
+  	})
+  	.key(function(d) {
+  		return d.Year;
+  	})
+    .key(function(d) {
+      return d.Team;
+    })
+    .sortKeys(d3.ascending)
+  	.entries(data);
+    //console.log("ratio nesting", entriesBySportByYearByCountryRatio);
 }
 
-function updateRanking(currSport, currYear) {
-  // will need to put all this in a function that gets updated/called when the sport and year change
-  // currSport = "Swimming"; // hard coded temporarily
-  // currYear = "2000"; // hard coded temporarily
+function updateCurrYear(direction) {
+  // update currYearIndex if possible
+  if (direction === "left" && currYearIndex > 0) {
+    currYearIndex -= 1;
+  } else if (direction === "right" && currYearIndex < yearOptions.length - 1) {
+    currYearIndex += 1;
+  }
+  // update label
+  document.getElementById("year-window").innerHTML = yearOptions[currYearIndex];
+  // update ranks displayed
+  updateRanking(currSport, currYearIndex);
+  rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);
+}
+
+// Update the current top 10 country rankings
+function updateRanking(currSport, currYearIndex) {
   // get all the data for a given sport (currSport) across the years
   yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
-      // console.log("searching for sport ", currSport);
-      // console.log("considering ", item.key);
       return item.key === currSport;
   });
    console.log("yearsData", yearsData);
   // get all the data for all the countries across a given year (currYear)
   countries = _.find(d3.values(yearsData.values), function (item) {
-      // console.log("searching for year ", currYear);
-      // console.log("considering ", item.key);
-      return item.key === currYear;
+      return item.key === yearOptions[currYearIndex];
   });
-  // console.log("countries", countries.values);
 
   // mapping for the flag tile ranking
   var athleteNames = [];
@@ -227,14 +219,14 @@ function updateRanking(currSport, currYear) {
   // distinct athletes as well as the number of medals won.
   // Compute the medal:athlete ratio.
   // Store back in a list of key:value objects: country -> medal:athlete ratio.
-  console.log("countries", countries);
   if (countries == null) {
     // no competition of this sport in currYear (ex. baseball dropped in 2012 and 2016)
-    console.log("No " + currSport + " in " + currYear);
-    document.getElementById("ranking-info").innerHTML = "No " + currSport + " in " + currYear + "!!";
+    // TODO: Fade out all currently displayed rankings
+    console.log("No " + currSport + " in " + yearOptions[currYearIndex]);
+    document.getElementById("ranking-info").innerHTML = "No " + currSport + " this year!";
   } else {
 
-  countries.values.forEach(function(d) {
+    countries.values.forEach(function(d) {
     // console.log("country:", d.values);
     var countryName = d.key;
     var athletes = d.values;
@@ -251,20 +243,14 @@ function updateRanking(currSport, currYear) {
         num_medals++;
       }
     })
-    // console.log("num_medals:", num_medals);
-    // console.log("num_athletes:", num_athletes);
     var ratio = num_athletes === 0 ? 0 : num_medals / num_athletes;
-    // console.log("ratio:", ratio);
     countryToRatio.push(new Object({key: countryName, value: ratio}));
   })
   countryToRatio.sort((a, b) => (a.value > b.value) ? -1 : 1);
-  // console.log("country to ratio mapping:", countryToRatio);
   topCountryToRatio = countryToRatio.slice(0, 10);
-  // console.log("top ten country to ratio mappings:", topCountryToRatio);
 
-
-  // not sure the best place to update this: the Rankings Header
-  document.getElementById("ranking-info").innerHTML = currSport + " " + currYear + " Rankings";
+  // update the Rankings Header
+  document.getElementById("ranking-info").innerHTML = currSport + " Rankings";
   }
 }
 
@@ -308,10 +294,11 @@ d3.csv('olympics.csv')
     console.log('Dynamically loaded CSV data', data);
     initializeData(data);
 	// createRanking("Swimming");
-    updateRanking(currSport, currYear);
+    updateRanking(currSport, currYearIndex);
     initializeRankChart();
+    initializeYearOptions();
     initializeDropdowns();
-    bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear);
+    bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
 	  //createRanking("Archery");
   });
 
