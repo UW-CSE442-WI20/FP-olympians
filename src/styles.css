@@ -251,6 +251,26 @@ main {
   fill: none;
 }
 
+#xAxisMedals .tick.label line {
+    display: none;
+}
+
+#xAxisMedals .tick.mark text {
+    display: none;
+}
+
+#medalTooltip {
+  text-anchor: middle;
+  font-family: sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: white;
+  pointer-events: none;
+  position: relative;
+  text-align: center;
+  color: black;
+}
+
 /* footer {
   grid-area: footer;
   background-color: beige;
