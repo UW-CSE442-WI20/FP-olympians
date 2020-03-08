@@ -375,5 +375,8 @@ function redrawMedals(slice, currSelectedAthlete) {
         // })
         .style("fill", function(d) {
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
+        })
+        .attr("pointer-events", (d) => {
+            return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
 }
