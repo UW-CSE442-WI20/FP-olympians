@@ -259,7 +259,7 @@ main {
     display: none;
 }
 
-#tooltip {
+#medalTooltip {
   text-anchor: middle;
   font-family: sans-serif;
   font-size: 11px;

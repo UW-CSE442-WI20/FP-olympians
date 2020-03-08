@@ -280,7 +280,7 @@ function generateMedalChart(data, medalsvg) {
 
     // Create container for the tooltip but make it invisible until we need it
     var tooltipContainer = d3.select('#medalchart').append("div")
-        .attr("id", "tooltip")
+        .attr("id", "medalTooltip")
         .style("position", "absolute")
         .style("border", "solid")
         .style("border-width", "1px")
@@ -313,7 +313,7 @@ function generateMedalChart(data, medalsvg) {
                 })
                 .on("mouseout", function () {
                     // Remove the tooltip
-                    d3.selectAll("#tooltip").style("visibility", "hidden")
+                    d3.selectAll("#medalTooltip").style("visibility", "hidden")
                     d3.select(this).style("stroke", "none");
                 })
                 .on("click", function(d) {
