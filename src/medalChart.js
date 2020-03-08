@@ -118,6 +118,14 @@ function generateMedalChart(data, medalsvg) {
         console.log("groupData:", groupData)
     });
 
+    var nodes = []
+    groupData.forEach((item) => {
+        item.values.forEach((row) => {
+            nodes.push(row);
+        });
+    });
+    console.log("nodes:", nodes);
+
     medalsvg.selectAll("g").transition();
     medalsvg.selectAll("g").remove();
     medalsvg.selectAll("text").remove();
@@ -165,6 +173,40 @@ function generateMedalChart(data, medalsvg) {
         return values;
     }
 
+    // console.log("before map", groupData);
+    // let tickVals = getXDomain().map(item => (item - 2));
+    // console.log("ticks", tickVals);
+    // let xAxisWeekGenerator = d3.axisBottom(xSmallScale)
+    //     .tickValues(tickVals)
+    //     .tickSize(10)
+    //     .tickPadding(5)
+    //     .tickFormat((d, i) => {
+    //       // let index = Math.floor(i / 2);
+    //       // console.log(tickVals[i] + 2)
+    //       return tickVals[i] + 2;
+    //       // return graphData[index].x;
+    //     });
+      
+    // const xAxisWeekGenerator = d3.axisBottom(xSmallScale)
+    //     .tickPadding(30)
+    //     .tickSize(-innerHeight, 0, 0)
+    //     .tickValues([2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020])
+    //     .tickFormat(d3.format("Y"))
+
+    // let xAxisWeekUi = medalsvg.append('g')
+    //     .attr('class', 'axis x')
+    //     .attr("id", "xAxisMedals")
+    //     .attr('transform', "translate(0," + innerHeight + ")")
+    //     .call(xAxisWeekGenerator);
+      
+    //   xAxisWeekUi.selectAll('.tick')
+    //     .attr('class', (d, i) => {
+    //       if (i % 2 === 0) {
+    //         return 'tick label';
+    //       }
+    //       return 'tick mark';
+    //     });
+
     const xSmallAxis = d3.axisBottom(xSmallScale)
         .tickPadding(30)
         .tickValues(getTickValues(2000, 2020))
@@ -181,6 +223,7 @@ function generateMedalChart(data, medalsvg) {
     // add axis groups to medalsvg
     const xSmallAxisGroup = medalsvg.append("g")
         .attr("class", "axis x")
+        .attr("id", "xAxisMedals")
         .attr("transform", "translate(0," + innerHeight + ")")
         .call(xSmallAxis);
 
@@ -207,14 +250,6 @@ function generateMedalChart(data, medalsvg) {
     }
 
     /////////////////////////////////// d3.force
-
-    var nodes = []
-    groupData.forEach((item) => {
-        item.values.forEach((row) => {
-            nodes.push(row);
-        });
-    });
-    console.log("nodes:", nodes);
 
     var simulation = d3.forceSimulation(nodes)
       // .force('charge', d3.forceManyBody().strength(5))

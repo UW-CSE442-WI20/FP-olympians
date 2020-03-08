@@ -150,6 +150,14 @@ main {
   fill: none;
 }
 
+#xAxisMedals .tick.label line {
+    display: none;
+}
+
+#xAxisMedals .tick.mark text {
+    display: none;
+}
+
 /* footer {
   grid-area: footer;
   background-color: beige;
