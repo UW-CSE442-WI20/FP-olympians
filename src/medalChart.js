@@ -343,6 +343,17 @@ function generateMedalChart(data, medalsvg) {
 
     /////////////////////// d3.force
 
+    d3.select("body").on("keydown", () => {
+        // recolor all medals when esc key is pressed to original medal color
+        if (d3.event.keyCode == 27) {
+            console.log("escape key pressed");
+            d3.selectAll("circle")
+                .style("fill", function(d) {
+                    return color(d.grpName);
+                });
+        }
+    });
+
     // now add titles to the axes
     medalsvg.append("text")
         .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
