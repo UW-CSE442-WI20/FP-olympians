@@ -350,7 +350,8 @@ function generateMedalChart(data, medalsvg) {
             d3.selectAll("circle")
                 .style("fill", function(d) {
                     return color(d.grpName);
-                });
+                })
+                .attr("pointer-events", "auto");
         }
     });
 
