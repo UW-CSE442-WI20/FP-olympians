@@ -41,7 +41,8 @@ class rankRows {
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
-        .attr("src","flags/" + imgcountryName + "-flag.svg")
+        .attr("src", imgcountryName + "-flag.svg")
+        //.attr("src","flags/" + imgcountryName + "-flag.svg")
         .attr("id", "img" + countryName)
         .attr("width", 90)
         .attr("height", 60);
@@ -143,7 +144,8 @@ class rankRows {
 
         // add image
         d3.select("#row" + countryName).append("img")
-        .attr("src","flags/" + imgcountryName + "-flag.svg")
+        .attr("src", imgcountryName + "-flag.svg")
+        //.attr("src","flags/" + imgcountryName + "-flag.svg")
         .attr("id", "img" + countryName)
         .attr("width", 90)
         .attr("height", 60);
@@ -295,7 +297,8 @@ class rankRows {
         imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
-        .attr("src","flags/" + imgcountryName + "-flag.svg")
+        .attr("src", imgcountryName + "-flag.svg")
+        //.attr("src","flags/" + imgcountryName + "-flag.svg")
         .attr("id", "img" + countryName)
         .attr("width", 90)
         .attr("height", 60);
