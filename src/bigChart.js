@@ -14,7 +14,8 @@ class bigChart {
     this.width = 0;// = parseInt(bigsvg.style("width"), 10);
     this.height = 0;// = parseInt(bigsvg.style("height"), 10);
     this.margin = 50;
-    this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
+    // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
+    this.margins = { top: 30, right: 35, bottom: 10, left: 35 };
 
     // getting scale of graph
 
@@ -63,10 +64,12 @@ class bigChart {
     }
 
     /* Scale */
-    var xScale = d3.scaleLinear()
-      .domain(getXDomain()) //([2000, 2020])
-      .range([0, this.width - this.margins.left - this.margins.right - 30]);
+    var xScale = d3.scaleLinear().domain([2000, 2020]).range([this.margins.left, this.width - this.margins.left - this.margins.right]);
+    // var xScale = d3.scaleLinear()
+    //   .domain([2000, 2020]) // getXDomain()
+    //   .range([this.margins.left, this.width - this.margins.left - this.margins.right - 30]); // used to start at 0
 
+    console.log("big chart x scale lower range:", this.margins.left);
     console.log("big chart x scale upper range:", this.width - this.margins.left - this.margins.right - 30);
 
     var yScale = d3.scaleLinear()
@@ -104,11 +107,11 @@ class bigChart {
     }
 
     /* Add Axis into SVG */
-    // var xAxis = d3.axisBottom(xScale).ticks(5);
-    const xAxis = d3.axisBottom(xScale)
-        .tickPadding(30)
-        .tickValues(getTickValues(2000, 2020))
-        .tickFormat(d3.format("Y"))
+    var xAxis = d3.axisBottom(xScale).ticks(5);
+    // const xAxis = d3.axisBottom(xScale))
+    //     .tickPadding(30)
+    //     .tickValues(getTickValues(2000, 2020))
+    //     .tickFormat(d3.format("Y"))
     var yAxis = d3.axisLeft(yScale).ticks(5);
 
     // svg.append("g")

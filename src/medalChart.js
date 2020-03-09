@@ -246,16 +246,27 @@ function generateMedalChart(data, medalsvg) {
 
     /////////////////////////////////// d3.force
 
+    const yForceOffset = medalType => {
+        if (medalType === 'Bronze') {
+            return 1;
+        } else if (medalType === 'Silver') {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
     var simulation = d3.forceSimulation(nodes)
       // .force('charge', d3.forceManyBody().strength(5))
       .force('x', d3.forceX().x(function(d) {
         return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5);
       }))
       .force('y', d3.forceY().y(function(d) {
-          return ySmallScale(d.grpValue / 4);
+          return ySmallScale(yForceOffset(d.grpName));
+          // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
         }))
       .force('collision', d3.forceCollide().radius(function(d) {
-        return 10;
+        return 11; // 10;
       }))
       .force("bounds", boundingBox)
       .on('tick', ticked);
@@ -265,7 +276,7 @@ function generateMedalChart(data, medalsvg) {
         for (let node of nodes) {
             // If the positions exceed the box, set them to the boundary position.
             var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
-            node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth()  - medalRadius), yearX - xSmallScale.bandwidth()  + medalRadius);
+            node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius);
             // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));            
             node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
         }
@@ -323,7 +334,8 @@ function generateMedalChart(data, medalsvg) {
                 .transition()
                 .ease(d3.easeElastic)
                 .duration((d) => {
-                    return (d.grpValue % 10) * 1000;
+                    return (cxOffset(d.grpName))* 2000 + (0.05 * d.grpValue);
+                    // return (d.grpValue % 10) * 1000;
                 })
                 .attr('cx', function(d) {
                   return d.x;
