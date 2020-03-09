@@ -95,6 +95,15 @@ class rankRows {
     return Number(Math.round(rank + 'e' + 2) + 'e-' + 2);
   }
 
+  // Remove all elements
+  clear() {
+    // Remove all old elements
+    for (var i = 0; i < this.previousRankings.length; i++) {
+      d3.select('#row' + this.previousRankings[i]).remove();
+    }
+    this.previousRankings = [];
+  }
+
   // Update the rank rows based on new year or new sport selection,
   // animate transitions as appropriate
   updateRankRowsSport(rowDiv, topCountryToRatio) {
