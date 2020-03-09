@@ -6,6 +6,7 @@ var entriesBySport = null;
 var entriesByCountryThenSport = null;
 var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
+var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
 var currSport = "Archery";
@@ -30,9 +31,9 @@ function initializeRankChart() {
 
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
-          .append('svg')
-          .attr('width', "1000")
-          .attr('height', 380);
+  .append('svg')
+  .attr('width', "1000")
+  .attr('height', 380);
 
 
 // create svg for medalChart
@@ -42,7 +43,7 @@ let medalsvg = d3.select('#medalchart')
 		.attr("height", 380);
 
 // draw small chart elements here
-var topRanks = [1,2,3];  // Basic Test Example
+var topRanks = [1, 2, 3];  // Basic Test Example
 // draw the three top rank elements
 //smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
 
@@ -95,31 +96,31 @@ function initializeDropdowns() {
 		.append('svg')
 		.attr("width", "1000")
 		.attr("height", 380);
-     bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
+     bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
 	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
   })
 }
 
 function initializeData(data) {
-	data.forEach(function(d) {
-		d.ID = +d.ID;
-		d.Age = +d.Age;
-		d.Year = +d.Year;
-		d.Order = +d.Order;
-	})
+  data.forEach(function (d) {
+    d.ID = +d.ID;
+    d.Age = +d.Age;
+    d.Year = +d.Year;
+    d.Order = +d.Order;
+  })
 
   entriesByCountryThenSport = d3.nest()
-    .key(function(d) {
+    .key(function (d) {
       return d.Team;
     })
-    .key(function(d) {
+    .key(function (d) {
       return d.Sport;
     })
     .entries(data);
 
   entriesByCountry = d3.nest()
-    .key(function(d) {
+    .key(function (d) {
       return d.Team;
     })
     .entries(data);
@@ -154,19 +155,50 @@ function initializeData(data) {
 			return d.Sport;
     })
     .sortKeys(d3.ascending)
-		.key(function(d) {
-			return d.Team;
+    .entries(data);
+
+  console.log("figuring out medal count");
+  entriesBySportByYearMedalCount = d3.nest()
+    .key(function (d) {
+      return d.Sport;
     })
     .sortKeys(d3.ascending)
-		.key(function(d) {
-			return d.Year;
+    .key(function (d) {
+      return d.Team;
     })
     .sortKeys(d3.ascending)
     .rollup(function(v) {
       return d3.sum(v, function(d) {
       return d.Medal.length > 0 ? 1 : 0})})
     .sortKeys(d3.ascending)
-		.entries(data);
+    .entries(data);
+
+
+    
+  entriesBySportByYearAthleteCount = d3.nest()
+  .key(function (d) {
+    return d.Sport;
+  })
+  .sortKeys(d3.ascending)
+  .key(function (d) {
+    return d.Team;
+  })
+  .sortKeys(d3.ascending)
+  .key(function (d) {
+    return d.Year;
+  })
+  .sortKeys(d3.ascending)
+  .rollup(function (v) {
+    let uniqueNames = _.uniq(v, function (item) {
+      return item.Name;
+    })
+    return uniqueNames.length;
+  })
+  .entries(data);
+
+console.log(entriesBySportByYearAthleteCount);
+
+
 
 	entriesBySportThenCountryThenYear = d3.nest()
 		.key(function(d) {
@@ -196,6 +228,8 @@ function initializeData(data) {
     .sortKeys(d3.ascending)
   	.entries(data);
     //console.log("ratio nesting", entriesBySportByYearByCountryRatio);
+
+    
 }
 
 function updateCurrYear(direction) {
@@ -223,7 +257,7 @@ function updateRanking(currSport, currYearIndex) {
   yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
       return item.key === currSport;
   });
-   console.log("yearsData", yearsData);
+  console.log("yearsData", yearsData);
   // get all the data for all the countries across a given year (currYear)
   countries = _.find(d3.values(yearsData.values), function (item) {
       return item.key === yearOptions[currYearIndex];
@@ -272,39 +306,6 @@ function updateRanking(currSport, currYearIndex) {
   }
 }
 
-// Function that returns sorted order of countries based on medals for that sport in 2016
-function createRanking(sport) {
-
-	// var currSportOnly = entriesBySportByYearMedalCount[0].values;
-  // console.log("curr sport only:", currSportOnly)
-
-	console.log("**********************")
-	// console.log(currSportOnly);
-  console.log("in createRatings", entriesBySportThenCountryThenYear)
-	console.log("**********************")
-	console.log("passing into bigchart DrawChart");
-	bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg, entriesBySportThenCountryThenYear);
-
-	//
-	// console.log(yearByCountry);
-	// // go over each year and give a ranking on who had the most medals that year
-	// console.log(typeof(yearByCountry));
-	// var countryToMedalsPerYear = {}
-	// for (let [key, value] of Object.entries(yearByCountry)) {
-	// 	var medalCount = _.countBy(value, function(item) {
-	// 		return item.Team;
-	// 	});
-	// }
-	// yearByCountry.forEach(function(key) {
-	// 	var val = yearByCountry[key];
-	// 	const countEachCountry = _.countBy(val, function(item) {
-	// 		item.Team;
-	// 	})
-	// 	console.log( key + ": " + countEachCountry);
-	// })
-
-}
-
 // Anything you put in the static folder will be available
 // over the network, e.g.
 d3.csv('olympics.csv')
@@ -319,7 +320,7 @@ d3.csv('olympics.csv')
     var columnNames = ["Year", "Athletes", "Medals"];
     const summaryCountry = new SummaryCountry(data, columnNames);
     summaryCountry.createChart('China');
-    bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+    bigChartInstance.drawChart(bigsvg, entriesBySportByYearAthleteCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
 
 	  //createRanking("Archery");
   });
