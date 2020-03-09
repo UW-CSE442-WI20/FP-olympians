@@ -295,11 +295,12 @@ function generateMedalChart(data, medalsvg) {
 
             u.enter()
                 .append('circle')
+                .merge(u)
                 .attr('r', medalRadius)
                 .style('fill', function(d) {
                   return color(d.grpName);
                 })
-                .merge(u)
+                // .merge(u)
                 .on("mouseover", function (d) {
                     // Change tooltip text
                     tooltipContainer
