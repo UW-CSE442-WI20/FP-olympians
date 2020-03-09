@@ -17,7 +17,9 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
+const Map = require('./map');
 var bigChartInstance;
+var map;
 
 
 const rankRowsDiv = d3.select('#rankings');
@@ -315,10 +317,11 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    map = new Map(entriesBySportByYearByCountryRatio);
 
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
-
+    map.getRanking();
   });
 
   // You can load JSON files directly via require.
