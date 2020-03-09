@@ -320,9 +320,8 @@ d3.csv('olympics.csv')
     const summaryCountry = new SummaryCountry(data, columnNames);
     summaryCountry.createChart('China');
     bigChartInstance = new BigChart(data);
-    bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+    bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
-	  //createRanking("Archery");
   });
 
   // You can load JSON files directly via require.

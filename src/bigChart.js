@@ -57,10 +57,6 @@ class bigChart {
         return uniqueNames.length;
       })
       .entries(data);
-
-    //
-
-
   }
 
   drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
@@ -359,20 +355,18 @@ class bigChart {
       })
 
 
-    // svg.selectAll(".axisBrush")
-    //   .data(dimensions).enter()
-    //   .append("g")
-    //   .attr('class', 'axisBrush')
-    //   .each(function (d) {
-    //     // console.log("xxxxxxxxxxxxxxxxx")
-    //     // console.log(d);
-    //     // xScale(d), 0], [xScale(d) + 5, this.height
-    //     // d3.brushY().extent([0, 0], [100, 200])
-    //     d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(80)]])) //TODO: change 600 to be this.height
-    //   })
-
+    svg.selectAll(".axisBrush")
+      .data(dimensions).enter()
+      .append("g")
+      .attr('class', 'axisBrush')
+      .each(function (d) {
+        // console.log("xxxxxxxxxxxxxxxxx")
+        // console.log(d);
+        // xScale(d), 0], [xScale(d) + 5, this.height
+        // d3.brushY().extent([0, 0], [100, 200])
+        d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]])) //TODO: change 600 to be this.height
+      })
   }
-
 }
 
 module.exports = bigChart;
