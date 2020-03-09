@@ -7,6 +7,7 @@ var entriesByCountryThenSport = null;
 var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearByCountryRatio = null;
+var entriesByCountry = null;
 var currSport = "Archery";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
@@ -15,7 +16,9 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
+const SummaryCountry = require('./summaryChartCountry');
 const bigChartInstance = new BigChart();
+
 
 const rankRowsDiv = d3.select('#rankings');
 var rankRows = null;
@@ -165,7 +168,6 @@ function initializeData(data) {
     .sortKeys(d3.ascending)
 		.entries(data);
 
-  console.log("finished: ", entriesBySportByYearMedalCount);
 	entriesBySportThenCountryThenYear = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -314,7 +316,11 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    var columnNames = ["Year", "Athletes", "Medals"];
+    const summaryCountry = new SummaryCountry(data, columnNames);
+    summaryCountry.createChart('China');
     bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+
 	  //createRanking("Archery");
   });
 
