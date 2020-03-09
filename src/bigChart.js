@@ -8,7 +8,6 @@ const generateMedalChart = require("./medalChart");
 class bigChart {
   constructor() {
 
-
     // Formatting lines
 
     // getting width and height of graph
@@ -139,7 +138,7 @@ class bigChart {
       .style("text-anchor", "middle")
       .attr("y", -10)
       .text(function (d) { return d; })
-      .style("fill", "black")
+      .style("fill", "black");
 
 
     svg.selectAll(".axisBrush")
