@@ -288,6 +288,8 @@ class bigChart {
       .style('fill', 'none')
       .on("mouseover", function (d) {
         // change line opacity
+        d3.selectAll(".line")
+          .style('opacity', otherLinesOpacityHover)
         d3.select(this)
           .style('opacity', lineOpacityHover)
           .style('stroke-width', lineStrokeHover);
@@ -300,9 +302,12 @@ class bigChart {
           .style('fill', color(d.key))
       })
       .on("mouseout", function (d) {
-        d3.select(this)
-          .style('opacity', lineOpacity)
-          .style("stroke-width", lineStroke);
+        d3.selectAll(".line")
+          .style("opacity", lineOpacity)
+          .style("stroke-width", lineStroke)
+        // d3.select(this)
+        //   .style('opacity', lineOpacity)
+        //   .style("stroke-width", lineStroke);
         svg.selectAll(".country-text").remove();
       })
       .on("click", function (d) {
