@@ -7,6 +7,7 @@ var entriesByCountryThenSport = null;
 var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearByCountryRatio = null;
+var entriesByCountry = null;
 var currSport = "Archery";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
@@ -15,7 +16,9 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
+const SummaryCountry = require('./summaryChartCountry');
 const bigChartInstance = new BigChart();
+
 
 const rankRowsDiv = d3.select('#rankings');
 var rankRows = null;
@@ -79,8 +82,13 @@ function initializeDropdowns() {
      console.log("currSport is ", currSport);
      console.log("currYear is ", currYearIndex);
      // update ranking based on sport selection
-     updateRanking(currSport, currYearIndex);
-     rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
+     var exist = updateRanking(currSport, currYearIndex);
+     if (exist) {
+       rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
+     } else {
+       // no sport this year
+       rankRows.clear();
+     }
      // update big chart
      medalsvg.remove();
      medalsvg = d3.select('#medalchart')
@@ -160,7 +168,6 @@ function initializeData(data) {
     .sortKeys(d3.ascending)
 		.entries(data);
 
-  console.log("finished: ", entriesBySportByYearMedalCount);
 	entriesBySportThenCountryThenYear = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -201,8 +208,13 @@ function updateCurrYear(direction) {
   // update label
   document.getElementById("year-window").innerHTML = yearOptions[currYearIndex];
   // update ranks displayed
-  updateRanking(currSport, currYearIndex);
-  rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);
+  var exist = updateRanking(currSport, currYearIndex);
+  if (exist) {
+    rankRows.updateRankRowsYear(rankRowsDiv, topCountryToRatio);
+  } else {
+    // no sport this year
+    rankRows.clear();
+  }
 }
 
 // Update the current top 10 country rankings
@@ -226,9 +238,9 @@ function updateRanking(currSport, currYearIndex) {
   // Store back in a list of key:value objects: country -> medal:athlete ratio.
   if (countries == null) {
     // no competition of this sport in currYear (ex. baseball dropped in 2012 and 2016)
-    // TODO: Fade out all currently displayed rankings
     console.log("No " + currSport + " in " + yearOptions[currYearIndex]);
-    document.getElementById("ranking-info").innerHTML = "No " + currSport + " this year!";
+    document.getElementById("ranking-info").innerHTML = "No " + currSport;
+    return false;
   } else {
 
     countries.values.forEach(function(d) {
@@ -256,6 +268,7 @@ function updateRanking(currSport, currYearIndex) {
 
   // update the Rankings Header
   document.getElementById("ranking-info").innerHTML = currSport + " Rankings";
+  return true;
   }
 }
 
@@ -303,7 +316,11 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    var columnNames = ["Year", "Athletes", "Medals"];
+    const summaryCountry = new SummaryCountry(data, columnNames);
+    summaryCountry.createChart('China');
     bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+
 	  //createRanking("Archery");
   });
 
