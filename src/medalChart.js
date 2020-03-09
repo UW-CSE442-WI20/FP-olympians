@@ -12,8 +12,8 @@ const _ = require("underscore");
 // TODO: Apply d3 force?
 module.exports =
 function generateMedalChart(data, medalsvg) {
-    console.log("generating medal counts chart!")
-    console.log("DATA****", data);
+    // console.log("generating medal counts chart!")
+    // console.log("DATA****", data);
     const minYear = 2000;
     const maxYear = 2020;
 
@@ -115,16 +115,25 @@ function generateMedalChart(data, medalsvg) {
                 }))
         }
 
-        console.log("groupData:", groupData)
+        // console.log("groupData:", groupData)
     });
 
     var nodes = []
+    let medalCounts = []
     groupData.forEach((item) => {
         item.values.forEach((row) => {
             nodes.push(row);
         });
+        medalCounts.push(new Object(
+            {
+                key: item.key,
+                values: _.countBy(item.values, (row) => {
+                    return row.grpName;
+                })
+            }));
     });
-    console.log("nodes:", nodes);
+    console.log("medal counts", medalCounts);
+    // console.log("nodes:", nodes);
 
     medalsvg.selectAll("g").transition();
     medalsvg.selectAll("g").remove();
@@ -296,18 +305,18 @@ function generateMedalChart(data, medalsvg) {
 
             u.enter()
                 .append('circle')
+                .merge(u)
                 .attr('r', medalRadius)
                 .style('fill', function(d) {
                   return color(d.grpName);
                 })
-                .merge(u)
                 .on("mouseover", function (d) {
                     // Change tooltip text
                     tooltipContainer
                         .style("left", (d3.mouse(this)[0]) + "px")
                         .style("top", (d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius) + "px")
                         .style("visibility", "visible")
-                        .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "</p>");
+                        .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>");
                     // highlight current circle selected
                     d3.select(this)
                         .style("stroke", "black");
@@ -347,7 +356,7 @@ function generateMedalChart(data, medalsvg) {
     d3.select("body").on("keydown", () => {
         // recolor all medals when esc key is pressed to original medal color
         if (d3.event.keyCode == 81) {
-            console.log("escape key pressed");
+            // console.log("escape key pressed");
             d3.selectAll("circle")
                 .style("fill", function(d) {
                     return color(d.grpName);
@@ -370,7 +379,7 @@ function redrawMedals(slice, currSelectedAthlete) {
         else return "#D4AF37";
     }
 
-    console.log("redrawing medals with selected athlete:", currSelectedAthlete);
+    // console.log("redrawing medals with selected athlete:", currSelectedAthlete);
     d3.selectAll("circle")
         // .style("stroke", function(d) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
