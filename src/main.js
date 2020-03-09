@@ -17,7 +17,6 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 // Include local JS files:
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
-const SummaryCountry = require('./summaryChartCountry');
 var bigChartInstance;
 
 
@@ -173,7 +172,7 @@ function initializeData(data) {
     .entries(data);
 
 
-    
+
   entriesBySportByYearAthleteCount = d3.nest()
   .key(function (d) {
     return d.Sport;
@@ -228,7 +227,7 @@ console.log(entriesBySportByYearAthleteCount);
   	.entries(data);
     //console.log("ratio nesting", entriesBySportByYearByCountryRatio);
 
-    
+
 }
 
 function updateCurrYear(direction) {
@@ -316,9 +315,7 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
-    var columnNames = ["Year", "Athletes", "Medals"];
-    const summaryCountry = new SummaryCountry(data, columnNames);
-    summaryCountry.createChart('China');
+
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 

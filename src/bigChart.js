@@ -4,6 +4,7 @@ const d3 = require('d3');
 const _ = require("underscore");
 
 const generateMedalChart = require("./medalChart");
+const SummaryCountry = require('./summaryChartCountry');
 
 class bigChart {
   constructor(data) {
@@ -18,6 +19,10 @@ class bigChart {
     this.margins = { top: 30, right: 35, bottom: 10, left: 35 };
 
     // getting scale of graph
+
+    // adding tiny chart
+    this.columnNames = ["Year", "Athletes", "Medals"];
+    this.summaryCountry = new SummaryCountry(data, this.columnNames);
 
     // getting color sceme
     this.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -70,6 +75,8 @@ class bigChart {
     this.height = this.height - this.margins.top - this.margins.bottom;
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
+
+    this.summaryCountry.createChart('Afghanistan');
 
     const minYear = 2000;
     const maxYear = 2020;
@@ -274,6 +281,7 @@ class bigChart {
       })
 
 
+    var country = this.summaryCountry
 
     lineGroup
       .enter()
@@ -326,7 +334,8 @@ class bigChart {
           // console.log("considering ", item.key);
           return item.key === d.key;
         });
-        console.log(countryData);
+        country.updateChart(countryData.key);
+        console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
       });
 
