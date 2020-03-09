@@ -11,9 +11,11 @@ class bigChart {
     // Formatting lines
 
     // getting width and height of graph
-    this.width;
-    this.height;
+    this.width = 0;// = parseInt(bigsvg.style("width"), 10);
+    this.height = 0;// = parseInt(bigsvg.style("height"), 10);
     this.margin = 50;
+    // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
+    this.margins = { top: 30, right: 35, bottom: 10, left: 35 };
 
     // getting scale of graph
 
@@ -34,59 +36,57 @@ class bigChart {
   }
 
   drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear) {
-    var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+    // var margin = { top: 20, right: 20, bottom: 30, left: 50 };
     // Set the width and height of the graph
-    var margin = { top: 30, right: 10, bottom: 10, left: 10 }
+    // var margin = { top: 30, right: 10, bottom: 10, left: 10 }
     this.width = parseInt(bigsvg.style("width"), 10);
     this.height = parseInt(bigsvg.style("height"), 10);
 
-    // this.width = this.width - margin.left - margin.right;
-    // this.height = this.height - margin.top - margin.bottom;
+    this.width = this.width - this.margins.left - this.margins.right;
+    this.height = this.height - this.margins.top - this.margins.bottom;
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
-
-
-
 
     console.log("+++++++++++++++++++++++++");
     console.log(data);
     console.log("+++++++++++++++++++++++++");
-    // var width = 500;
-    // var height = 300;
 
+    const minYear = 2000;
+    const maxYear = 2020;
 
-
-    // /* Format Data */
-    // var parseDate = d3.timeParse("%Y");
-    // data.forEach(function(d) {
-    //   d.values.forEach(function(d) {
-    //     d.date = parseDate(d.date);
-    //     d.price = +d.price;
-    //   });
-    // });
-
+    // from medalchart
+    const getXDomain = () => {
+      var domain = [];
+      for (let i = minYear; i <= maxYear; i += 4) {
+        domain.push(i);
+      }
+      return domain;
+    }
 
     /* Scale */
+    var xScale = d3.scaleLinear().domain([2000, 2020]).range([this.margins.left, this.width - this.margins.left - this.margins.right]);
+    // var xScale = d3.scaleLinear()
+    //   .domain([2000, 2020]) // getXDomain()
+    //   .range([this.margins.left, this.width - this.margins.left - this.margins.right - 30]); // used to start at 0
 
-    xScale = d3.scaleLinear()
-      .domain([1980, 2016])
-      .range([0, this.width - margin.left - margin.right - 30]);
+    console.log("big chart x scale lower range:", this.margins.left);
+    console.log("big chart x scale upper range:", this.width - this.margins.left - this.margins.right - 30);
 
-    yScale = d3.scaleLinear()
+    var yScale = d3.scaleLinear()
       .domain([0, 80])
-      .range([this.height - margin.top - margin.bottom, 0]);
+      .range([this.height - this.margins.top - this.margins.bottom, 0]);
 
 
     // delete all lines
 
 
     /* Add SVG */
-    svg = bigsvg
+    var svg = bigsvg
       .append("svg")
-      .attr("width", this.width + margin.left + margin.right)
-      .attr("height", this.height + margin.top + margin.bottom)
+      .attr("width", this.width + this.margins.left + this.margins.right)
+      .attr("height", this.height + this.margins.top + this.margins.bottom)
       .append("g")
-      .attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
+      .attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")"); // this is just (30, 30 right now)
 
     /* Add line into SVG */
     this.line = d3.line()
@@ -97,9 +97,21 @@ class bigChart {
       .attr('class', 'lines');
 
 
+    // from medalchart
+    const getTickValues = (startTick, endTick) => {
+      var values = [];
+      for (var i = startTick; i <= endTick; i += 4) {
+        values.push(i)
+      }
+      return values;
+    }
 
     /* Add Axis into SVG */
     var xAxis = d3.axisBottom(xScale).ticks(5);
+    // const xAxis = d3.axisBottom(xScale))
+    //     .tickPadding(30)
+    //     .tickValues(getTickValues(2000, 2020))
+    //     .tickFormat(d3.format("Y"))
     var yAxis = d3.axisLeft(yScale).ticks(5);
 
     // svg.append("g")
@@ -107,8 +119,8 @@ class bigChart {
     //   .attr("transform", `translate(0, ${this.height - this.margin})`)
     //   .call(xAxis);
 
-    dimensions = []
-    for (i = 1980; i <= 2016; i += 4) {
+    var dimensions = []
+    for (let i = 2000; i <= 2020; i += 4) {
       dimensions.push(i);
     }
 
@@ -270,6 +282,12 @@ class bigChart {
       .transition()
       .style('opacity', 0)
       .remove();
+
+    // now add titles to the axes
+    bigsvg.append("text")
+        .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+        .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+        .text("Medals Won");
   }
 
 }
