@@ -71,7 +71,7 @@ class bigChart {
     
 
     xScale = d3.scaleLinear()
-      .domain([2000, 2020])
+      .domain([1980, 2020])
       .range([0, this.width - margin.left - margin.right - 30]);
 
     yScale = d3.scaleLinear()
@@ -87,8 +87,8 @@ class bigChart {
     /* Add SVG */
     svg = bigsvg
       .append("svg")
-      .attr("width", this.width + margin.left + margin.right)
-      .attr("height", this.height + margin.top + margin.bottom)
+      .attr("width", this.width)
+      .attr("height", this.height)
       .append("g")
       .attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
 
@@ -152,6 +152,7 @@ class bigChart {
 
     this.dimensions = dimensions;
     this.yRange = yRange;
+    this.svg = svg;
     console.log(this.yRange);
 
     this.redraw(bigsvg, currSport, medalsvg);
@@ -188,7 +189,7 @@ class bigChart {
     // let lines = d3.select('.lines');
 
     var color = this.color;
-    var svg = bigsvg;
+    var svg = this.svg
     console.log("+++++++++++++++++++++++++");
     console.log("finding currSport: ", currSport)
     var entriesBySportByYearAthleteCount = this.entriesBySportByYearAthleteCount;
