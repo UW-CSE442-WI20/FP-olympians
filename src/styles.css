@@ -266,6 +266,7 @@ main {
   width:100%;
   margin-right:5px;
   position:relative;
+}
 
 #xAxisMedals .tick.label line {
     display: none;
