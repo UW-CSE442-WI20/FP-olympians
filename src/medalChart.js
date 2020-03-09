@@ -128,6 +128,7 @@ function generateMedalChart(data, medalsvg) {
 
     medalsvg.selectAll("g").transition();
     medalsvg.selectAll("g").remove();
+    d3.selectAll("circle").remove();
     medalsvg.selectAll("text").remove();
     medalsvg.selectAll("g").transition();
 
