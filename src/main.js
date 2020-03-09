@@ -33,7 +33,7 @@ const bigsvg = d3.select('#bigchart')
 
 
 // create svg for medalChart
-const medalsvg = d3.select('#medalchart')
+let medalsvg = d3.select('#medalchart')
 		.append('svg')
 		.attr("width", "1000")
 		.attr("height", 380);
@@ -82,6 +82,11 @@ function initializeDropdowns() {
      updateRanking(currSport, currYearIndex);
      rankRows.updateRankRowsSport(rankRowsDiv, topCountryToRatio);
      // update big chart
+     medalsvg.remove();
+     medalsvg = d3.select('#medalchart')
+		.append('svg')
+		.attr("width", "1000")
+		.attr("height", 380);
      bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg);
 	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
