@@ -97,7 +97,6 @@ function initializeDropdowns() {
 		.attr("width", "1000")
 		.attr("height", 380);
      bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
-	    // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
 
   })
 }
@@ -320,7 +319,7 @@ d3.csv('olympics.csv')
     var columnNames = ["Year", "Athletes", "Medals"];
     const summaryCountry = new SummaryCountry(data, columnNames);
     summaryCountry.createChart('China');
-    bigChartInstance.drawChart(bigsvg, entriesBySportByYearAthleteCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+    bigChartInstance.drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
 
 	  //createRanking("Archery");
   });

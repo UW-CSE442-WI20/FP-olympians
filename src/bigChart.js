@@ -55,7 +55,27 @@ class bigChart {
     this.height = this.height - this.margins.top - this.margins.bottom;
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
-    this.entriesBySportByYearAthleteCount = data;
+    
+    this.entriesBySportByYearAthleteCount =  d3.nest()
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Team;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Year;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function (v) {
+      let uniqueNames = _.uniq(v, function (item) {
+        return item.Name;
+      })
+      return uniqueNames.length;
+    })
+    .entries(data);
 
     console.log("+++++++++++++++++++++++++");
     console.log(data);
@@ -249,7 +269,7 @@ class bigChart {
       .domain([0, yRange[currSport]])
       .range([actualHeight, 0]);
 
-    yAxis = d3.axisLeft(yScale).ticks(5);
+    yAxis = d3.axisLeft(yScale);
 
 
     var line = d3.line()
