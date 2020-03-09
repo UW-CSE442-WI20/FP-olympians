@@ -30594,8 +30594,8 @@ var _ = require("underscore"); // Draws the total bronze/silver/medals won by th
 
 
 module.exports = function generateMedalChart(data, medalsvg) {
-  console.log("generating medal counts chart!");
-  console.log("DATA****", data);
+  // console.log("generating medal counts chart!")
+  // console.log("DATA****", data);
   var minYear = 2000;
   var maxYear = 2020; // test
 
@@ -30655,17 +30655,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
     var goldEvents = getEvents(year, 'Gold');
     var bronzeAthletes = getAthletes(year, 'Bronze');
     var silverAthletes = getAthletes(year, 'Silver');
-    var goldAthletes = getAthletes(year, 'Gold'); // console.log("item:", item)
-    // console.log("year:", item.key)
-    // console.log("bronze=", bronze)
-    // console.log("silver=", silver)
-    // console.log("gold=", gold)
-    // console.log("bronzeEvents=", bronzeEvents)
-    // console.log("silverEvents=", silverEvents)
-    // console.log("goldEvents=", goldEvents)
-    // console.log("bronzeAthletes=", bronzeAthletes)
-    // console.log("silverAthletes=", silverAthletes)
-    // console.log("goldAthletes=", goldAthletes)
+    var goldAthletes = getAthletes(year, 'Gold');
 
     if (year >= minYear && year <= maxYear && containsYear(groupData, year) === undefined) {
       var medalMap = [];
@@ -30704,27 +30694,37 @@ module.exports = function generateMedalChart(data, medalsvg) {
         key: year,
         values: medalMap
       }));
-    }
+    } // console.log("groupData:", groupData)
 
-    console.log("groupData:", groupData);
   });
   var nodes = [];
+  var medalCounts = [];
   groupData.forEach(function (item) {
     item.values.forEach(function (row) {
       nodes.push(row);
     });
+    medalCounts.push(new Object({
+      key: item.key,
+      values: _.countBy(item.values, function (row) {
+        return row.grpName;
+      })
+    }));
   });
-  console.log("nodes:", nodes);
+  console.log("medal counts", medalCounts); // console.log("nodes:", nodes);
+
   medalsvg.selectAll("g").transition();
   medalsvg.selectAll("g").remove();
+  d3.selectAll("circle").remove();
   medalsvg.selectAll("text").remove();
   medalsvg.selectAll("g").transition();
   var margin = {
     top: 20,
-    right: 20,
+    right: 10,
     bottom: 30,
-    left: 50
-  }; // Set the width and height of the graph
+    left: 10
+  }; // bigchart: { top: 30, right: 10, bottom: 10, left: 10 };
+  // var margin = {top: 20, right: 20, bottom: 30, left: 50};
+  // Set the width and height of the graph
 
   var width = parseInt(medalsvg.style("width"), 10);
   var height = parseInt(medalsvg.style("height"), 10);
@@ -30751,9 +30751,13 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }
 
     return domain;
-  };
+  }; // var xScale = d3.scaleLinear()
+  //     .domain([2000, 2020])
+  //     .range([0, this.width - margin.left - margin.right - 30]);
 
-  var xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]);
+
+  var xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]); //[0, 950]);
+
   var ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.bottom, innerHeight]);
 
   var getTickValues = function getTickValues(startTick, endTick) {
@@ -30796,7 +30800,13 @@ module.exports = function generateMedalChart(data, medalsvg) {
   //     });
 
 
-  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(30).tickValues(getTickValues(2000, 2020)).tickFormat(d3.format("Y"));
+  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(30).tickValues(getTickValues(2000, 2020)) // .tickFormat(d => { //tick custom
+  //     console.log("tick format, d:", d)
+  // const year = yearFormat(d);
+  // const month = monthFormat(d).replace(/^0/, "");
+  // return (d.getMonth() == 0 && w > breakpoint) ?  year + month:  month;
+  // })
+  .tickFormat(d3.format("Y"));
   var ySmallAxis = d3.axisLeft(ySmallScale); // add title: country name
 
   medalsvg.append("text").attr("x", width / 2).attr("y", height - innerHeight - 1.3 * margin["top"]).style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
@@ -30807,10 +30817,14 @@ module.exports = function generateMedalChart(data, medalsvg) {
   var medalTypes = groupData[0].values.map(function (d) {
     return d.grpName;
   });
-  x1.domain(medalTypes).rangeRound([0, 30]);
+  x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
   var color = function color(medalType) {
-    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#D4AF37";
+    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#f2ce4b"; //"#D4AF37";
+  };
+
+  var hoverBorder = function hoverBorder(medalType) {
+    if (medalType === 'Bronze') return "#b9732d";else if (medalType === 'Silver') return "#a6a6a6";else return "#eebe11";
   };
 
   var cxOffset = function cxOffset(medalType) {
@@ -30826,13 +30840,23 @@ module.exports = function generateMedalChart(data, medalsvg) {
   var medalRadius = 10; // radius of medal circles 
   /////////////////////////////////// d3.force
 
+  var yForceOffset = function yForceOffset(medalType) {
+    if (medalType === 'Bronze') {
+      return 1;
+    } else if (medalType === 'Silver') {
+      return 2;
+    } else {
+      return 3;
+    }
+  };
+
   var simulation = d3.forceSimulation(nodes) // .force('charge', d3.forceManyBody().strength(5))
   .force('x', d3.forceX().x(function (d) {
-    return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1);
+    return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5);
   })).force('y', d3.forceY().y(function (d) {
-    return ySmallScale(d.grpValue / 4);
+    return ySmallScale(yForceOffset(d.grpName)); // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
   })).force('collision', d3.forceCollide().radius(function (d) {
-    return 10;
+    return 11; // 10;
   })).force("bounds", boundingBox).on('tick', ticked); // Custom force to put all nodes in a box
 
   function boundingBox() {
@@ -30844,8 +30868,9 @@ module.exports = function generateMedalChart(data, medalsvg) {
       for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var node = _step.value;
         // If the positions exceed the box, set them to the boundary position.
-        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 1);
-        node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2 - medalRadius), yearX - xSmallScale.bandwidth() / 2 + medalRadius); // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));            
+        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5); // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
+
+        node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius); // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));            
 
         node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
       }
@@ -30870,26 +30895,34 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   function ticked() {
     var u = medalsvg.selectAll('circle').data(nodes);
-    u.enter().append('circle').attr('r', medalRadius).style('fill', function (d) {
+    u.enter().append('circle').merge(u).attr('r', medalRadius).style('fill', function (d) {
       return color(d.grpName);
-    }).merge(u).on("mouseover", function (d) {
+    }) // .style('opacity', 0.6)
+    .on("mouseover", function (d) {
       // Change tooltip text
-      tooltipContainer.style("left", d3.mouse(this)[0] + "px").style("top", d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "</p>"); // highlight current circle selected
+      tooltipContainer.style("left", d3.mouse(this)[0] + "px").style("top", d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>"); // highlight current circle selected
 
-      d3.select(this).style("stroke", "black");
+      d3.select(this) // .style('opacity', 1.0)
+      .style('fill', function (d) {
+        return hoverBorder(d.grpName);
+      }).attr('r', medalRadius * 1.2).style("stroke", '#663300'); // .style("stroke-width", 3);
     }).on("mouseout", function () {
       // Remove the tooltip
       d3.selectAll("#medalTooltip").style("visibility", "hidden");
-      d3.select(this).style("stroke", "none");
+      d3.select(this) // .style('opacity', 0.6)
+      .style('fill', function (d) {
+        return color(d.grpName);
+      }).attr('r', medalRadius).style("stroke", "none");
     }).on("click", function (d) {
       // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
       // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));            
       currSelectedAthlete = d.grpAthlete;
       redrawMedals(u, currSelectedAthlete);
     }).attr("cx", function (d) {
-      return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1);
+      //return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.1);
+      return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5);
     }).attr("cy", 0).transition().ease(d3.easeElastic).duration(function (d) {
-      return d.grpValue % 10 * 1000;
+      return cxOffset(d.grpName) * 2000 + 0.05 * d.grpValue; // return (d.grpValue % 10) * 1000;
     }).attr('cx', function (d) {
       return d.x;
     }).attr('cy', function (d) {
@@ -30901,8 +30934,8 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   d3.select("body").on("keydown", function () {
     // recolor all medals when esc key is pressed to original medal color
-    if (d3.event.keyCode == 27) {
-      console.log("escape key pressed");
+    if (d3.event.keyCode == 81) {
+      // console.log("escape key pressed");
       d3.selectAll("circle").style("fill", function (d) {
         return color(d.grpName);
       }).attr("pointer-events", "auto");
@@ -30917,19 +30950,151 @@ module.exports = function generateMedalChart(data, medalsvg) {
 function redrawMedals(slice, currSelectedAthlete) {
   var color = function color(medalType) {
     if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#D4AF37";
-  };
+  }; // console.log("redrawing medals with selected athlete:", currSelectedAthlete);
 
-  console.log("redrawing medals with selected athlete:", currSelectedAthlete);
+
   d3.selectAll("circle") // .style("stroke", function(d) {
   //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
   // })
   .style("fill", function (d) {
     return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
+  }).style("opacity", function (d) {
+    return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
   }).attr("pointer-events", function (d) {
     return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
   });
 }
-},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js"}],"bigChart.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js"}],"summaryChartCountry.js":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var d3 = require('d3');
+
+var summaryChartCountry =
+/*#__PURE__*/
+function () {
+  function summaryChartCountry(data, columns) {
+    _classCallCheck(this, summaryChartCountry);
+
+    this.data = data;
+    this.columns = columns;
+  }
+
+  _createClass(summaryChartCountry, [{
+    key: "initData",
+    value: function initData() {
+      var obj = d3.nest().key(function (d) {
+        return d.Team;
+      }).key(function (d) {
+        return d.Year;
+      }).sortKeys(d3.ascending).rollup(function (v) {
+        var m = d3.map(v, function (d) {
+          return d.ID;
+        }).size();
+        return {
+          Medals: d3.sum(v, function (d) {
+            return d.Medal.length > 0 ? 1 : 0;
+          }),
+          Athletes: m
+        };
+      }).entries(this.data);
+      return obj;
+    }
+  }, {
+    key: "createChart",
+    value: function createChart(country) {
+      var result = this.initData();
+      console.log("here's the result of init:", result);
+      var columns = this.columns;
+      d3.select("#table_wrap").attr("width", 100).attr("height", 100);
+      var table = d3.select("#country_table").attr("width", 100).attr("height", 100);
+      var thead = table.append("thead");
+      var tbody = table.append("tbody"); // append the header row
+
+      thead.append("tr").selectAll("th").data(columns).enter().append("th").text(function (columnNames) {
+        return columnNames;
+      }); // create a row for each object in the data
+
+      var index = result.findIndex(function (c) {
+        return c.key == country;
+      });
+      var countryName = result[index].key;
+      document.getElementById("country").innerHTML = countryName;
+      var flattened = [];
+      result[index].values.forEach(function (d) {
+        flattened.push({
+          Year: d.key,
+          Medals: d.value.Medals,
+          Athletes: d.value.Athletes
+        });
+      });
+      var rows = tbody.selectAll("tr").data(flattened).enter().append("tr");
+      var cells = rows.selectAll("td").data(function (row) {
+        return columns.map(function (column) {
+          return {
+            column: column,
+            value: row[column]
+          };
+        });
+      }).enter().append("td") // .attr("style", "font-family: 'Lato'")
+      .html(function (d) {
+        return d.value;
+      });
+    }
+  }, {
+    key: "updateChart",
+    value: function updateChart(country) {
+      d3.selectAll("thead").remove();
+      d3.selectAll("tbody").remove();
+      var result = this.initData();
+      console.log("here's the result of init:", result);
+      var columns = this.columns;
+      d3.select("#table_wrap").attr("width", 100).attr("height", 100);
+      var table = d3.select("#country_table").attr("width", 100).attr("height", 100);
+      var thead = table.append("thead");
+      var tbody = table.append("tbody"); // append the header row
+
+      thead.append("tr").selectAll("th").data(columns).enter().append("th").text(function (columnNames) {
+        return columnNames;
+      }); // create a row for each object in the data
+
+      var index = result.findIndex(function (c) {
+        return c.key == country;
+      });
+      var countryName = result[index].key;
+      document.getElementById("country").innerHTML = countryName;
+      var flattened = [];
+      result[index].values.forEach(function (d) {
+        flattened.push({
+          Year: d.key,
+          Medals: d.value.Medals,
+          Athletes: d.value.Athletes
+        });
+      });
+      var rows = tbody.selectAll("tr").data(flattened).enter().append("tr");
+      var cells = rows.selectAll("td").data(function (row) {
+        return columns.map(function (column) {
+          return {
+            column: column,
+            value: row[column]
+          };
+        });
+      }).enter().append("td") // .attr("style", "font-family: 'Lato'")
+      .html(function (d) {
+        return d.value;
+      });
+    }
+  }]);
+
+  return summaryChartCountry;
+}();
+
+;
+module.exports = summaryChartCountry;
+},{"d3":"../node_modules/d3/index.js"}],"bigChart.js":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -30944,92 +31109,134 @@ var _ = require("underscore");
 
 var generateMedalChart = require("./medalChart");
 
+var SummaryCountry = require('./summaryChartCountry');
+
 var bigChart =
 /*#__PURE__*/
 function () {
-  function bigChart() {
+  function bigChart(data) {
     _classCallCheck(this, bigChart);
 
     // Formatting lines
     // getting width and height of graph
-    this.width;
-    this.height;
-    this.margin = 50; // getting scale of graph
-    // getting color sceme
+    this.width = 0; // = parseInt(bigsvg.style("width"), 10);
+
+    this.height = 0; // = parseInt(bigsvg.style("height"), 10);
+
+    this.margin = 50; // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
+
+    this.margins = {
+      top: 30,
+      right: 35,
+      bottom: 10,
+      left: 35
+    }; // getting scale of graph
+    // adding tiny chart
+
+    this.columnNames = ["Year", "Athletes", "Medals"];
+    this.summaryCountry = new SummaryCountry(data, this.columnNames); // getting color sceme
 
     this.color = d3.scaleOrdinal(d3.schemeCategory10); // getting lineScale
 
     this.line; // getting the area where lines are added
 
-    this.lines; // the svg containing the whole chart
+    this.lines; // Figures out the maximum amount of athletes for a sport for each year
+
+    this.yRange = {};
+    this.brushRange = {};
+    this.dimensions;
+    this.currSport; // the svg containing the whole chart
 
     this.svg; // Additional data required for medalChart
 
     this.entriesBySportThenCountryThenYear;
+    this.entriesBySportByYearAthleteCount = d3.nest().key(function (d) {
+      return d.Sport;
+    }).sortKeys(d3.ascending).key(function (d) {
+      return d.Team;
+    }).sortKeys(d3.ascending).key(function (d) {
+      return d.Year;
+    }).sortKeys(d3.ascending).rollup(function (v) {
+      var uniqueNames = _.uniq(v, function (item) {
+        return item.Name;
+      });
+
+      return uniqueNames.length;
+    }).entries(data);
   }
 
   _createClass(bigChart, [{
     key: "drawChart",
-    value: function drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear) {
-      var margin = {
-        top: 20,
-        right: 20,
-        bottom: 30,
-        left: 50
-      }; // Set the width and height of the graph
-
-      var margin = {
-        top: 30,
-        right: 10,
-        bottom: 10,
-        left: 10
-      };
+    value: function drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
+      // var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+      // Set the width and height of the graph
+      // var margin = { top: 30, right: 10, bottom: 10, left: 10 }
       this.width = parseInt(bigsvg.style("width"), 10);
-      this.height = parseInt(bigsvg.style("height"), 10); // this.width = this.width - margin.left - margin.right;
-      // this.height = this.height - margin.top - margin.bottom;
-
+      this.height = parseInt(bigsvg.style("height"), 10);
+      this.width = this.width - this.margins.left - this.margins.right;
+      this.height = this.height - this.margins.top - this.margins.bottom;
       this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
-      console.log("+++++++++++++++++++++++++");
-      console.log(data);
-      console.log("+++++++++++++++++++++++++"); // var width = 500;
-      // var height = 300;
-      // /* Format Data */
-      // var parseDate = d3.timeParse("%Y");
-      // data.forEach(function(d) {
-      //   d.values.forEach(function(d) {
-      //     d.date = parseDate(d.date);
-      //     d.price = +d.price;
-      //   });
-      // });
+      this.summaryCountry.createChart('Afghanistan');
+      var minYear = 2000;
+      var maxYear = 2020; // from medalchart
 
+      var getXDomain = function getXDomain() {
+        var domain = [];
+
+        for (var i = minYear; i <= maxYear; i += 4) {
+          domain.push(i);
+        }
+
+        return domain;
+      };
       /* Scale */
 
-      xScale = d3.scaleLinear().domain([1980, 2016]).range([0, this.width - margin.left - margin.right - 30]);
-      yScale = d3.scaleLinear().domain([0, 80]).range([this.height - margin.top - margin.bottom, 0]); // delete all lines
+
+      var xScale = d3.scaleLinear().domain([2000, 2020]).range([this.margins.left, this.width - this.margins.left - this.margins.right]); // var xScale = d3.scaleLinear()
+      //   .domain([2000, 2020]) // getXDomain()
+      //   .range([this.margins.left, this.width - this.margins.left - this.margins.right - 30]); // used to start at 0
+
+      console.log("big chart x scale lower range:", this.margins.left);
+      console.log("big chart x scale upper range:", this.width - this.margins.left - this.margins.right - 30);
+      var yScale = d3.scaleLinear().domain([0, 80]).range([this.height - this.margins.top - this.margins.bottom, 0]);
+      this.xScale = xScale;
+      this.yScale = yScale; // delete all lines
 
       /* Add SVG */
 
-      svg = bigsvg.append("svg").attr("width", this.width + margin.left + margin.right).attr("height", this.height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
+      var svg = bigsvg.append("svg").attr("width", this.width + this.margins.left + this.margins.right).attr("height", this.height + this.margins.top + this.margins.bottom).append("g").attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")"); // this is just (30, 30 right now)
+      // /* Add line into SVG */
+      // this.line = d3.line()
+      //   .x(d => xScale(d.key))
+      //   .y(d => yScale(d.value));
 
-      /* Add line into SVG */
+      this.lines = svg.append('g').attr('class', 'lines'); // from medalchart
 
-      this.line = d3.line().x(function (d) {
-        return xScale(d.key);
-      }).y(function (d) {
-        return yScale(d.value);
-      });
-      this.lines = svg.append('g').attr('class', 'lines');
+      var getTickValues = function getTickValues(startTick, endTick) {
+        var values = [];
+
+        for (var i = startTick; i <= endTick; i += 4) {
+          values.push(i);
+        }
+
+        return values;
+      };
       /* Add Axis into SVG */
 
-      var xAxis = d3.axisBottom(xScale).ticks(5);
+
+      var xAxis = d3.axisBottom(xScale).ticks(5); // const xAxis = d3.axisBottom(xScale))
+      //     .tickPadding(30)
+      //     .tickValues(getTickValues(2000, 2020))
+      //     .tickFormat(d3.format("Y"))
+
       var yAxis = d3.axisLeft(yScale).ticks(5); // svg.append("g")
       //   .attr("class", "x axis")
       //   .attr("transform", `translate(0, ${this.height - this.margin})`)
       //   .call(xAxis);
 
-      dimensions = [];
+      var dimensions = [];
 
-      for (i = 1980; i <= 2016; i += 4) {
+      for (var i = 2000; i <= 2020; i += 4) {
         dimensions.push(i);
       } // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
       //   return d != "name" && (y[d] = d3.scale.linear()
@@ -31039,39 +31246,43 @@ function () {
 
 
       console.log(dimensions);
-      svg.selectAll(".parallelAxis").data(dimensions).enter().append("g").attr('class', 'parallelAxis').attr("transform", function (d) {
-        console.log(xScale(d));
-        return "translate(" + xScale(d) + ") ";
-      }) // And I build the axis with the call function
-      .each(function (d) {
-        d3.select(this).call(yAxis);
-      }) // Add axis title
-      .append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
-        return d;
-      }).style("fill", "black");
-      svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {
-        // console.log("xxxxxxxxxxxxxxxxx")
-        // console.log(d);
-        // xScale(d), 0], [xScale(d) + 5, this.height
-        // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(80)]])); //TODO: change 600 to be this.height
+      console.log(this.entriesBySportByYearAthleteCount);
+      var yRange = this.yRange;
+      this.entriesBySportByYearAthleteCount.forEach(function (sport) {
+        if (sport.key.length == 0) {
+          return;
+        }
+
+        var maxVal = undefined;
+        sport.values.forEach(function (country) {
+          country.values.forEach(function (year) {
+            var yearInt = parseInt(year.key, 10);
+
+            if (maxVal == undefined) {
+              maxVal = year.value;
+            } else if (maxVal < year.value) {
+              maxVal = year.value;
+            }
+          });
+        });
+        console.log(sport.key + ": " + maxVal);
+        yRange[sport.key] = maxVal; // d3.scaleLinear()
+        //   .domain([0, maxVal])
+        //   .range([height, 0]);
       });
-      this.redraw(bigsvg, data, currSport, medalsvg);
+      this.dimensions = dimensions;
+      this.yRange = yRange;
+      this.svg = svg;
+      console.log(this.yRange);
+      this.redraw(bigsvg, currSport, medalsvg);
     }
-  }, {
-    key: "brushstart",
-    value: function brushstart() {
-      d3.event.sourceEvent.stopPropogation();
-    }
-  }, {
-    key: "brush",
-    value: function brush() {}
   }, {
     key: "redraw",
-    value: function redraw(bigsvg, data, currSport, medalsvg) {
-      var _this = this;
+    value: function redraw(bigsvg, currSport, medalsvg) {
+      if (currSport.length === "") {
+        return;
+      }
 
-      console.log(data);
       var duration = 250;
       var lineOpacity = "0.50";
       var lineOpacityHover = "0.95";
@@ -31086,17 +31297,22 @@ function () {
       var margin = this.margin; // let lines = d3.select('.lines');
 
       var color = this.color;
-      var svg = bigsvg;
+      var svg = this.svg;
       console.log("+++++++++++++++++++++++++");
       console.log("finding currSport: ", currSport);
+      var entriesBySportByYearAthleteCount = this.entriesBySportByYearAthleteCount;
+      var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
+      console.log(currSport);
 
-      var data = _.find(d3.values(data), function (item) {
+      var data = _.find(d3.values(entriesBySportByYearAthleteCount), function (item) {
         return item.key == currSport;
       }).values;
 
+      var dimensions = this.dimensions;
+      var yRange = this.yRange;
+      this.currSport = currSport;
       console.log(data);
       console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
-      var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
       console.log(svg); // this.lines.selectAll(".line-group")
       // .transition()
       // .style('opacity',0)
@@ -31107,23 +31323,42 @@ function () {
       //   return item.key;
       // })
 
+      /* Add line into SVG */
+
+      var actualHeight = this.height - this.margins.top - this.margins.bottom;
+      var xScale = this.xScale;
+      console.log(yRange[currSport]);
+      console.log(this.height);
+      console.log(actualHeight);
+      var yScale = d3.scaleLinear().domain([0, yRange[currSport]]).range([actualHeight, 0]);
+      yAxis = d3.axisLeft(yScale);
+      var line = d3.line().x(function (d) {
+        return xScale(d.key);
+      }).y(function (d) {
+        return yScale(d.value);
+      });
       var lineGroup = this.lines.selectAll(".line-group").data(data, function (item) {
         return item;
       });
+      var country = this.summaryCountry;
       lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', function (d) {
-        return 'line ' + d.key;
+        return 'line';
       }).attr('d', function (d) {
-        return _this.line(d.values);
+        return line(d.values);
       }) // Draw color based on index? Or maybe based on country?
       .style('stroke', function (d) {
         return color(d.key);
       }).style('opacity', lineOpacity).style('fill', 'none').on("mouseover", function (d) {
         // change line opacity
+        d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
         d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
 
         svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
       }).on("mouseout", function (d) {
-        d3.select(this).style('opacity', lineOpacity).style("stroke-width", lineStroke);
+        d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
+        //   .style('opacity', lineOpacity)
+        //   .style("stroke-width", lineStroke);
+
         svg.selectAll(".country-text").remove();
       }).on("click", function (d) {
         // get the data for the selected athlete
@@ -31145,18 +31380,53 @@ function () {
           return item.key === d.key;
         });
 
-        console.log(countryData);
+        country.updateChart(countryData.key);
+        console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
       });
-      lineGroup.exit().transition().style('opacity', 0).remove();
+      lineGroup.exit().transition().style('opacity', 0).remove(); // now add titles to the axes
+
+      bigsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+      .attr("transform", "translate(" + this.margins.left + "," + this.height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+      .text("Athletes Participated");
+      svg.selectAll(".parallelAxis").data(dimensions).enter().append("g").attr('class', 'parallelAxis').attr("transform", function (d) {
+        return "translate(" + xScale(d) + ") ";
+      }).append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
+        return d;
+      }).style("fill", "black");
+      svg.selectAll(".parallelAxis").transition().duration(1500).each(function (d) {
+        d3.select(this).call(yAxis);
+      }); //   var brushRange = {};
+      //   svg.selectAll(".axisBrush")
+      //     .data(dimensions).enter()
+      //     .append("g")
+      //     .attr('class', 'axisBrush')
+      //     .each(function (d) {
+      //       // console.log("xxxxxxxxxxxxxxxxx")
+      //       // console.log(d);
+      //       // xScale(d), 0], [xScale(d) + 5, this.height
+      //       // d3.brushY().extent([0, 0], [100, 200])
+      //       d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("start", function() {
+      //         d3.event.stopPropogation();
+      //       }).on("brush", brush)) //TODO: change 600 to be this.height
+      //     })
+      //   this.brushRange = brushRange;  
     }
   }]);
 
   return bigChart;
-}();
+}(); // function brushstart() {
+//   // d3.event.
+// }
+// function brush() {
+//   var brushRange = this.brushRange;
+//   var actives = dimensions.filter(function(p) { return !brushRange[p].empty()})
+//   console.log(actives);
+// }
+
 
 module.exports = bigChart;
-},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./medalChart":"medalChart.js"}],"rankRows.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./medalChart":"medalChart.js","./summaryChartCountry":"summaryChartCountry.js"}],"rankRows.js":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -31373,93 +31643,6 @@ function () {
 }();
 
 module.exports = rankRows;
-},{"d3":"../node_modules/d3/index.js"}],"summaryChartCountry.js":[function(require,module,exports) {
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var d3 = require('d3');
-
-var summaryChartCountry =
-/*#__PURE__*/
-function () {
-  function summaryChartCountry(data, columns) {
-    _classCallCheck(this, summaryChartCountry);
-
-    this.data = data;
-    this.columns = columns;
-  }
-
-  _createClass(summaryChartCountry, [{
-    key: "initData",
-    value: function initData() {
-      var obj = d3.nest().key(function (d) {
-        return d.Team;
-      }).key(function (d) {
-        return d.Year;
-      }).sortKeys(d3.ascending).rollup(function (v) {
-        var m = d3.map(v, function (d) {
-          return d.ID;
-        }).size();
-        return {
-          Medals: d3.sum(v, function (d) {
-            return d.Medal.length > 0 ? 1 : 0;
-          }),
-          Athletes: m
-        };
-      }).entries(this.data);
-      return obj;
-    }
-  }, {
-    key: "createChart",
-    value: function createChart(country) {
-      var result = this.initData();
-      console.log("here's the result of init:", result);
-      var columns = this.columns;
-      d3.select("#table_wrap").attr("width", 100).attr("height", 100);
-      var table = d3.select("#country_table").attr("width", 100).attr("height", 100);
-      var thead = table.append("thead");
-      var tbody = table.append("tbody"); // append the header row
-
-      thead.append("tr").selectAll("th").data(columns).enter().append("th").text(function (columnNames) {
-        return columnNames;
-      }); // create a row for each object in the data
-
-      var index = result.findIndex(function (c) {
-        return c.key == country;
-      });
-      var countryName = result[index].key;
-      document.getElementById("country").innerHTML = countryName;
-      var flattened = [];
-      result[index].values.forEach(function (d) {
-        flattened.push({
-          Year: d.key,
-          Medals: d.value.Medals,
-          Athletes: d.value.Athletes
-        });
-      });
-      var rows = tbody.selectAll("tr").data(flattened).enter().append("tr");
-      var cells = rows.selectAll("td").data(function (row) {
-        return columns.map(function (column) {
-          return {
-            column: column,
-            value: row[column]
-          };
-        });
-      }).enter().append("td") // .attr("style", "font-family: 'Lato'")
-      .html(function (d) {
-        return d.value;
-      });
-    }
-  }]);
-
-  return summaryChartCountry;
-}();
-
-;
-module.exports = summaryChartCountry;
 },{"d3":"../node_modules/d3/index.js"}],"main.js":[function(require,module,exports) {
 var d3 = require('d3');
 
@@ -31470,6 +31653,7 @@ var entriesBySport = null;
 var entriesByCountryThenSport = null;
 var entriesBySportThenCountryThenYear = null;
 var entriesBySportByYearMedalCount = null;
+var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
 var currSport = "Archery";
@@ -31483,9 +31667,7 @@ var BigChart = require('./bigChart');
 
 var RankRows = require('./rankRows');
 
-var SummaryCountry = require('./summaryChartCountry');
-
-var bigChartInstance = new BigChart();
+var bigChartInstance;
 var rankRowsDiv = d3.select('#rankings');
 var rankRows = null; // instantiate rankRows
 
@@ -31555,7 +31737,7 @@ function initializeDropdowns() {
 
     medalsvg.remove();
     medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380);
-    bigChartInstance.redraw(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg); // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
+    bigChartInstance.redraw(bigsvg, currSport, medalsvg);
   });
 }
 
@@ -31596,15 +31778,31 @@ function initializeData(data) {
 
   entriesBySportByYearMedalCount = d3.nest().key(function (d) {
     return d.Sport;
+  }).sortKeys(d3.ascending).entries(data);
+  console.log("figuring out medal count");
+  entriesBySportByYearMedalCount = d3.nest().key(function (d) {
+    return d.Sport;
   }).sortKeys(d3.ascending).key(function (d) {
     return d.Team;
-  }).sortKeys(d3.ascending).key(function (d) {
-    return d.Year;
   }).sortKeys(d3.ascending).rollup(function (v) {
     return d3.sum(v, function (d) {
       return d.Medal.length > 0 ? 1 : 0;
     });
   }).sortKeys(d3.ascending).entries(data);
+  entriesBySportByYearAthleteCount = d3.nest().key(function (d) {
+    return d.Sport;
+  }).sortKeys(d3.ascending).key(function (d) {
+    return d.Team;
+  }).sortKeys(d3.ascending).key(function (d) {
+    return d.Year;
+  }).sortKeys(d3.ascending).rollup(function (v) {
+    var uniqueNames = _.uniq(v, function (item) {
+      return item.Name;
+    });
+
+    return uniqueNames.length;
+  }).entries(data);
+  console.log(entriesBySportByYearAthleteCount);
   entriesBySportThenCountryThenYear = d3.nest().key(function (d) {
     return d.Sport;
   }).sortKeys(d3.ascending).key(function (d) {
@@ -31698,34 +31896,6 @@ function updateRanking(currSport, currYearIndex) {
     document.getElementById("ranking-info").innerHTML = currSport + " Rankings";
     return true;
   }
-} // Function that returns sorted order of countries based on medals for that sport in 2016
-
-
-function createRanking(sport) {
-  // var currSportOnly = entriesBySportByYearMedalCount[0].values;
-  // console.log("curr sport only:", currSportOnly)
-  console.log("**********************"); // console.log(currSportOnly);
-
-  console.log("in createRatings", entriesBySportThenCountryThenYear);
-  console.log("**********************");
-  console.log("passing into bigchart DrawChart");
-  bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg, entriesBySportThenCountryThenYear); //
-  // console.log(yearByCountry);
-  // // go over each year and give a ranking on who had the most medals that year
-  // console.log(typeof(yearByCountry));
-  // var countryToMedalsPerYear = {}
-  // for (let [key, value] of Object.entries(yearByCountry)) {
-  // 	var medalCount = _.countBy(value, function(item) {
-  // 		return item.Team;
-  // 	});
-  // }
-  // yearByCountry.forEach(function(key) {
-  // 	var val = yearByCountry[key];
-  // 	const countEachCountry = _.countBy(val, function(item) {
-  // 		item.Team;
-  // 	})
-  // 	console.log( key + ": " + countEachCountry);
-  // })
 } // Anything you put in the static folder will be available
 // over the network, e.g.
 
@@ -31738,15 +31908,13 @@ d3.csv('olympics.csv').then(function (data) {
   initializeRankChart();
   initializeYearOptions();
   initializeDropdowns();
-  var columnNames = ["Year", "Athletes", "Medals"];
-  var summaryCountry = new SummaryCountry(data, columnNames);
-  summaryCountry.createChart('China');
-  bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows); //createRanking("Archery");
+  bigChartInstance = new BigChart(data);
+  bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 }); // You can load JSON files directly via require.
 // Note this does not add a network request, it adds
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
-},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./bigChart":"bigChart.js","./rankRows":"rankRows.js","./summaryChartCountry":"summaryChartCountry.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./bigChart":"bigChart.js","./rankRows":"rankRows.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -31774,7 +31942,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60241" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39601" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
