@@ -67,6 +67,7 @@ sidebar {
   padding: 2px;
   display: flex;
   flex-direction: column;
+  z-index: 1;
 }
 
 /* #scrollmenu {
@@ -244,7 +245,7 @@ main {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   background-color: white;
-  position:relative;
+  position: relative;
 }
 
 .line {
