@@ -346,7 +346,7 @@ function generateMedalChart(data, medalsvg) {
 
     d3.select("body").on("keydown", () => {
         // recolor all medals when esc key is pressed to original medal color
-        if (d3.event.keyCode == 27) {
+        if (d3.event.keyCode == 81) {
             console.log("escape key pressed");
             d3.selectAll("circle")
                 .style("fill", function(d) {
