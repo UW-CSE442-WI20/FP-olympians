@@ -212,6 +212,12 @@ function generateMedalChart(data, medalsvg) {
     const xSmallAxis = d3.axisBottom(xSmallScale)
         .tickPadding(30)
         .tickValues(getTickValues(2000, 2020))
+        // .tickFormat(d => { //tick custom
+        //     console.log("tick format, d:", d)
+            // const year = yearFormat(d);
+            // const month = monthFormat(d).replace(/^0/, "");
+            // return (d.getMonth() == 0 && w > breakpoint) ?  year + month:  month;
+        // })
         .tickFormat(d3.format("Y"))
     const ySmallAxis = d3.axisLeft(ySmallScale)
 
@@ -238,7 +244,13 @@ function generateMedalChart(data, medalsvg) {
     const color = medalType => {
         if (medalType === 'Bronze') return "#CD7F32";
         else if (medalType === 'Silver') return "#C0C0C0";
-        else return "#D4AF37";
+        else return "#f2ce4b"; //"#D4AF37";
+    }
+
+    const hoverBorder = medalType => {
+        if (medalType === 'Bronze') return "#b9732d";
+        else if (medalType === 'Silver') return "#a6a6a6";
+        else return "#eebe11";
     }
 
     const cxOffset = medalType => {
@@ -313,6 +325,7 @@ function generateMedalChart(data, medalsvg) {
                 .style('fill', function(d) {
                   return color(d.grpName);
                 })
+                // .style('opacity', 0.6)
                 .on("mouseover", function (d) {
                     // Change tooltip text
                     tooltipContainer
@@ -322,12 +335,24 @@ function generateMedalChart(data, medalsvg) {
                         .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>");
                     // highlight current circle selected
                     d3.select(this)
-                        .style("stroke", "black");
+                        // .style('opacity', 1.0)
+                        .style('fill', function(d) {
+                            return hoverBorder(d.grpName);
+                        })
+                        .attr('r', medalRadius * 1.2)
+                        .style("stroke", '#663300');
+                        // .style("stroke-width", 3);
                 })
                 .on("mouseout", function () {
                     // Remove the tooltip
-                    d3.selectAll("#medalTooltip").style("visibility", "hidden")
-                    d3.select(this).style("stroke", "none");
+                    d3.selectAll("#medalTooltip").style("visibility", "hidden");
+                    d3.select(this)
+                        // .style('opacity', 0.6)
+                        .style('fill', function(d) {
+                            return color(d.grpName);
+                        })
+                        .attr('r', medalRadius)
+                        .style("stroke", "none");
                 })
                 .on("click", function(d) {
                     // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
@@ -391,6 +416,9 @@ function redrawMedals(slice, currSelectedAthlete) {
         // })
         .style("fill", function(d) {
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
+        })
+        .style("opacity", function(d) {
+            return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
         })
         .attr("pointer-events", (d) => {
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
