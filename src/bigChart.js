@@ -6,7 +6,7 @@ const _ = require("underscore");
 const generateMedalChart = require("./medalChart");
 
 class bigChart {
-  constructor() {
+  constructor(data) {
 
 
     // Formatting lines
@@ -14,6 +14,7 @@ class bigChart {
     // getting width and height of graph
     this.width;
     this.height;
+
     this.margin = 50;
 
     // getting scale of graph
@@ -26,20 +27,31 @@ class bigChart {
     // getting the area where lines are added
     this.lines;
 
+    // Figures out the maximum amount of athletes for a sport for each year
+    this.yRange = {}
+    this.dimensions;
 
     // the svg containing the whole chart
     this.svg;
 
     // Additional data required for medalChart
     this.entriesBySportThenCountryThenYear;
+
+    this.entriesBySportByYearAthleteCount;
+
+    //
+
+
   }
 
   drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear) {
-    var margin = { top: 20, right: 20, bottom: 30, left: 50 };
     // Set the width and height of the graph
     var margin = { top: 30, right: 10, bottom: 10, left: 10 }
+    this.margin = margin;
     this.width = parseInt(bigsvg.style("width"), 10);
     this.height = parseInt(bigsvg.style("height"), 10);
+
+
 
     // this.width = this.width - margin.left - margin.right;
     // this.height = this.height - margin.top - margin.bottom;
@@ -47,37 +59,28 @@ class bigChart {
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
 
 
+    this.entriesBySportByYearAthleteCount = data;
+
 
 
     console.log("+++++++++++++++++++++++++");
     console.log(data);
     console.log("+++++++++++++++++++++++++");
-    // var width = 500;
-    // var height = 300;
-
-
-
-    // /* Format Data */
-    // var parseDate = d3.timeParse("%Y");
-    // data.forEach(function(d) {
-    //   d.values.forEach(function(d) {
-    //     d.date = parseDate(d.date);
-    //     d.price = +d.price;
-    //   });
-    // });
-
 
     /* Scale */
+    
 
     xScale = d3.scaleLinear()
       .domain([2000, 2020])
       .range([0, this.width - margin.left - margin.right - 30]);
 
     yScale = d3.scaleLinear()
-      .domain([0, 80])
+      // .domain([0, 80])
       .range([this.height - margin.top - margin.bottom, 0]);
 
 
+    this.xScale = xScale;
+    this.yScale = yScale;
     // delete all lines
 
 
@@ -89,27 +92,28 @@ class bigChart {
       .append("g")
       .attr("transform", "translate(" + margin.top + "," + margin.top + ")"); // this is just (30, 30 right now)
 
-    /* Add line into SVG */
-    this.line = d3.line()
-      .x(d => xScale(d.key))
-      .y(d => yScale(d.value));
+    // /* Add line into SVG */
+    // this.line = d3.line()
+    //   .x(d => xScale(d.key))
+    //   .y(d => yScale(d.value));
 
     this.lines = svg.append('g')
       .attr('class', 'lines');
 
 
 
-    /* Add Axis into SVG */
-    var xAxis = d3.axisBottom(xScale).ticks(5);
-    var yAxis = d3.axisLeft(yScale).ticks(5);
+    // /* Add Axis into SVG */
+    // var xAxis = d3.axisBottom(xScale).ticks(5);
+    // var yAxis = d3.axisLeft(yScale).ticks(5);
 
     // svg.append("g")
     //   .attr("class", "x axis")
     //   .attr("transform", `translate(0, ${this.height - this.margin})`)
     //   .call(xAxis);
 
+
     dimensions = []
-    for (i = 2000; i <= 2020; i += 4) {
+    for (i = 1980; i <= 2020; i += 4) {
       dimensions.push(i);
     }
 
@@ -121,40 +125,36 @@ class bigChart {
     // }));
 
     console.log(dimensions);
-
-    svg.selectAll(".parallelAxis")
-      .data(dimensions).enter()
-      .append("g")
-      .attr('class', 'parallelAxis')
-      .attr("transform", function (d) {
-        console.log(xScale(d));
-        return "translate(" + xScale(d) + ") ";
+    var yRange = this.yRange;
+    this.entriesBySportByYearAthleteCount.forEach(function (sport) {
+      if (sport.key.length == 0) {
+        return;
+      }
+      var maxVal = undefined
+      sport.values.forEach(function (country) {
+        country.values.forEach(function (year) {
+          var yearInt = parseInt(year.key, 10);
+          if (maxVal == undefined) {
+            maxVal = year.value;
+          }
+          else if (maxVal < year.value) {
+            maxVal = year.value;
+          }
+        })
       })
-      // And I build the axis with the call function
-      .each(function (d) {
-        d3.select(this).call(yAxis);
-      })
-      // Add axis title
-      .append("text")
-      .style("text-anchor", "middle")
-      .attr("y", -10)
-      .text(function (d) { return d; })
-      .style("fill", "black")
+      console.log(sport.key + ": " + maxVal);
+      yRange[sport.key] = maxVal;
 
+      // d3.scaleLinear()
+      //   .domain([0, maxVal])
+      //   .range([height, 0]);
+    })
 
-    svg.selectAll(".axisBrush")
-      .data(dimensions).enter()
-      .append("g")
-      .attr('class', 'axisBrush')
-      .each(function (d) {
-        // console.log("xxxxxxxxxxxxxxxxx")
-        // console.log(d);
-        // xScale(d), 0], [xScale(d) + 5, this.height
-        // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(80)]])) //TODO: change 600 to be this.height
-      })
+    this.dimensions = dimensions;
+    this.yRange = yRange;
+    console.log(this.yRange);
 
-    this.redraw(bigsvg, data, currSport, medalsvg);
+    this.redraw(bigsvg, currSport, medalsvg);
   }
 
   brushstart() {
@@ -165,10 +165,11 @@ class bigChart {
 
   }
 
-  redraw(bigsvg, data, currSport, medalsvg) {
+  redraw(bigsvg, currSport, medalsvg) {
 
-
-    console.log(data);
+    if (currSport.length === "") {
+      return;
+    }
 
     var duration = 250;
     var lineOpacity = "0.50";
@@ -190,14 +191,19 @@ class bigChart {
     var svg = bigsvg;
     console.log("+++++++++++++++++++++++++");
     console.log("finding currSport: ", currSport)
-    var data = _.find(d3.values(data), function (item) {
+    var entriesBySportByYearAthleteCount = this.entriesBySportByYearAthleteCount;
+    var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
+    console.log(currSport)
+    var data = _.find(d3.values(entriesBySportByYearAthleteCount), function (item) {
       return item.key == currSport;
     }).values;
+
+    var dimensions = this.dimensions;
+    var yRange = this.yRange;
 
     console.log(data);
     console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-    var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
     console.log(svg);
 
     // this.lines.selectAll(".line-group")
@@ -211,19 +217,41 @@ class bigChart {
     // })
 
 
+    /* Add line into SVG */
+
+    var actualHeight = this.height - this.margin.top - this.margin.bottom;
+
+    var xScale = this.xScale;
+    console.log(yRange[currSport])
+    console.log(this.height);
+    console.log(actualHeight);
+    var yScale = d3.scaleLinear()
+      .domain([0, yRange[currSport]])
+      .range([actualHeight, 0]);
+
+    yAxis = d3.axisLeft(yScale).ticks(5);
+
+
+    var line = d3.line()
+      .x(d => xScale(d.key))
+      .y(d => yScale(d.value));
+
+
+
     var lineGroup = this.lines.selectAll(".line-group")
       .data(data, function (item) {
         return item;
       })
 
+    
 
     lineGroup
       .enter()
       .append('g')
       .attr('class', 'line-group')
       .append('path')
-      .attr('class', d => 'line ' + d.key)
-      .attr('d', d => this.line(d.values))
+      .attr('class', d => 'line')
+      .attr('d', d => line(d.values))
       // Draw color based on index? Or maybe based on country?
       .style('stroke', d => color(d.key))
       .style('opacity', lineOpacity)
@@ -271,6 +299,39 @@ class bigChart {
       .transition()
       .style('opacity', 0)
       .remove();
+
+    svg.selectAll(".parallelAxis")
+      .data(dimensions).enter()
+      .append("g")
+      .attr('class', 'parallelAxis')
+      .attr("transform", function (d) {
+        return "translate(" + xScale(d) + ") ";
+      })
+      .append("text")
+      .style("text-anchor", "middle")
+      .attr("y", -10)
+      .text(function (d) { return d; })
+      .style("fill", "black")
+
+    svg.selectAll(".parallelAxis")
+    .transition().duration(1500)
+      .each(function (d) {
+        d3.select(this).call(yAxis)
+      })
+
+
+    // svg.selectAll(".axisBrush")
+    //   .data(dimensions).enter()
+    //   .append("g")
+    //   .attr('class', 'axisBrush')
+    //   .each(function (d) {
+    //     // console.log("xxxxxxxxxxxxxxxxx")
+    //     // console.log(d);
+    //     // xScale(d), 0], [xScale(d) + 5, this.height
+    //     // d3.brushY().extent([0, 0], [100, 200])
+    //     d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(80)]])) //TODO: change 600 to be this.height
+    //   })
+
   }
 
 }
