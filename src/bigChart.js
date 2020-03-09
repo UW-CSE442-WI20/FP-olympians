@@ -324,7 +324,7 @@ class bigChart {
     bigsvg.append("text")
         .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
         .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-        .text("Medals Won");
+        .text("Athletes Participated");
     svg.selectAll(".parallelAxis")
       .data(dimensions).enter()
       .append("g")
