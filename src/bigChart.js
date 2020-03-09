@@ -37,14 +37,33 @@ class bigChart {
     // Additional data required for medalChart
     this.entriesBySportThenCountryThenYear;
 
-    this.entriesBySportByYearAthleteCount;
+    this.entriesBySportByYearAthleteCount = d3.nest()
+      .key(function (d) {
+        return d.Sport;
+      })
+      .sortKeys(d3.ascending)
+      .key(function (d) {
+        return d.Team;
+      })
+      .sortKeys(d3.ascending)
+      .key(function (d) {
+        return d.Year;
+      })
+      .sortKeys(d3.ascending)
+      .rollup(function (v) {
+        let uniqueNames = _.uniq(v, function (item) {
+          return item.Name;
+        })
+        return uniqueNames.length;
+      })
+      .entries(data);
 
     //
 
 
   }
 
-  drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear) {
+  drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
     // var margin = { top: 20, right: 20, bottom: 30, left: 50 };
     // Set the width and height of the graph
     // var margin = { top: 30, right: 10, bottom: 10, left: 10 }
@@ -55,31 +74,6 @@ class bigChart {
     this.height = this.height - this.margins.top - this.margins.bottom;
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
-    
-    this.entriesBySportByYearAthleteCount =  d3.nest()
-    .key(function (d) {
-      return d.Sport;
-    })
-    .sortKeys(d3.ascending)
-    .key(function (d) {
-      return d.Team;
-    })
-    .sortKeys(d3.ascending)
-    .key(function (d) {
-      return d.Year;
-    })
-    .sortKeys(d3.ascending)
-    .rollup(function (v) {
-      let uniqueNames = _.uniq(v, function (item) {
-        return item.Name;
-      })
-      return uniqueNames.length;
-    })
-    .entries(data);
-
-    console.log("+++++++++++++++++++++++++");
-    console.log(data);
-    console.log("+++++++++++++++++++++++++");
 
     const minYear = 2000;
     const maxYear = 2020;
@@ -283,7 +277,7 @@ class bigChart {
         return item;
       })
 
-    
+
 
     lineGroup
       .enter()
@@ -342,9 +336,9 @@ class bigChart {
 
     // now add titles to the axes
     bigsvg.append("text")
-        .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-        .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-        .text("Athletes Participated");
+      .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+      .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+      .text("Athletes Participated");
     svg.selectAll(".parallelAxis")
       .data(dimensions).enter()
       .append("g")
@@ -359,7 +353,7 @@ class bigChart {
       .style("fill", "black")
 
     svg.selectAll(".parallelAxis")
-    .transition().duration(1500)
+      .transition().duration(1500)
       .each(function (d) {
         d3.select(this).call(yAxis)
       })

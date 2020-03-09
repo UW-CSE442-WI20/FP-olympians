@@ -18,7 +18,7 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
 const SummaryCountry = require('./summaryChartCountry');
-const bigChartInstance = new BigChart();
+var bigChartInstance;
 
 
 const rankRowsDiv = d3.select('#rankings');
@@ -319,7 +319,8 @@ d3.csv('olympics.csv')
     var columnNames = ["Year", "Athletes", "Medals"];
     const summaryCountry = new SummaryCountry(data, columnNames);
     summaryCountry.createChart('China');
-    bigChartInstance.drawChart(bigsvg, data, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
+    bigChartInstance = new BigChart(data);
+    bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows);
 
 	  //createRanking("Archery");
   });
