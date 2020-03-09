@@ -12,8 +12,8 @@ const _ = require("underscore");
 // TODO: Apply d3 force?
 module.exports =
 function generateMedalChart(data, medalsvg) {
-    console.log("generating medal counts chart!")
-    console.log("DATA****", data);
+    // console.log("generating medal counts chart!")
+    // console.log("DATA****", data);
     const minYear = 2000;
     const maxYear = 2020;
 
@@ -84,19 +84,6 @@ function generateMedalChart(data, medalsvg) {
         var silverAthletes = getAthletes(year, 'Silver');
         var goldAthletes = getAthletes(year, 'Gold');
 
-        // console.log("item:", item)
-        // console.log("year:", item.key)
-        // console.log("bronze=", bronze)
-        // console.log("silver=", silver)
-        // console.log("gold=", gold)
-        // console.log("bronzeEvents=", bronzeEvents)
-        // console.log("silverEvents=", silverEvents)
-        // console.log("goldEvents=", goldEvents)
-        // console.log("bronzeAthletes=", bronzeAthletes)
-        // console.log("silverAthletes=", silverAthletes)
-        // console.log("goldAthletes=", goldAthletes)
-
-
         if (year >= minYear && year <= maxYear && containsYear(groupData, year) === undefined) {
             var medalMap = [];
             for (let i = 1; i <= bronze; i++) {
@@ -115,23 +102,34 @@ function generateMedalChart(data, medalsvg) {
                 }))
         }
 
-        console.log("groupData:", groupData)
+        // console.log("groupData:", groupData)
     });
 
     var nodes = []
+    let medalCounts = []
     groupData.forEach((item) => {
         item.values.forEach((row) => {
             nodes.push(row);
         });
+        medalCounts.push(new Object(
+            {
+                key: item.key,
+                values: _.countBy(item.values, (row) => {
+                    return row.grpName;
+                })
+            }));
     });
-    console.log("nodes:", nodes);
+    console.log("medal counts", medalCounts);
+    // console.log("nodes:", nodes);
 
     medalsvg.selectAll("g").transition();
     medalsvg.selectAll("g").remove();
+    d3.selectAll("circle").remove();
     medalsvg.selectAll("text").remove();
     medalsvg.selectAll("g").transition();
 
-    var margin = {top: 20, right: 20, bottom: 30, left: 50};
+    var margin = { top: 20, right: 10, bottom: 30, left: 10 }; // bigchart: { top: 30, right: 10, bottom: 10, left: 10 };
+    // var margin = {top: 20, right: 20, bottom: 30, left: 50};
 
     // Set the width and height of the graph
     var width = parseInt(medalsvg.style("width"), 10);
@@ -162,7 +160,11 @@ function generateMedalChart(data, medalsvg) {
         return domain;
     }
 
-    const xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]);
+    // var xScale = d3.scaleLinear()
+    //     .domain([2000, 2020])
+    //     .range([0, this.width - margin.left - margin.right - 30]);
+
+    const xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]); //[0, 950]);
     const ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.bottom, innerHeight]);
 
     const getTickValues = (startTick, endTick) => {
@@ -231,7 +233,7 @@ function generateMedalChart(data, medalsvg) {
     var medalTypes = groupData[0].values.map(function (d) {
         return d.grpName;
     });
-    x1.domain(medalTypes).rangeRound([0, 30]);
+    x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
     const color = medalType => {
         if (medalType === 'Bronze') return "#CD7F32";
@@ -253,16 +255,27 @@ function generateMedalChart(data, medalsvg) {
 
     /////////////////////////////////// d3.force
 
+    const yForceOffset = medalType => {
+        if (medalType === 'Bronze') {
+            return 1;
+        } else if (medalType === 'Silver') {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
     var simulation = d3.forceSimulation(nodes)
       // .force('charge', d3.forceManyBody().strength(5))
       .force('x', d3.forceX().x(function(d) {
-        return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1);
+        return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5);
       }))
       .force('y', d3.forceY().y(function(d) {
-          return ySmallScale(d.grpValue / 4);
+          return ySmallScale(yForceOffset(d.grpName));
+          // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
         }))
       .force('collision', d3.forceCollide().radius(function(d) {
-        return 10;
+        return 11; // 10;
       }))
       .force("bounds", boundingBox)
       .on('tick', ticked);
@@ -271,8 +284,8 @@ function generateMedalChart(data, medalsvg) {
     function boundingBox() {
         for (let node of nodes) {
             // If the positions exceed the box, set them to the boundary position.
-            var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 1)
-            node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2 - medalRadius), yearX - xSmallScale.bandwidth() / 2 + medalRadius);
+            var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
+            node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius);
             // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));            
             node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
         }
@@ -300,14 +313,13 @@ function generateMedalChart(data, medalsvg) {
                 .style('fill', function(d) {
                   return color(d.grpName);
                 })
-                // .merge(u)
                 .on("mouseover", function (d) {
                     // Change tooltip text
                     tooltipContainer
                         .style("left", (d3.mouse(this)[0]) + "px")
                         .style("top", (d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius) + "px")
                         .style("visibility", "visible")
-                        .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "</p>");
+                        .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>");
                     // highlight current circle selected
                     d3.select(this)
                         .style("stroke", "black");
@@ -324,13 +336,15 @@ function generateMedalChart(data, medalsvg) {
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
-                    return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1);
+                    //return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.1);
+                    return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5)
                 })
                 .attr("cy", 0)
                 .transition()
                 .ease(d3.easeElastic)
                 .duration((d) => {
-                    return (d.grpValue % 10) * 1000;
+                    return (cxOffset(d.grpName))* 2000 + (0.05 * d.grpValue);
+                    // return (d.grpValue % 10) * 1000;
                 })
                 .attr('cx', function(d) {
                   return d.x;
@@ -346,8 +360,8 @@ function generateMedalChart(data, medalsvg) {
 
     d3.select("body").on("keydown", () => {
         // recolor all medals when esc key is pressed to original medal color
-        if (d3.event.keyCode == 27) {
-            console.log("escape key pressed");
+        if (d3.event.keyCode == 81) {
+            // console.log("escape key pressed");
             d3.selectAll("circle")
                 .style("fill", function(d) {
                     return color(d.grpName);
@@ -370,7 +384,7 @@ function redrawMedals(slice, currSelectedAthlete) {
         else return "#D4AF37";
     }
 
-    console.log("redrawing medals with selected athlete:", currSelectedAthlete);
+    // console.log("redrawing medals with selected athlete:", currSelectedAthlete);
     d3.selectAll("circle")
         // .style("stroke", function(d) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
