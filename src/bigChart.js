@@ -326,10 +326,13 @@ class bigChart {
             .style('stroke', d => color(d.key))
         }
       })
+
+      
       .on("click", function (d) {
+        yo();
         // get the data for the selected athlete
         selectedCountry = selectedCountry === undefined ? d : undefined;
-        if (selectedCountry === d) {
+        if (selectedCountry != undefined) {
           d3.selectAll(".line")
             .style('opacity', otherLinesOpacitySelected)
           d3.select(this)
@@ -404,6 +407,10 @@ class bigChart {
         }).on("brush", brush)) //TODO: change 600 to be this.height
       })
     this.brushRange = brushRange;
+  }
+
+  yo() {
+    console.log("yo");
   }
 
 
