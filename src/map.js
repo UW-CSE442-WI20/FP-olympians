@@ -1136,19 +1136,19 @@ class worldMap {
   //   pom.click();
   // }
 
-  getTop(country) {
-    var top = this.data;
-    console.log("checking what top is", this.data)
-    var index = top.findIndex(function(c) {
-      return c.key == country;
-    });
-
-    console.log("checking this country", country);
-
-    var values = top[index];
-    console.log("here's the info", values)
-
-  }
+  // getTop(country) {
+  //   var top = this.data;
+  //   console.log("checking what top is", this.data)
+  //   var index = top.findIndex(function(c) {
+  //     return c.key == country;
+  //   });
+  //
+  //   console.log("checking this country", country);
+  //
+  //   var values = top[index];
+  //   console.log("here's the info", values)
+  //
+  // }
 
 }
 
