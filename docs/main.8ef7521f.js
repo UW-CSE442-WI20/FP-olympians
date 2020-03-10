@@ -31030,6 +31030,8 @@ var generateMedalChart = require("./medalChart");
 
 var SummaryCountry = require('./summaryChartCountry');
 
+var selectedCountry = undefined;
+
 var bigChart =
 /*#__PURE__*/
 function () {
@@ -31205,7 +31207,8 @@ function () {
       var duration = 250;
       var lineOpacity = "0.50";
       var lineOpacityHover = "0.95";
-      var otherLinesOpacityHover = "0.1";
+      var otherLinesOpacityHover = "0.25";
+      var otherLinesOpacitySelected = "0.1";
       var lineStroke = "3px";
       var lineStrokeHover = "4.5px";
       var circleOpacity = '0.85';
@@ -31268,19 +31271,39 @@ function () {
       .style('stroke', function (d) {
         return color(d.key);
       }).style('opacity', lineOpacity).style('fill', 'none').on("mouseover", function (d) {
-        // change line opacity
-        d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
-        d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
+        if (selectedCountry === undefined) {
+          // change line opacity
+          d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
+          d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
 
-        svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
+          svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
+        } else if (selectedCountry === d) {
+          d3.select(this).style('stroke', 'black');
+        }
       }).on("mouseout", function (d) {
-        d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
-        //   .style('opacity', lineOpacity)
-        //   .style("stroke-width", lineStroke);
+        if (selectedCountry === undefined) {
+          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
+          //   .style('opacity', lineOpacity)
+          //   .style("stroke-width", lineStroke);
 
-        svg.selectAll(".country-text").remove();
+          svg.selectAll(".country-text").remove();
+        } else if (selectedCountry === d) {
+          d3.select(this).style('stroke', function (d) {
+            return color(d.key);
+          });
+        }
       }).on("click", function (d) {
         // get the data for the selected athlete
+        selectedCountry = selectedCountry === undefined ? d : undefined;
+
+        if (selectedCountry === d) {
+          d3.selectAll(".line").style('opacity', otherLinesOpacitySelected);
+          d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
+        } else {
+          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke);
+          return;
+        }
+
         console.log(entriesBySportThenCountryThenYear);
         console.log(d);
         console.log("curr sport:", currSport);
@@ -31315,21 +31338,18 @@ function () {
       }).style("fill", "black");
       svg.selectAll(".parallelAxis").transition().duration(1500).each(function (d) {
         d3.select(this).call(yAxis);
-      }); //   var brushRange = {};
-      //   svg.selectAll(".axisBrush")
-      //     .data(dimensions).enter()
-      //     .append("g")
-      //     .attr('class', 'axisBrush')
-      //     .each(function (d) {
-      //       // console.log("xxxxxxxxxxxxxxxxx")
-      //       // console.log(d);
-      //       // xScale(d), 0], [xScale(d) + 5, this.height
-      //       // d3.brushY().extent([0, 0], [100, 200])
-      //       d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("start", function() {
-      //         d3.event.stopPropogation();
-      //       }).on("brush", brush)) //TODO: change 600 to be this.height
-      //     })
-      //   this.brushRange = brushRange;  
+      });
+      var brushRange = {};
+      svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {
+        // console.log("xxxxxxxxxxxxxxxxx")
+        // console.log(d);
+        // xScale(d), 0], [xScale(d) + 5, this.height
+        // d3.brushY().extent([0, 0], [100, 200])
+        d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
+          console.log("yo");
+        }).on("brush", brush)); //TODO: change 600 to be this.height
+      });
+      this.brushRange = brushRange;
     }
   }]);
 
@@ -43121,4 +43141,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.4bcd0238.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.8ef7521f.js.map
