@@ -135,6 +135,8 @@ function generateMedalChart(data, medalsvg) {
     // var margin = {top: 20, right: 20, bottom: 30, left: 50};
 
     // Set the width and height of the graph
+    var divbox = document.getElementById("medalchart").getBoundingClientRect();
+    console.log("divbox", divbox);
     var width = parseInt(medalsvg.style("width"), 10);
     var height = parseInt(medalsvg.style("height"), 10);
     width = width - margin.left - margin.right;
@@ -339,8 +341,8 @@ function generateMedalChart(data, medalsvg) {
                 .on("mouseover", function (d) {
                     // Change tooltip text
                     tooltipContainer
-                        .style("left", (d3.mouse(this)[0]) + "px")
-                        .style("top", (d3.mouse(this)[1] + document.getElementById('medalchart').getBoundingClientRect().top + medalRadius) + "px")
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY + medalRadius) + "px")
                         .style("visibility", "visible")
                         .html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>");
                     // highlight current circle selected
@@ -368,7 +370,7 @@ function generateMedalChart(data, medalsvg) {
                     // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
                     // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));
                     currSelectedAthlete = d.grpAthlete;
-                    // athleteFilter = !athleteFilter;
+                    athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
@@ -426,15 +428,15 @@ function redrawMedals(slice, currSelectedAthlete) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         // })
         .style("fill", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
         })
         .style("opacity", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
         })
         .attr("pointer-events", (d) => {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
 }
