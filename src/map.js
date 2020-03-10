@@ -19,7 +19,7 @@ class worldMap {
         highlightBorderColor: '#bada55',
         popupOnHover: true,
         highlightOnHover: true,
-        highlightBorderWidth: 3,
+        highlightBorderWidth: 1,
         popupTemplate: function(geography, data) {
           return '<div class="hoverinfo">' + geography.properties.name +
             '\'s top sport(s): ' + data.first +
@@ -27,7 +27,7 @@ class worldMap {
         }
       },
       fills: {
-        defaultFill: 'green'
+        defaultFill: '#6C8CBF'
       },
       data: {
         'AFG': {
@@ -1067,6 +1067,8 @@ class worldMap {
 
 
     this.map.legend();
+    // this.map.svg.attr("height", "100px");
+    // this.map.svg.attr("width", "100px");
 
     this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
     this.countryToRatio = [];

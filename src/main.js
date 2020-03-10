@@ -35,9 +35,9 @@ function initializeRankChart() {
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
   .append('svg')
-  .attr('width', "1000")
-  .attr('height', 380);
-
+  .attr('width', "800")
+  .attr('height',380);
+console.log("bigsvg", bigsvg);
 
 // create svg for medalChart
 let medalsvg = d3.select('#medalchart')
@@ -335,7 +335,7 @@ d3.csv('olympics.csv')
     initializeYearOptions();
     initializeDropdowns();
     initializeSearch();
-  
+
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
