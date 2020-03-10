@@ -108,6 +108,30 @@ function generateMedalChart(data, medalsvg) {
         // console.log("groupData:", groupData)
     });
 
+    let medalTallies = []
+    // want three rows per year
+    // year -> medalType -> medalCount
+    data.forEach(function (item) {
+        var year = item.key;
+
+        var bronze = getMedalCount(year, 'Bronze');
+        var silver = getMedalCount(year, 'Silver');
+        var gold = getMedalCount(year, 'Gold');
+
+        if (year >= minYear && year <= maxYear && containsYear(medalTallies, year) === undefined) {
+            var medalMap = [];
+            medalMap.push({year: year, grpName: 'Bronze', grpValue: bronze});
+            medalMap.push({year: year, grpName: 'Silver', grpValue: silver});
+            medalMap.push({year: year, grpName: 'Gold', grpValue: gold});
+
+            medalTallies.push(new Object(
+                {
+                    key: year, values: medalMap
+                }))
+        }
+    });
+    console.log("medal tallies", medalTallies);
+
     var nodes = []
     let medalCounts = []
     groupData.forEach((item) => {
@@ -250,7 +274,7 @@ function generateMedalChart(data, medalsvg) {
         else return "#f2ce4b"; //"#D4AF37";
     }
 
-    const hoverBorder = medalType => {
+    const hoverColor = medalType => {
         if (medalType === 'Bronze') return "#b9732d";
         else if (medalType === 'Silver') return "#a6a6a6";
         else return "#eebe11";
@@ -266,6 +290,16 @@ function generateMedalChart(data, medalsvg) {
         }
     }
 
+    const cxTallyOffset = medalType => {
+        if (medalType === 'Bronze') {
+            return 0.35;
+        } else if (medalType === 'Silver') {
+            return 0.5;
+        } else {
+            return 0.65;
+        }
+    }
+
     const medalRadius = 10; // radius of medal circles
 
     /////////////////////////////////// d3.force
@@ -274,7 +308,7 @@ function generateMedalChart(data, medalsvg) {
       medalsvg.append("text")
           .attr("id", "medalTooltip")
           .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 3) + ")")
-          .text(data[0].values[0].Team + " did not win any medals");
+          .text("No medals to show for " + data[0].values[0].Team);
     }
 
     const yForceOffset = medalType => {
@@ -325,11 +359,12 @@ function generateMedalChart(data, medalsvg) {
 
     function ticked() {
         var u = medalsvg
-            .selectAll('circle')
+            .selectAll('#medal')
             .data(nodes);
 
             u.enter()
                 .append('circle')
+                .attr('id', 'medal')
                 .merge(u)
                 .attr('r', medalRadius)
                 .style('fill', function(d) {
@@ -347,7 +382,7 @@ function generateMedalChart(data, medalsvg) {
                     d3.select(this)
                         // .style('opacity', 1.0)
                         .style('fill', function(d) {
-                            return hoverBorder(d.grpName);
+                            return hoverColor(d.grpName);
                         })
                         .attr('r', medalRadius * 1.2)
                         .style("stroke", '#663300');
@@ -368,7 +403,7 @@ function generateMedalChart(data, medalsvg) {
                     // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
                     // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));
                     currSelectedAthlete = d.grpAthlete;
-                    // athleteFilter = !athleteFilter;
+                    athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
@@ -411,6 +446,48 @@ function generateMedalChart(data, medalsvg) {
         .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
         .attr("transform", "translate(" + margin.left + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
         .text("Medals Won");
+
+    var tally = medalsvg
+        .selectAll(".tally")
+        .data(medalTallies)
+        .enter()
+        .append("g")
+        .attr("class", "g")
+        // .attr("transform", "translate(" + (width / 2) + "," + (height + 0.5 * margin.bottom) + ")")
+        .attr("transform", function (d) {
+            return "translate(" + xSmallScale(d.key) + "," + (height + 0.5 * margin.bottom) + ")";
+        })
+
+    tally.selectAll("#tallyGroup")
+        .data(function (d) {
+            console.log("medal tally data values", d.values)
+            return d.values;
+        })
+        .enter().append("g")
+        .attr('id', 'tallyGroup');
+    tally.selectAll("#tallyGroup")
+        .append("circle")
+        .attr("id", "tallyCircle")
+        .style("fill", function (d) {
+            return hoverColor(d.grpName)
+        })
+        .attr("r", 10)
+        .attr("cx", function (d) {
+            return cxTallyOffset(d.grpName) * xSmallScale.bandwidth();
+        })
+        .attr("cy", function(d) {
+            return 10;
+        });
+    tally.selectAll("#tallyGroup")
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", function (d) {
+            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",15.5)";
+        })
+        .style("fill", "white")
+        .text(function(d) {
+            return d.grpValue;
+        });
 }
 
 function redrawMedals(slice, currSelectedAthlete) {
@@ -426,15 +503,15 @@ function redrawMedals(slice, currSelectedAthlete) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         // })
         .style("fill", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
         })
         .style("opacity", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
         })
         .attr("pointer-events", (d) => {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
 }
