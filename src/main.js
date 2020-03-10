@@ -42,7 +42,7 @@ console.log("bigsvg", bigsvg);
 // create svg for medalChart
 let medalsvg = d3.select('#medalchart')
 		.append('svg')
-		.attr("width", "1000")
+		.attr("width", "800")
 		.attr("height", 380);
 
 // draw small chart elements here

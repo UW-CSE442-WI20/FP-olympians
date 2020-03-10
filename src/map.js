@@ -37,7 +37,7 @@ class worldMap {
               datamap.svg.selectAll('g').attr('transform', d3.event.transform);
             })
         );
-        document.getElementById('btn').onclick = function() {
+        document.getElementById('map-btn').onclick = function() {
           datamap.svg.selectAll("g")
             .transition()
             .duration(500)
