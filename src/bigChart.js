@@ -4,6 +4,7 @@ const d3 = require('d3');
 const _ = require("underscore");
 
 const generateMedalChart = require("./medalChart");
+const SummaryCountry = require('./summaryChartCountry');
 
 class bigChart {
   constructor(data) {
@@ -16,8 +17,12 @@ class bigChart {
     this.margin = 50;
     // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
     this.margins = { top: 30, right: 35, bottom: 10, left: 35 };
-
+  
     // getting scale of graph
+
+    // adding tiny chart
+    this.columnNames = ["Year", "Athletes", "Medals"];
+    this.summaryCountry = new SummaryCountry(data, this.columnNames);
 
     // getting color sceme
     this.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -29,7 +34,9 @@ class bigChart {
 
     // Figures out the maximum amount of athletes for a sport for each year
     this.yRange = {}
+    this.brushRange = {}
     this.dimensions;
+    this.currSport;
 
     // the svg containing the whole chart
     this.svg;
@@ -70,6 +77,8 @@ class bigChart {
     this.height = this.height - this.margins.top - this.margins.bottom;
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
+
+    this.summaryCountry.createChart('Afghanistan');
 
     const minYear = 2000;
     const maxYear = 2020;
@@ -187,14 +196,6 @@ class bigChart {
     this.redraw(bigsvg, currSport, medalsvg);
   }
 
-  brushstart() {
-    d3.event.sourceEvent.stopPropogation();
-  }
-
-  brush() {
-
-  }
-
   redraw(bigsvg, currSport, medalsvg) {
 
     if (currSport.length === "") {
@@ -230,6 +231,7 @@ class bigChart {
 
     var dimensions = this.dimensions;
     var yRange = this.yRange;
+    this.currSport = currSport;
 
     console.log(data);
     console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
@@ -274,6 +276,7 @@ class bigChart {
       })
 
 
+    var country = this.summaryCountry
 
     lineGroup
       .enter()
@@ -288,6 +291,8 @@ class bigChart {
       .style('fill', 'none')
       .on("mouseover", function (d) {
         // change line opacity
+        d3.selectAll(".line")
+          .style('opacity', otherLinesOpacityHover)
         d3.select(this)
           .style('opacity', lineOpacityHover)
           .style('stroke-width', lineStrokeHover);
@@ -300,9 +305,12 @@ class bigChart {
           .style('fill', color(d.key))
       })
       .on("mouseout", function (d) {
-        d3.select(this)
-          .style('opacity', lineOpacity)
-          .style("stroke-width", lineStroke);
+        d3.selectAll(".line")
+          .style("opacity", lineOpacity)
+          .style("stroke-width", lineStroke)
+        // d3.select(this)
+        //   .style('opacity', lineOpacity)
+        //   .style("stroke-width", lineStroke);
         svg.selectAll(".country-text").remove();
       })
       .on("click", function (d) {
@@ -321,7 +329,8 @@ class bigChart {
           // console.log("considering ", item.key);
           return item.key === d.key;
         });
-        console.log(countryData);
+        country.updateChart(countryData.key);
+        console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
       });
 
@@ -354,19 +363,35 @@ class bigChart {
         d3.select(this).call(yAxis)
       })
 
-
-    svg.selectAll(".axisBrush")
-      .data(dimensions).enter()
-      .append("g")
-      .attr('class', 'axisBrush')
-      .each(function (d) {
-        // console.log("xxxxxxxxxxxxxxxxx")
-        // console.log(d);
-        // xScale(d), 0], [xScale(d) + 5, this.height
-        // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]])) //TODO: change 600 to be this.height
-      })
+  //   var brushRange = {};
+  //   svg.selectAll(".axisBrush")
+  //     .data(dimensions).enter()
+  //     .append("g")
+  //     .attr('class', 'axisBrush')
+  //     .each(function (d) {
+  //       // console.log("xxxxxxxxxxxxxxxxx")
+  //       // console.log(d);
+  //       // xScale(d), 0], [xScale(d) + 5, this.height
+  //       // d3.brushY().extent([0, 0], [100, 200])
+  //       d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("start", function() {
+  //         d3.event.stopPropogation();
+  //       }).on("brush", brush)) //TODO: change 600 to be this.height
+  //     })
+  //   this.brushRange = brushRange;  
   }
+
+
 }
+
+
+// function brushstart() {
+//   // d3.event.
+// }
+
+// function brush() {
+//   var brushRange = this.brushRange;
+//   var actives = dimensions.filter(function(p) { return !brushRange[p].empty()})
+//   console.log(actives);
+// }
 
 module.exports = bigChart;
