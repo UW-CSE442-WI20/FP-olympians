@@ -259,7 +259,7 @@ main {
   height:100px;
   min-width:400px;
   margin-right:3px;
-  position:absolute;
+  /* position:absolute; */
 }
 
 #table_wrap {

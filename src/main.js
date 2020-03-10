@@ -317,11 +317,15 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
-    map = new Map(entriesBySportByYearByCountryRatio);
-
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
-    map.getRanking();
+
+    d3.csv('rankings.csv')
+      .then((data) => {
+        map = new Map(entriesBySportByYearByCountryRatio, data);
+        console.log("here are the rankings:", data)
+        map.getTop('China');
+      });
   });
 
   // You can load JSON files directly via require.
