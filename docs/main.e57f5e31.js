@@ -30339,7 +30339,7 @@ var _ = require("underscore"); // Draws the total bronze/silver/medals won by th
 // global variables
 
 
-var athleteFilter = false; // TODO: Apply d3 force?
+var athleteFilter = false;
 
 module.exports = function generateMedalChart(data, medalsvg) {
   // console.log("generating medal counts chart!")
@@ -30442,9 +30442,41 @@ module.exports = function generateMedalChart(data, medalsvg) {
         key: year,
         values: medalMap
       }));
-    } // console.log("groupData:", groupData)
-
+    }
   });
+  var medalTallies = []; // want three rows per year
+  // year -> medalType -> medalCount
+
+  data.forEach(function (item) {
+    var year = item.key;
+    var bronze = getMedalCount(year, 'Bronze');
+    var silver = getMedalCount(year, 'Silver');
+    var gold = getMedalCount(year, 'Gold');
+
+    if (year >= minYear && year <= maxYear && containsYear(medalTallies, year) === undefined) {
+      var medalMap = [];
+      medalMap.push({
+        year: year,
+        grpName: 'Bronze',
+        grpValue: bronze
+      });
+      medalMap.push({
+        year: year,
+        grpName: 'Silver',
+        grpValue: silver
+      });
+      medalMap.push({
+        year: year,
+        grpName: 'Gold',
+        grpValue: gold
+      });
+      medalTallies.push(new Object({
+        key: year,
+        values: medalMap
+      }));
+    }
+  });
+  console.log("medal tallies", medalTallies);
   var nodes = [];
   var medalCounts = [];
   groupData.forEach(function (item) {
@@ -30461,8 +30493,11 @@ module.exports = function generateMedalChart(data, medalsvg) {
   console.log("medal counts", medalCounts); // console.log("nodes:", nodes);
 
   medalsvg.selectAll("g").transition();
-  medalsvg.selectAll("g").remove();
-  d3.selectAll("circle").remove();
+  medalsvg.selectAll("g").remove(); // d3.selectAll("circle").remove();
+
+  medalsvg.selectAll("#medal").remove();
+  medalsvg.selectAll("#medalTooltip").remove();
+  medalsvg.selectAll("#tally").remove();
   medalsvg.selectAll("text").remove();
   medalsvg.selectAll("g").transition();
   var margin = {
@@ -30470,9 +30505,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
     right: 10,
     bottom: 30,
     left: 10
-  }; // bigchart: { top: 30, right: 10, bottom: 10, left: 10 };
-  // var margin = {top: 20, right: 20, bottom: 30, left: 50};
-  // Set the width and height of the graph
+  }; // Set the width and height of the graph
 
   var divbox = document.getElementById("medalchart").getBoundingClientRect();
   console.log("divbox", divbox);
@@ -30501,10 +30534,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }
 
     return domain;
-  }; // var xScale = d3.scaleLinear()
-  //     .domain([2000, 2020])
-  //     .range([0, this.width - margin.left - margin.right - 30]);
-
+  };
 
   var xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]); //[0, 950]);
 
@@ -30550,13 +30580,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   //     });
 
 
-  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(30).tickValues(getTickValues(2000, 2020)) // .tickFormat(d => { //tick custom
-  //     console.log("tick format, d:", d)
-  // const year = yearFormat(d);
-  // const month = monthFormat(d).replace(/^0/, "");
-  // return (d.getMonth() == 0 && w > breakpoint) ?  year + month:  month;
-  // })
-  .tickFormat(d3.format("Y"));
+  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(30).tickValues(getTickValues(2000, 2020)).tickFormat(d3.format("Y"));
   var ySmallAxis = d3.axisLeft(ySmallScale); // add title: country name
 
   medalsvg.append("text").attr("x", width / 2).attr("y", height - innerHeight - 1.3 * margin["top"]).style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
@@ -30570,10 +30594,10 @@ module.exports = function generateMedalChart(data, medalsvg) {
   x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
   var color = function color(medalType) {
-    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#f2ce4b"; //"#D4AF37";
+    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#F2CE4B"; //"#D4AF37";
   };
 
-  var hoverBorder = function hoverBorder(medalType) {
+  var hoverColor = function hoverColor(medalType) {
     if (medalType === 'Bronze') return "#b9732d";else if (medalType === 'Silver') return "#a6a6a6";else return "#eebe11";
   };
 
@@ -30587,11 +30611,21 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }
   };
 
+  var cxTallyOffset = function cxTallyOffset(medalType) {
+    if (medalType === 'Bronze') {
+      return 0.35;
+    } else if (medalType === 'Silver') {
+      return 0.5;
+    } else {
+      return 0.65;
+    }
+  };
+
   var medalRadius = 10; // radius of medal circles
   /////////////////////////////////// d3.force
 
   if (nodes.length == 0) {
-    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 3 + ")").text(data[0].values[0].Team + " did not win any medals");
+    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 3 + ")").text("No medals to show for " + data[0].values[0].Team);
   }
 
   var yForceOffset = function yForceOffset(medalType) {
@@ -30604,13 +30638,12 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }
   };
 
-  var simulation = d3.forceSimulation(nodes) // .force('charge', d3.forceManyBody().strength(5))
-  .force('x', d3.forceX().x(function (d) {
+  var simulation = d3.forceSimulation(nodes).force('charge', d3.forceManyBody().strength(5)).alphaDecay(0.1).force('x', d3.forceX().x(function (d) {
     return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5);
   })).force('y', d3.forceY().y(function (d) {
     return ySmallScale(yForceOffset(d.grpName)); // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
   })).force('collision', d3.forceCollide().radius(function (d) {
-    return 11; // 10;
+    return 11;
   })).force("bounds", boundingBox).on('tick', ticked); // Custom force to put all nodes in a box
 
   function boundingBox() {
@@ -30648,8 +30681,8 @@ module.exports = function generateMedalChart(data, medalsvg) {
   var tooltipContainer = d3.select('#medalchart').append("div").attr("id", "medalTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
 
   function ticked() {
-    var u = medalsvg.selectAll('circle').data(nodes);
-    u.enter().append('circle').merge(u).attr('r', medalRadius).style('fill', function (d) {
+    var u = medalsvg.selectAll('#medal').data(nodes);
+    u.enter().append('circle').attr('id', 'medal').merge(u).attr('r', medalRadius).style('fill', function (d) {
       return color(d.grpName);
     }) // .style('opacity', 0.6)
     .on("mouseover", function (d) {
@@ -30658,7 +30691,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
       d3.select(this) // .style('opacity', 1.0)
       .style('fill', function (d) {
-        return hoverBorder(d.grpName);
+        return hoverColor(d.grpName);
       }).attr('r', medalRadius * 1.2).style("stroke", '#663300'); // .style("stroke-width", 3);
     }).on("mouseout", function () {
       // Remove the tooltip
@@ -30691,7 +30724,8 @@ module.exports = function generateMedalChart(data, medalsvg) {
     // recolor all medals when esc key is pressed to original medal color
     if (d3.event.keyCode == 81) {
       // console.log("escape key pressed");
-      d3.selectAll("circle").style("fill", function (d) {
+      athleteFilter = !athleteFilter;
+      d3.selectAll("#medal").style("fill", function (d) {
         return color(d.grpName);
       }).attr("pointer-events", "auto");
     }
@@ -30700,15 +30734,33 @@ module.exports = function generateMedalChart(data, medalsvg) {
   medalsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
   .attr("transform", "translate(" + margin.left + "," + height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
   .text("Medals Won");
+  var tally = medalsvg.selectAll(".tally").data(medalTallies).enter().append("g").attr("class", "g") // .attr("transform", "translate(" + (width / 2) + "," + (height + 0.5 * margin.bottom) + ")")
+  .attr("transform", function (d) {
+    return "translate(" + xSmallScale(d.key) + "," + (height + 0.5 * margin.bottom) + ")";
+  });
+  tally.selectAll("#tallyGroup").data(function (d) {
+    console.log("medal tally data values", d.values);
+    return d.values;
+  }).enter().append("g").attr('id', 'tallyGroup');
+  tally.selectAll("#tallyGroup").append("circle").attr("id", "tallyCircle").style("fill", function (d) {
+    return hoverColor(d.grpName);
+  }).attr("r", 11).attr("cx", function (d) {
+    return cxTallyOffset(d.grpName) * xSmallScale.bandwidth();
+  }).attr("cy", 10);
+  tally.selectAll("#tallyGroup").append("text").attr("text-anchor", "middle").attr("transform", function (d) {
+    return "translate(" + cxTallyOffset(d.grpName) * xSmallScale.bandwidth() + ",15.5)";
+  }).style("fill", "white").text(function (d) {
+    return d.grpValue;
+  });
 };
 
 function redrawMedals(slice, currSelectedAthlete) {
   var color = function color(medalType) {
-    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#D4AF37";
+    if (medalType === 'Bronze') return "#CD7F32";else if (medalType === 'Silver') return "#C0C0C0";else return "#F2CE4B";
   }; // console.log("redrawing medals with selected athlete:", currSelectedAthlete);
 
 
-  d3.selectAll("circle") // .style("stroke", function(d) {
+  d3.selectAll("#medal") // .style("stroke", function(d) {
   //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
   // })
   .style("fill", function (d) {
@@ -31405,7 +31457,7 @@ function () {
         this.topDivs.push(newDiv); // add image to each row here
         // get country name
 
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-");
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -31458,7 +31510,7 @@ function () {
       for (var i = 0; i < topCountryToRatio.length; i++) {
         if (topCountryToRatio[i].value > 0) {
           countryName = topCountryToRatio[i].key.replace(/ /g, "");
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-"); // add in new element
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase(); // add in new element
 
           rowDiv.append("div").attr("id", "row" + countryName) // new country
           .style("position", "absolute").style("top", "90%") // .style("left", 0)
@@ -31550,7 +31602,7 @@ function () {
           .style("position", "absolute").style("top", i * 10 + "%") // .style("left", 0)
           .style("width", "190px").style("height", "60px").style("margin-top", "6px").style("margin-bottom", "6px").style("background-color", "#B0C4DE").style("display", "flex").style("flex-direction", "row").style("justify-content", "flex-start").style("align-items", "center").style("opacity", 0.0).transition().delay(100).style("opacity", 1.0); // add image
 
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-");
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
           console.log(imgcountryName);
           d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
           .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
@@ -41706,6 +41758,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
 
   _classCallCheck(this, worldMap);
 
+  this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
   this.data = d3.nest().key(function (d) {
     return d.Team;
   }).entries(data);
@@ -41718,13 +41771,24 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
       highlightBorderColor: '#bada55',
       popupOnHover: true,
       highlightOnHover: true,
-      highlightBorderWidth: 3,
+      highlightBorderWidth: 1,
       popupTemplate: function popupTemplate(geography, data) {
         return '<div class="hoverinfo">' + geography.properties.name + '\'s top sport(s): ' + data.first + data.second + data.third;
       }
     },
+    done: function done(datamap) {
+      console.log("inside of the done func");
+      d3.select('.datamap').call(d3.zoom().scaleExtent([0.7, 6]).on('zoom', function () {
+        datamap.svg.selectAll('g').attr('transform', d3.event.transform);
+      }));
+
+      document.getElementById('btn').onclick = function () {
+        datamap.svg.selectAll("g").transition().duration(500).attr("transform", d3.zoomIdentity);
+        d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
+      };
+    },
     fills: {
-      defaultFill: 'green'
+      defaultFill: '#6C8CBF'
     },
     data: {
       'AFG': {
@@ -42539,7 +42603,8 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
       },
       'SAU': {
         first: data[164].values[0].Sport + ", ",
-        second: data[164].values[2].Sport
+        second: data[164].values[2].Sport,
+        third: ""
       },
       'SEN': {
         first: 'None',
@@ -42717,7 +42782,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
         third: data[200].values[2].Sport
       },
       'URY': {
-        first: data[202].values[0].Sport + ", ",
+        first: data[202].values[0].Sport,
         second: "",
         third: ""
       },
@@ -42761,10 +42826,6 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
 
   });
   console.log("executing data");
-  this.map.legend();
-  this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
-  this.countryToRatio = [];
-  this.orderedTop = [];
   d3.select(window).on('resize', function () {
     _this.map.resize();
   });
@@ -42880,7 +42941,8 @@ function initializeRankChart() {
 } // create svg for bigChart
 
 
-var bigsvg = d3.select('#bigchart').append('svg').attr('width', "1000").attr('height', 380); // create svg for medalChart
+var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', 380);
+console.log("bigsvg", bigsvg); // create svg for medalChart
 
 var medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380); // draw small chart elements here
 
@@ -43141,4 +43203,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.8ef7521f.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.e57f5e31.js.map

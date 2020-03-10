@@ -37,7 +37,8 @@ class rankRows {
 
         // add image to each row here
         // get country name
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-");
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").toLowerCase();
+        console.log("THIS IS IMAGE COUNTRY NAME", imgcountryName);
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
@@ -119,7 +120,7 @@ class rankRows {
     for (var i = 0; i < topCountryToRatio.length; i++) {
       if (topCountryToRatio[i].value > 0) {
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-");
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").toLowerCase();
 
         // add in new element
         rowDiv.append("div")
@@ -294,7 +295,7 @@ class rankRows {
         .style("opacity", 1.0);
 
         // add image
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-");
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").toLowerCase();
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
         .attr("src", imgcountryName + "-flag.svg")

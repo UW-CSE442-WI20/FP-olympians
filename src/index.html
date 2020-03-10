@@ -12,18 +12,10 @@
     <div class="dashboard">
       <header>
         <!-- Header content -->
-        <div class="dropdown">
-          Sport:
-          <select id="select-sport"></select>
-        </div>
-        <div class="grid-element searchbar">
-            <div class="autocomplete">
-              <input id="searchbar" name="searchbar" type="text" class="searchbar" placeholder="Search"/>
-          </div>
-        </div>
         <div>
           <h1>Looking Forward to the 2020 Olympics</h1>
         </div>
+        <button id="map-btn" type="button">Reset Map</button>
       </header>
 
       <sidebar>
@@ -51,30 +43,40 @@
       </sidebar>
 
       <main>
-        <div id="container" style="position: relative; width:100%; height:1000px;">
+        <div id="map-container" style="position: relative; width:100%; height:1000px;">
+          <div id="map-text">map text here
+          </div>
           <div id="map" style="position: absolute; width:80%; object-fit: contain; margin: 0 auto;"> </div>
         </div>
         <!-- Main content -->
-        <div class="container">
-
-          <!-- <div class="dropdown">
-            Sport:
-            <select id="select-sport"></select>
-          </div> -->
-
-          <div id="bigchart">
-            <!-- Big chart content -->
+        <div id="main-container">
+          <div id="left-container">
+            <div class="dropdown">
+              Sport:
+              <select id="select-sport"></select>
+            </div>
+            <div class="searchbar">
+                <div class="autocomplete">
+                  <input id="searchbar" name="searchbar" type="text" class="searchbar" placeholder="Search"/>
+              </div>
+            </div>
+            <div id="sport-text">This is some sport text
+            </div>
+            <div id="countryTable">
+              <!-- Summary statistic for country -->
+              <div id="table_wrap">
+                  <h3 id="country"></h3>
+                  <table id="country_table"></table>
+              </div>
+            </div>
           </div>
+          <div id="chart-container">
+            <div id="bigchart">
+              <!-- Big chart content -->
+            </div>
 
-          <div id="medalchart">
-            <!-- Medal chart content -->
-          </div>
-
-          <div id="countryTable">
-            <!-- Summary statistic for country -->
-            <div id="table_wrap">
-                <h3 id="country"></h3>
-                <table id="country_table"></table>
+            <div id="medalchart">
+              <!-- Medal chart content -->
             </div>
           </div>
         </div>

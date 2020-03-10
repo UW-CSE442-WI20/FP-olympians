@@ -31284,8 +31284,6 @@ var generateMedalChart = require("./medalChart");
 
 var SummaryCountry = require('./summaryChartCountry');
 
-var selectedCountry = undefined;
-
 var bigChart =
 /*#__PURE__*/
 function () {
@@ -31461,8 +31459,7 @@ function () {
       var duration = 250;
       var lineOpacity = "0.50";
       var lineOpacityHover = "0.95";
-      var otherLinesOpacityHover = "0.25";
-      var otherLinesOpacitySelected = "0.1";
+      var otherLinesOpacityHover = "0.1";
       var lineStroke = "3px";
       var lineStrokeHover = "4.5px";
       var circleOpacity = '0.85';
@@ -31525,39 +31522,19 @@ function () {
       .style('stroke', function (d) {
         return color(d.key);
       }).style('opacity', lineOpacity).style('fill', 'none').on("mouseover", function (d) {
-        if (selectedCountry === undefined) {
-          // change line opacity
-          d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
-          d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
+        // change line opacity
+        d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
+        d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
 
-          svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
-        } else if (selectedCountry === d) {
-          d3.select(this).style('stroke', 'black');
-        }
+        svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
       }).on("mouseout", function (d) {
-        if (selectedCountry === undefined) {
-          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
-          //   .style('opacity', lineOpacity)
-          //   .style("stroke-width", lineStroke);
+        d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
+        //   .style('opacity', lineOpacity)
+        //   .style("stroke-width", lineStroke);
 
-          svg.selectAll(".country-text").remove();
-        } else if (selectedCountry === d) {
-          d3.select(this).style('stroke', function (d) {
-            return color(d.key);
-          });
-        }
+        svg.selectAll(".country-text").remove();
       }).on("click", function (d) {
         // get the data for the selected athlete
-        selectedCountry = selectedCountry === undefined ? d : undefined;
-
-        if (selectedCountry === d) {
-          d3.selectAll(".line").style('opacity', otherLinesOpacitySelected);
-          d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
-        } else {
-          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke);
-          return;
-        }
-
         console.log(entriesBySportThenCountryThenYear);
         console.log(d);
         console.log("curr sport:", currSport);
@@ -31592,18 +31569,21 @@ function () {
       }).style("fill", "black");
       svg.selectAll(".parallelAxis").transition().duration(1500).each(function (d) {
         d3.select(this).call(yAxis);
-      });
-      var brushRange = {};
-      svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {
-        // console.log("xxxxxxxxxxxxxxxxx")
-        // console.log(d);
-        // xScale(d), 0], [xScale(d) + 5, this.height
-        // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
-          console.log("yo");
-        }).on("brush", brush)); //TODO: change 600 to be this.height
-      });
-      this.brushRange = brushRange;
+      }); //   var brushRange = {};
+      //   svg.selectAll(".axisBrush")
+      //     .data(dimensions).enter()
+      //     .append("g")
+      //     .attr('class', 'axisBrush')
+      //     .each(function (d) {
+      //       // console.log("xxxxxxxxxxxxxxxxx")
+      //       // console.log(d);
+      //       // xScale(d), 0], [xScale(d) + 5, this.height
+      //       // d3.brushY().extent([0, 0], [100, 200])
+      //       d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("start", function() {
+      //         d3.event.stopPropogation();
+      //       }).on("brush", brush)) //TODO: change 600 to be this.height
+      //     })
+      //   this.brushRange = brushRange;  
     }
   }]);
 
@@ -31659,7 +31639,7 @@ function () {
         this.topDivs.push(newDiv); // add image to each row here
         // get country name
 
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-");
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -31712,7 +31692,7 @@ function () {
       for (var i = 0; i < topCountryToRatio.length; i++) {
         if (topCountryToRatio[i].value > 0) {
           countryName = topCountryToRatio[i].key.replace(/ /g, "");
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-"); // add in new element
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase(); // add in new element
 
           rowDiv.append("div").attr("id", "row" + countryName) // new country
           .style("position", "absolute").style("top", "90%") // .style("left", 0)
@@ -31804,7 +31784,7 @@ function () {
           .style("position", "absolute").style("top", i * 10 + "%") // .style("left", 0)
           .style("width", "190px").style("height", "60px").style("margin-top", "6px").style("margin-bottom", "6px").style("background-color", "#B0C4DE").style("display", "flex").style("flex-direction", "row").style("justify-content", "flex-start").style("align-items", "center").style("opacity", 0.0).transition().delay(100).style("opacity", 1.0); // add image
 
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-");
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
           console.log(imgcountryName);
           d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
           .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
@@ -41972,13 +41952,13 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
       highlightBorderColor: '#bada55',
       popupOnHover: true,
       highlightOnHover: true,
-      highlightBorderWidth: 3,
+      highlightBorderWidth: 1,
       popupTemplate: function popupTemplate(geography, data) {
         return '<div class="hoverinfo">' + geography.properties.name + '\'s top sport(s): ' + data.first + data.second + data.third;
       }
     },
     fills: {
-      defaultFill: 'green'
+      defaultFill: '#6C8CBF'
     },
     data: {
       'AFG': {
@@ -43015,7 +42995,9 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
 
   });
   console.log("executing data");
-  this.map.legend();
+  this.map.legend(); // this.map.svg.attr("height", "100px");
+  // this.map.svg.attr("width", "100px");
+
   this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
   this.countryToRatio = [];
   this.orderedTop = [];
@@ -43134,7 +43116,8 @@ function initializeRankChart() {
 } // create svg for bigChart
 
 
-var bigsvg = d3.select('#bigchart').append('svg').attr('width', "1000").attr('height', 380); // create svg for medalChart
+var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', 380);
+console.log("bigsvg", bigsvg); // create svg for medalChart
 
 var medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380); // draw small chart elements here
 
@@ -43422,7 +43405,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38655" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51365" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

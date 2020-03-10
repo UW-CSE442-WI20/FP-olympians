@@ -402,9 +402,11 @@ class bigChart {
         // console.log(d);
         // xScale(d), 0], [xScale(d) + 5, this.height
         // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
-          console.log("yo");
-        }).on("brush", brush)) //TODO: change 600 to be this.height
+
+        
+        // d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
+        //   console.log("yo");
+        // }).on("brush", brush)) //TODO: change 600 to be this.height
       })
     this.brushRange = brushRange;
   }
