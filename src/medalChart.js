@@ -9,6 +9,9 @@ const _ = require("underscore");
 // Input will preferably be all the rows for that country for the given sport, plus the year.
 // We can then filter based on year inside this method.
 
+// global variables
+let athleteFilter = false;
+
 // TODO: Apply d3 force?
 module.exports =
 function generateMedalChart(data, medalsvg) {
@@ -188,7 +191,7 @@ function generateMedalChart(data, medalsvg) {
     //       return tickVals[i] + 2;
     //       // return graphData[index].x;
     //     });
-      
+
     // const xAxisWeekGenerator = d3.axisBottom(xSmallScale)
     //     .tickPadding(30)
     //     .tickSize(-innerHeight, 0, 0)
@@ -200,7 +203,7 @@ function generateMedalChart(data, medalsvg) {
     //     .attr("id", "xAxisMedals")
     //     .attr('transform', "translate(0," + innerHeight + ")")
     //     .call(xAxisWeekGenerator);
-      
+
     //   xAxisWeekUi.selectAll('.tick')
     //     .attr('class', (d, i) => {
     //       if (i % 2 === 0) {
@@ -263,9 +266,16 @@ function generateMedalChart(data, medalsvg) {
         }
     }
 
-    const medalRadius = 10; // radius of medal circles 
+    const medalRadius = 10; // radius of medal circles
 
     /////////////////////////////////// d3.force
+
+    if (nodes.length == 0) {
+      medalsvg.append("text")
+          .attr("id", "medalTooltip")
+          .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 3) + ")")
+          .text(data[0].values[0].Team + " did not win any medals");
+    }
 
     const yForceOffset = medalType => {
         if (medalType === 'Bronze') {
@@ -298,7 +308,7 @@ function generateMedalChart(data, medalsvg) {
             // If the positions exceed the box, set them to the boundary position.
             var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
             node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius);
-            // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));            
+            // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));
             node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
         }
     }
@@ -356,8 +366,9 @@ function generateMedalChart(data, medalsvg) {
                 })
                 .on("click", function(d) {
                     // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
-                    // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));            
+                    // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));
                     currSelectedAthlete = d.grpAthlete;
+                    // athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
@@ -415,12 +426,15 @@ function redrawMedals(slice, currSelectedAthlete) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         // })
         .style("fill", function(d) {
+            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
         })
         .style("opacity", function(d) {
+            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
         })
         .attr("pointer-events", (d) => {
+            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
 }
