@@ -9,12 +9,14 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
+var countryNames = null;
 var currSport = "Archery";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
 var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
+const autocomplete = require("./search");
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
 const Map = require('./map');
@@ -98,8 +100,23 @@ function initializeDropdowns() {
 		.attr("width", "1000")
 		.attr("height", 380);
      bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
-
+     initializeSearch();
   })
+}
+
+function initializeSearch() {
+	var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
+	    // console.log("searching for ", currSport);
+	    // console.log("considering ", item.key);
+	    return item.key === currSport;
+	});
+	console.log("sport data", sportData);
+	countryNames = [];
+	var countries = sportData.values.forEach((item) => {
+		countryNames.push(item.key);
+	});
+	console.log("countries", countryNames);
+	autocomplete(document.getElementById("searchbar"), countryNames, sportData, medalsvg);
 }
 
 function initializeData(data) {
@@ -317,6 +334,8 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    initializeSearch();
+  
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
