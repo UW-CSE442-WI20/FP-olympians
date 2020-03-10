@@ -425,6 +425,7 @@ function generateMedalChart(data, medalsvg) {
         // recolor all medals when esc key is pressed to original medal color
         if (d3.event.keyCode == 81) {
             // console.log("escape key pressed");
+            athleteFilter = !athleteFilter;
             d3.selectAll("#medal")
                 .style("fill", function(d) {
                     return color(d.grpName);
