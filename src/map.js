@@ -4,6 +4,8 @@ const Datamap = require('../node_modules/datamaps/dist/datamaps.world.min.js')
 
 class worldMap {
   constructor(entriesBySportByYearByCountryRatio, data) {
+    this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
+
     this.data = d3.nest()
       .key(function(d) {
         return d.Team
@@ -25,6 +27,23 @@ class worldMap {
             '\'s top sport(s): ' + data.first +
              data.second + data.third;
         }
+      },
+      done: function(datamap) {
+        console.log("inside of the done func")
+        d3.select('.datamap').call(
+          d3.zoom()
+            .scaleExtent([0.7, 6])
+            .on('zoom', function() {
+              datamap.svg.selectAll('g').attr('transform', d3.event.transform);
+            })
+        );
+        document.getElementById('btn').onclick = function() {
+          datamap.svg.selectAll("g")
+            .transition()
+            .duration(500)
+            .attr("transform", d3.zoomIdentity);
+          d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
+        };
       },
       fills: {
         defaultFill: 'green'
@@ -842,7 +861,8 @@ class worldMap {
         },
         'SAU': {
           first: data[164].values[0].Sport + ", ",
-          second: data[164].values[2].Sport
+          second: data[164].values[2].Sport,
+          third: ""
         },
         'SEN': {
           first: 'None',
@@ -1063,20 +1083,12 @@ class worldMap {
       // idea: get list of countries and manually put them
       // in including color change?
     });
+
     console.log("executing data");
-
-
-    this.map.legend();
-
-    this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
-    this.countryToRatio = [];
-    this.orderedTop = [];
-
     d3.select(window).on('resize', () => {
       this.map.resize();
     });
   }
-
 
   // old code to generate ranking
   // getRanking() {
@@ -1150,6 +1162,4 @@ class worldMap {
   //
   // }
 
-}
-
-module.exports = worldMap;
+} module.exports = worldMap;
