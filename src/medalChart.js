@@ -368,7 +368,7 @@ function generateMedalChart(data, medalsvg) {
                     // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
                     // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));
                     currSelectedAthlete = d.grpAthlete;
-                    // athleteFilter = !athleteFilter;
+                    athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
@@ -426,15 +426,15 @@ function redrawMedals(slice, currSelectedAthlete) {
         //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
         // })
         .style("fill", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
         })
         .style("opacity", function(d) {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? 1.0 : 0.8;
         })
         .attr("pointer-events", (d) => {
-            // currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
+            currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
 }
