@@ -13,7 +13,7 @@ body {
 
 h1 {
   text-align: left;
-  color: black;
+  color: #6C8CBF;
   margin-left: 60px;
 }
 
@@ -33,6 +33,12 @@ p.selector {
 
 .dashboard {
   display: grid;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
 
   grid-template-areas:
     "header sidebar"
@@ -45,11 +51,15 @@ p.selector {
   grid-gap: 1px;
   height: 100vh;
   width: 100vw;
+  background-color: white;
+  /* background-color: rgba(28, 22, 43, 0.65); */
+  /* background-image: linear-gradient(to bottom, rgba(82, 91, 104, 1), rgba(82, 91, 104, 0.6)); */
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
 }
 
 header {
   grid-area: header;
-  background-color: white;
+  background-color: none;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -63,7 +73,8 @@ sidebar {
   width: 210px;
   overflow-y: scroll;
   grid-area: sidebar;
-  background-color: black;
+  /* background-color: #F9ECEC; */
+  background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%);
   padding: 2px;
   display: flex;
   flex-direction: column;
@@ -94,7 +105,9 @@ sidebar {
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
   margin-right: 0rem;
-  background-color: black;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
 }
 
 #rank-title {
@@ -113,7 +126,7 @@ sidebar {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: #FFFAFA;
+  background-color: #F9ECEC;
   color: black;
   text-align: left;
   font-size: 0.85em;
@@ -123,7 +136,7 @@ sidebar {
   padding-bottom: 10px;
   top: -5px;
   right: 105%;
-  box-shadow: 4px 2px 2px #000080;
+  box-shadow: 4px 2px 2px #6C8CBF;
 
   /* Position the tooltip */
   position: absolute;
@@ -142,7 +155,7 @@ sidebar {
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent #FFFAFA;
+  border-color: transparent transparent transparent #F9ECEC;
 }
 
 #year-selector {
@@ -159,7 +172,7 @@ sidebar {
 .button {
   display: block;
   width: 40%;
-  background-color: black;
+  background-color: #6C8CBF;
   border: none;
   border-radius: 4px;
   color: #FFFAFA;
@@ -174,7 +187,7 @@ sidebar {
 }
 
 .button:hover {
-  background-color: #FFFAFA;
+  background-color: #F9ECEC;
   color: black;
   opacity: 1;
 }
@@ -193,7 +206,9 @@ sidebar {
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background-color: black;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
 }
 
 .dropdown {
@@ -220,19 +235,37 @@ sidebar {
 
 main {
   grid-area: content;
-  background-color: white;
+  background-color: none;
+  /* background-image: linear-gradient(to bottom, rgba(28, 22, 43, 0.65), rgba(20, 14, 36, 0.31)); */
   margin: 0;
   padding: 0;
 }
 
-.container {
+#overview-text {
+  width: 200px;
+}
+
+#map-container {
+  display: flex;
+  flex-direction: row;
+}
+
+#left-side-chart {
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
   margin: 0;
   padding: 0;
+  background-color: #F9ECEC;
 }
 
 #bigchart {
@@ -244,7 +277,7 @@ main {
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background-color: white;
+  background: none;
   position: relative;
 }
 
@@ -266,6 +299,14 @@ main {
   width:100%;
   margin-right:5px;
   position:relative;
+}
+
+#map {
+  padding: 0;
+}
+
+#medalChart {
+  background-color: none;
 }
 
 #xAxisMedals .tick.label line {

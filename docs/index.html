@@ -1,8 +1,12 @@
 <html>
   <head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <!-- <script src="../node_modules/datamaps/dist/datamaps.world.min.js"></script> -->
+    <!-- <script src="/datamaps.world.min.js"></script> -->
     <meta charset="UTF-8">
     <title>Looking Forward to the 2020 Olympics</title>
-    <link rel="stylesheet" href="https://uw-cse442-wi20.github.io/FP-olympians/styles.07e80c70.css">
+    <link rel="stylesheet" href="https://uw-cse442-wi20.github.io/FP-olympians/styles.e15eb3e2.css">
   </head>
   <body>
     <div class="dashboard">
@@ -11,6 +15,11 @@
         <div class="dropdown">
           Sport:
           <select id="select-sport"></select>
+        </div>
+        <div class="grid-element searchbar">
+            <div class="autocomplete">
+              <input id="searchbar" name="searchbar" type="text" class="searchbar" placeholder="Search">
+          </div>
         </div>
         <div>
           <h1>Looking Forward to the 2020 Olympics</h1>
@@ -42,6 +51,9 @@
       </sidebar>
 
       <main>
+        <div id="container" style="position: relative; width:100%; height:1000px;">
+          <div id="map" style="position: absolute; width:80%; object-fit: contain; margin: 0 auto;"> </div>
+        </div>
         <!-- Main content -->
         <div class="container">
 
@@ -73,7 +85,7 @@
       </footer>
     </div>
 
-    <script src="https://uw-cse442-wi20.github.io/FP-olympians/main.eb8019b1.js"></script>
+    <script src="https://uw-cse442-wi20.github.io/FP-olympians/main.4bcd0238.js"></script>
 
   </body>
 </html>
