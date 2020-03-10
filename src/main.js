@@ -324,7 +324,6 @@ d3.csv('olympics.csv')
       .then((data) => {
         map = new Map(entriesBySportByYearByCountryRatio, data);
         console.log("here are the rankings:", data)
-        map.getTop('China');
       });
   });
 
