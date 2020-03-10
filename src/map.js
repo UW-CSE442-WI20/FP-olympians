@@ -1040,7 +1040,7 @@ class worldMap {
           third: data[200].values[2].Sport
         },
         'URY': {
-          first: data[202].values[0].Sport + ", ",
+          first: data[202].values[0].Sport,
           second: "",
           third: ""
         },
