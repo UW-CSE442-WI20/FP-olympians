@@ -31410,7 +31410,7 @@ function () {
       //         d3.event.stopPropogation();
       //       }).on("brush", brush)) //TODO: change 600 to be this.height
       //     })
-      //   this.brushRange = brushRange;  
+      //   this.brushRange = brushRange;
     }
   }]);
 
@@ -31667,7 +31667,9 @@ var BigChart = require('./bigChart');
 
 var RankRows = require('./rankRows');
 
-var bigChartInstance;
+var SummaryCountry = require('./summaryChartCountry');
+
+var bigChartInstance = new BigChart();
 var rankRowsDiv = d3.select('#rankings');
 var rankRows = null; // instantiate rankRows
 
@@ -31737,7 +31739,7 @@ function initializeDropdowns() {
 
     medalsvg.remove();
     medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380);
-    bigChartInstance.redraw(bigsvg, currSport, medalsvg);
+    bigChartInstance.redraw(bigsvg, currSport, medalsvg); // bigChartInstance.drawChart(bigsvg, entriesBySportByYearMedalCount[currSport.value].values, currSport, medalsvg);
   });
 }
 
@@ -31908,13 +31910,15 @@ d3.csv('olympics.csv').then(function (data) {
   initializeRankChart();
   initializeYearOptions();
   initializeDropdowns();
-  bigChartInstance = new BigChart(data);
-  bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
+  var columnNames = ["Year", "Athletes", "Medals"];
+  var summaryCountry = new SummaryCountry(data, columnNames);
+  summaryCountry.createChart('China');
+  bigChartInstance.drawChart(bigsvg, entriesBySportByYearAthleteCount, currSport, medalsvg, entriesBySportThenCountryThenYear, rankRows); //createRanking("Archery");
 }); // You can load JSON files directly via require.
 // Note this does not add a network request, it adds
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
-},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./bigChart":"bigChart.js","./rankRows":"rankRows.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","underscore":"../node_modules/underscore/underscore.js","./bigChart":"bigChart.js","./rankRows":"rankRows.js","./summaryChartCountry":"summaryChartCountry.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -31942,7 +31946,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39601" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50362" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
