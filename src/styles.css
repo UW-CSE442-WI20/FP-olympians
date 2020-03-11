@@ -52,12 +52,12 @@ p.selector {
 
   grid-template-areas:
     "header sidebar"
-    "maparea sidebar"
-    "content sidebar";
+    "content sidebar"
+    "maparea sidebar";
     /* "footer footer"; */
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 90px 1fr auto;
+  grid-template-rows: 90px 1fr 200px;
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
@@ -274,7 +274,7 @@ main {
 #map-text {
   margin-top: 320px;
   width: 200px;
-  height: 620px;
+  height: 320px;
   background-color: gray;
 }
 
@@ -292,7 +292,7 @@ main {
   height: 50%; */
   z-index: 0;
   width:100%;
-  height:900px;
+  height: 640px;
 }
 
 .datamap {
@@ -336,6 +336,7 @@ main {
   width: 800px;
   height: 380px;
   padding: 5px;
+  padding-bottom: 0px;
   margin-top: 0.5rem;
   margin-bottom: 0rem;
   margin-left: 0.5rem;
@@ -347,9 +348,10 @@ main {
 #medalChart {
   display: inline-block;
   width: 800px;
-  height: 380px;
+  height: 410px;
   padding: 5px;
-  margin-top: 0rem;
+  padding-top: 0px;
+  margin-top: -140px;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;

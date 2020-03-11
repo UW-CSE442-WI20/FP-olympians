@@ -16,7 +16,7 @@ class bigChart {
     this.height = 0;// = parseInt(bigsvg.style("height"), 10);
     this.margin = 50;
     // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
-    this.margins = { top: 30, right: 35, bottom: 10, left: 35 };
+    this.margins = { top: 30, right: 35, bottom: 0, left: 35 };
 
     // getting scale of graph
 

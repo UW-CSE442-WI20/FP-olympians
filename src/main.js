@@ -10,7 +10,7 @@ var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
 var countryNames = null;
-var currSport = "Archery";
+var currSport = "Swimming";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
 var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
@@ -76,7 +76,7 @@ function initializeDropdowns() {
     }
 	}
   // default selection
-  select.options[0].selected = true;
+  select.options[25].selected = true;
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
 	   currSportSelections = document.getElementById('select-sport');
