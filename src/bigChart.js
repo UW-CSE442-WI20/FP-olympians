@@ -284,6 +284,9 @@ class bigChart {
 
     svg.selectAll(".country-text").remove();
 
+    
+
+      
     lineGroup
       .enter()
       .append('g')
@@ -293,7 +296,7 @@ class bigChart {
       .attr('d', d => line(d.values))
       // Draw color based on index? Or maybe based on country?
       .style('stroke', d => color(d.key))
-      .style('opacity', lineOpacity)
+      .style('opacity', 0)
       .style('fill', 'none')
       .on("mouseover", function (d) {
         if (selectedCountry === undefined) {
@@ -331,8 +334,6 @@ class bigChart {
             .style('stroke', d => color(d.key))
         }
       })
-
-      
       .on("click", function (d) {
         // get the data for the selected athlete
         selectedCountry = selectedCountry === undefined ? d : undefined;
@@ -368,12 +369,18 @@ class bigChart {
         country.updateChart(countryData.key);
         console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
-      });
+      })
+      .transition()
+      .duration(1000)
+      .style('opacity', lineOpacity)
 
-    lineGroup.exit()
+
+
+      lineGroup.exit()
       .transition()
       .style('opacity', 0)
       .remove();
+
 
     // now add titles to the axes
     bigsvg.append("text")
@@ -392,11 +399,9 @@ class bigChart {
       .attr("y", -10)
       .text(function (d) { return d; })
       .style("fill", "black")
-
     svg.selectAll(".parallelAxis")
-      .transition().duration(1500)
       .each(function (d) {
-        d3.select(this).call(yAxis)
+        d3.select(this).transition().duration(500).call(yAxis)
       })
 
     var brushRange = {};
