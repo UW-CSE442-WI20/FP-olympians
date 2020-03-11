@@ -30941,7 +30941,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }) // .style('opacity', 0.6)
     .on("mouseover", function (d) {
       // Change tooltip text
-      tooltipContainer.style("left", d3.event.pageX + "px").style("top", d3.event.pageY + medalRadius + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>"); // highlight current circle selected
+      tooltipContainer.style("left", d3.mouse(this)[0] + medalRadius + "px").style("top", d3.mouse(this)[1] + medalRadius * 2 + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>"); // highlight current circle selected
 
       d3.select(this) // .style('opacity', 1.0)
       .style('fill', function (d) {
@@ -43496,7 +43496,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58228" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60333" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -30687,7 +30687,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
     }) // .style('opacity', 0.6)
     .on("mouseover", function (d) {
       // Change tooltip text
-      tooltipContainer.style("left", d3.event.pageX + "px").style("top", d3.event.pageY + medalRadius + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>"); // highlight current circle selected
+      tooltipContainer.style("left", d3.mouse(this)[0] + medalRadius + "px").style("top", d3.mouse(this)[1] + medalRadius * 2 + "px").style("visibility", "visible").html("<p>" + d.grpAthlete + "<br>" + d.grpEvent + "<br>" + d.grpName + "</p>"); // highlight current circle selected
 
       d3.select(this) // .style('opacity', 1.0)
       .style('fill', function (d) {
@@ -43215,4 +43215,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.660a0ca2.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.591902a0.js.map
