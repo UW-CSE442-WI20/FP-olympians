@@ -25,7 +25,7 @@ class worldMap {
         popupTemplate: function(geography, data) {
           return '<div class="hoverinfo">' + geography.properties.name +
             '\'s top sport(s): ' + data.first +
-             data.second + data.third;
+             data.second + data.third + '</div>';
         }
       },
       done: function(datamap) {

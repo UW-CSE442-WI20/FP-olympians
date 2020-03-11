@@ -242,7 +242,8 @@ function generateMedalChart(data, medalsvg) {
     // add title: country name
     medalsvg.append("text")
         .attr("x", width / 2)
-        .attr("y", height - innerHeight - 1.3 * margin["top"])
+        .attr("y", height + margin["bottom"] + 18)  // 11 is r of circle
+        //.attr("y", height - innerHeight - 1.3 * margin["top"])
         .style("text-anchor", "middle")
         .text(data[0].values[0].Team);  // Country Name
 

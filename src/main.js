@@ -97,7 +97,7 @@ function initializeDropdowns() {
      medalsvg.remove();
      medalsvg = d3.select('#medalchart')
 		.append('svg')
-		.attr("width", "1000")
+		.attr("width", "800")
 		.attr("height", 380);
      bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
      initializeSearch();

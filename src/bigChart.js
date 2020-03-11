@@ -138,12 +138,12 @@ class bigChart {
     }
 
     /* Add Axis into SVG */
-    var xAxis = d3.axisBottom(xScale).ticks(5);
+    //var xAxis = d3.axisBottom(xScale).ticks(5);
     // const xAxis = d3.axisBottom(xScale))
     //     .tickPadding(30)
     //     .tickValues(getTickValues(2000, 2020))
     //     .tickFormat(d3.format("Y"))
-    var yAxis = d3.axisLeft(yScale).ticks(5);
+    //var yAxis; // = d3.axisLeft(yScale).ticks(5);
 
     // svg.append("g")
     //   .attr("class", "x axis")
@@ -192,6 +192,50 @@ class bigChart {
     this.yRange = yRange;
     this.svg = svg;
     console.log(this.yRange);
+
+    var actualHeight = this.height - this.margins.top - this.margins.bottom;
+
+    var yScale = d3.scaleLinear()
+      .domain([0, yRange[currSport]])
+      .range([actualHeight, 0]);
+
+    // set up y axis
+    var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"))
+       .ticks(7)
+       .tickSize(0)
+       .tickPadding(-5);
+
+    // now add titles to the axes
+    bigsvg.append("text")
+      .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+      .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+      .text("Athletes Participated");
+      svg.selectAll(".parallelAxis")
+        .data(dimensions).enter()
+        .append("g")
+        .attr('class', 'parallelAxis')
+        .attr("transform", function (d) {
+          return "translate(" + xScale(d) + ") ";
+        })
+        .append("text")
+        .style("text-anchor", "middle")
+        .attr("y", -10)
+        .text(function (d) { return d; })
+        .style("fill", "gray")
+      svg.selectAll(".parallelAxis")
+        .each(function (d) {
+          // add in the rectangle bars
+          d3.select(this).append("rect")
+            .attr("x", -6)
+            .attr("y", -6)
+            .attr("width", 14)
+            .attr("height", 320)
+            .attr("fill", "#525B68")
+            .attr("opacity", 0.8);
+          //d3.select(this).call(yAxis);
+          d3.select(this).transition().duration(500).call(yAxis);
+        })
+
 
     this.redraw(bigsvg, currSport, medalsvg);
   }
@@ -262,8 +306,20 @@ class bigChart {
       .domain([0, yRange[currSport]])
       .range([actualHeight, 0]);
 
-    yAxis = d3.axisLeft(yScale);
+    // set up y axis
+    var yAxis = d3.axisLeft(yScale)
+      // .tickFormat(d3.format("d"))
+       .ticks(7)
+       .tickSize(0)
+       .tickPadding(-5)
+       .tickFormat(function(e){
+        if(Math.floor(e) != e)
+        {
+            return;
+        }
 
+        return e;
+    });
 
     var line = d3.line()
       .x(d => xScale(d.key))
@@ -284,9 +340,6 @@ class bigChart {
 
     svg.selectAll(".country-text").remove();
 
-    
-
-      
     lineGroup
       .enter()
       .append('g')
@@ -313,6 +366,7 @@ class bigChart {
             .attr("x", (width - margin) / 2)
             .attr("y", 15)
             .style('fill', color(d.key))
+            .style("pointer-events", "none");
         }
         else if (selectedCountry === d) {
           d3.select(this)
@@ -382,26 +436,36 @@ class bigChart {
       .remove();
 
 
-    // now add titles to the axes
-    bigsvg.append("text")
-      .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-      .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-      .text("Athletes Participated");
-    svg.selectAll(".parallelAxis")
-      .data(dimensions).enter()
-      .append("g")
-      .attr('class', 'parallelAxis')
-      .attr("transform", function (d) {
-        return "translate(" + xScale(d) + ") ";
-      })
-      .append("text")
-      .style("text-anchor", "middle")
-      .attr("y", -10)
-      .text(function (d) { return d; })
-      .style("fill", "black")
+    // // now add titles to the axes
+    // bigsvg.append("text")
+    //   .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+    //   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+    //   .text("Athletes Participated");
+    // svg.selectAll(".parallelAxis")
+    //   .data(dimensions).enter()
+    //   .append("g")
+    //   .attr('class', 'parallelAxis')
+    //   .attr("transform", function (d) {
+    //     return "translate(" + xScale(d) + ") ";
+    //   })
+    //   .append("text")
+    //   .style("text-anchor", "middle")
+    //   .attr("y", -10)
+    //   .text(function (d) { return d; })
+    //   .style("fill", "gray")
     svg.selectAll(".parallelAxis")
       .each(function (d) {
-        d3.select(this).transition().duration(500).call(yAxis)
+        // add in the rectangle bars
+        //d3.select(this).remove("rect");
+        // d3.select(this).append("rect")
+        //   .attr("x", -6)
+        //   .attr("y", -6)
+        //   .attr("width", 12)
+        //   .attr("height", 320)
+        //   .attr("fill", "blue")
+        //   .attr("opacity", 0.8);
+        //d3.select(this).call(yAxis);
+        d3.select(this).transition().duration(500).call(yAxis);
       })
 
     var brushRange = {};
