@@ -257,6 +257,7 @@ main {
 }
 
 #sport-text {
+  margin-top: 50px;
   width: 200px;
   background-color: gray;
 }
@@ -394,8 +395,70 @@ main {
 
 .searchbar {
   z-index: 2;
-  /* margin-left: 10px; */
+  max-height: 0px;
+  overflow: visible;
+  display: flex;
 }
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#searchbarautocomplete-list {
+  overflow: scroll;
+  max-height: 250px;
+  text-align: left;
+}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+
+.autocomplete-items {
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  font-size: 14px;
+  /*position the autocomplete items to be the same width as the container:*/
+  width: 100%;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #6C8CBF;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #F9ECEC;
+}
+
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
 
 /* footer {
   grid-area: footer;
@@ -403,4 +466,4 @@ main {
 } */
 
 
-/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.8d37e6f9.css.map */
+/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.6d0149e0.css.map */

@@ -31511,10 +31511,10 @@ function () {
       }
 
       var duration = 250;
-      var lineOpacity = "0.50";
+      var lineOpacity = "0.5";
       var lineOpacityHover = "0.95";
-      var otherLinesOpacityHover = "0.25";
-      var otherLinesOpacitySelected = "0.1";
+      var otherLinesOpacityHover = "0.1";
+      var otherLinesOpacitySelected = "0.025";
       var lineStroke = "3px";
       var lineStrokeHover = "4.5px";
       var circleOpacity = '0.85';
@@ -31568,7 +31568,10 @@ function () {
       var lineGroup = this.lines.selectAll(".line-group").data(data, function (item) {
         return item;
       });
-      var country = this.summaryCountry;
+      var country = this.summaryCountry; // reset the selectedCountry as we have changed to a different one
+
+      selectedCountry = undefined;
+      svg.selectAll(".country-text").remove();
       lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', function (d) {
         return 'line';
       }).attr('d', function (d) {
@@ -31576,7 +31579,7 @@ function () {
       }) // Draw color based on index? Or maybe based on country?
       .style('stroke', function (d) {
         return color(d.key);
-      }).style('opacity', lineOpacity).style('fill', 'none').on("mouseover", function (d) {
+      }).style('opacity', 0).style('fill', 'none').on("mouseover", function (d) {
         if (selectedCountry === undefined) {
           // change line opacity
           d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
@@ -31602,11 +31605,15 @@ function () {
         // get the data for the selected athlete
         selectedCountry = selectedCountry === undefined ? d : undefined;
 
-        if (selectedCountry === d) {
+        if (selectedCountry != undefined) {
           d3.selectAll(".line").style('opacity', otherLinesOpacitySelected);
           d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
         } else {
-          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke);
+          // When clicking again
+          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke).style('stroke', function (d) {
+            return color(d.key);
+          });
+          svg.selectAll(".country-text").remove();
           return;
         }
 
@@ -31631,7 +31638,7 @@ function () {
         country.updateChart(countryData.key);
         console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
-      });
+      }).transition().duration(1000).style('opacity', lineOpacity);
       lineGroup.exit().transition().style('opacity', 0).remove(); // now add titles to the axes
 
       bigsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
@@ -31642,8 +31649,8 @@ function () {
       }).append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
         return d;
       }).style("fill", "black");
-      svg.selectAll(".parallelAxis").transition().duration(1500).each(function (d) {
-        d3.select(this).call(yAxis);
+      svg.selectAll(".parallelAxis").each(function (d) {
+        d3.select(this).transition().duration(500).call(yAxis);
       });
       var brushRange = {};
       svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {// console.log("xxxxxxxxxxxxxxxxx")
@@ -31655,6 +31662,11 @@ function () {
         // }).on("brush", brush)) //TODO: change 600 to be this.height
       });
       this.brushRange = brushRange;
+    }
+  }, {
+    key: "yo",
+    value: function yo() {
+      console.log("yo");
     }
   }]);
 
@@ -43484,7 +43496,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51960" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58228" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
