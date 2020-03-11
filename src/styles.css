@@ -42,11 +42,12 @@ p.selector {
 
   grid-template-areas:
     "header sidebar"
+    "maparea sidebar"
     "content sidebar";
     /* "footer footer"; */
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 120px auto;
+  grid-template-rows: 90px 1fr auto;
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
@@ -66,6 +67,15 @@ header {
   z-index: 2;
 }
 
+maparea {
+  grid-area: maparea;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  z-index: -1;
+}
+
 sidebar {
   position: fixed;
   top: 0;
@@ -79,8 +89,10 @@ sidebar {
   padding: 2px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   z-index: 2;
 }
+
 
 /* #scrollmenu {
   background-color: #333;
@@ -252,11 +264,12 @@ main {
 #map-text {
   margin-top: 300px;
   width: 200px;
-  height: 300px;
+  height: 620px;
   background-color: gray;
 }
 
 #map-container {
+  position: relative;
   display: flex;
   flex-direction: row;
   margin: 0;
@@ -264,13 +277,16 @@ main {
   align-content: center;
   margin-top: -300px;
   margin-bottom: -250px;
-  width: 1000px;
-  height: 50%;
+  margin-right: 15px;
+  /* width: 1000px;
+  height: 50%; */
   z-index: 0;
+  width:100%;
+  height:920px;
 }
 
 .datamap {
-  background-color: gray;
+  background-color: #F9ECEC;
 }
 
 #map-btn {
@@ -283,26 +299,26 @@ main {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  margin-right: 15px;
   padding: 0;
-  background-color: #F9ECEC;
-  z-index: 1;
+  background-color: white;
+  z-index: 2;
 }
 
 #left-container {
-  height: 1000px;
+  height: 800px;
   width: 200px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
 }
 
 #chart-container {
   display: flex;
   flex-direction: column;
   width: 800px;
-  height: 1000px;
+  height: 800px;
 }
 
 #bigchart {
@@ -311,7 +327,7 @@ main {
   height: 380px;
   padding: 5px;
   margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   background: none;
@@ -323,7 +339,7 @@ main {
   width: 800px;
   height: 380px;
   padding: 5px;
-  margin-top: 0.5rem;
+  margin-top: 0rem;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -338,17 +354,17 @@ main {
 
 
 #country_table {
-  width:100%;
-  height:100px;
-  min-width:400px;
-  margin-right:3px;
-  position:absolute;
+  width: 200px;
+  height: 100px;
+  min-width: 40px;
+  margin-right: 3px;
+  position: absolute;
 }
 
 #table_wrap {
-  width:100%;
-  margin-right:5px;
-  position:relative;
+  width: 200px;
+  margin-right: 5px;
+  position: relative;
 }
 
 #map {
@@ -378,6 +394,7 @@ main {
 
 .searchbar {
   z-index: 2;
+  /* margin-left: 10px; */
 }
 
 /* footer {
