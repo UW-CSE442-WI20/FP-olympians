@@ -31392,14 +31392,13 @@ function () {
         d3.select(this).call(yAxis);
       });
       var brushRange = {};
-      svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {
-        // console.log("xxxxxxxxxxxxxxxxx")
+      svg.selectAll(".axisBrush").data(dimensions).enter().append("g").attr('class', 'axisBrush').each(function (d) {// console.log("xxxxxxxxxxxxxxxxx")
         // console.log(d);
         // xScale(d), 0], [xScale(d) + 5, this.height
         // d3.brushY().extent([0, 0], [100, 200])
-        d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
-          console.log("yo");
-        }).on("brush", brush)); //TODO: change 600 to be this.height
+        // d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
+        //   console.log("yo");
+        // }).on("brush", brush)) //TODO: change 600 to be this.height
       });
       this.brushRange = brushRange;
     }
@@ -31458,6 +31457,7 @@ function () {
         // get country name
 
         imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
+        console.log("THIS IS IMAGE COUNTRY NAME", imgcountryName);
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -41782,7 +41782,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
         datamap.svg.selectAll('g').attr('transform', d3.event.transform);
       }));
 
-      document.getElementById('btn').onclick = function () {
+      document.getElementById('map-btn').onclick = function () {
         datamap.svg.selectAll("g").transition().duration(500).attr("transform", d3.zoomIdentity);
         d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
       };
@@ -42944,7 +42944,7 @@ function initializeRankChart() {
 var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', 380);
 console.log("bigsvg", bigsvg); // create svg for medalChart
 
-var medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380); // draw small chart elements here
+var medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380); // draw small chart elements here
 
 var topRanks = [1, 2, 3]; // Basic Test Example
 // draw the three top rank elements
@@ -43203,4 +43203,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.e57f5e31.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.ecb1c318.js.map
