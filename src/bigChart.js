@@ -226,9 +226,9 @@ class bigChart {
         .each(function (d) {
           // add in the rectangle bars
           d3.select(this).append("rect")
-            .attr("x", -6)
+            .attr("x", -10)
             .attr("y", -6)
-            .attr("width", 14)
+            .attr("width", 16)
             .attr("height", 320)
             .attr("fill", "#525B68")
             .attr("opacity", 0.8);
@@ -344,6 +344,7 @@ class bigChart {
       .enter()
       .append('g')
       .attr('class', 'line-group')
+      .attr('id', d => d.key)
       .append('path')
       .attr('class', d => 'line')
       .attr('d', d => line(d.values))
@@ -390,6 +391,7 @@ class bigChart {
       })
       .on("click", function (d) {
         // get the data for the selected athlete
+        console.log(this);
         selectedCountry = selectedCountry === undefined ? d : undefined;
         if (selectedCountry != undefined) {
           d3.selectAll(".line")

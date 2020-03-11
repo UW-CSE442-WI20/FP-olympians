@@ -9,6 +9,7 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
+var countryNamesBySport = null;
 var countryNames = null;
 var currSport = "Swimming";
 var currYearIndex = 4; // 2016
@@ -99,7 +100,7 @@ function initializeDropdowns() {
 		.append('svg')
 		.attr("width", "800")
 		.attr("height", 380);
-     bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
+     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
      initializeSearch();
   })
 }
@@ -116,7 +117,7 @@ function initializeSearch() {
 		countryNames.push(item.key);
 	});
 	console.log("countries", countryNames);
-	autocomplete(document.getElementById("searchbar"), countryNames, sportData, medalsvg);
+	autocomplete(document.getElementById("searchbar"), countryNamesBySport, sportData, medalsvg);
 }
 
 function initializeData(data) {
@@ -189,6 +190,27 @@ function initializeData(data) {
       return d.Medal.length > 0 ? 1 : 0})})
     .sortKeys(d3.ascending)
     .entries(data);
+
+
+    countryNamesBySport = d3.nest()
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function(v) {
+      let uniqueCountries = _.uniq(v, function(d) {
+        return d.Team;
+      })
+      return uniqueCountries.map(function(item) {
+        return item.Team;
+      }).sort();
+    })
+    .entries(data);
+
+
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO");
+    console.log(countryNamesBySport);
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO")
 
 
 
