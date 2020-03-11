@@ -9,15 +9,19 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
-var currSport = "Archery";
+var countryNames = null;
+var currSport = "Swimming";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
 var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
+const autocomplete = require("./search");
 const BigChart = require('./bigChart');
 const RankRows = require('./rankRows');
+const Map = require('./map');
 var bigChartInstance;
+var map;
 
 
 const rankRowsDiv = d3.select('#rankings');
@@ -31,14 +35,14 @@ function initializeRankChart() {
 // create svg for bigChart
 const bigsvg = d3.select('#bigchart')
   .append('svg')
-  .attr('width', "1000")
-  .attr('height', 380);
-
+  .attr('width', "800")
+  .attr('height',380);
+console.log("bigsvg", bigsvg);
 
 // create svg for medalChart
 let medalsvg = d3.select('#medalchart')
 		.append('svg')
-		.attr("width", "1000")
+		.attr("width", "800")
 		.attr("height", 380);
 
 // draw small chart elements here
@@ -72,7 +76,7 @@ function initializeDropdowns() {
     }
 	}
   // default selection
-  select.options[0].selected = true;
+  select.options[25].selected = true;
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
 	   currSportSelections = document.getElementById('select-sport');
@@ -93,11 +97,26 @@ function initializeDropdowns() {
      medalsvg.remove();
      medalsvg = d3.select('#medalchart')
 		.append('svg')
-		.attr("width", "1000")
+		.attr("width", "800")
 		.attr("height", 380);
      bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
-
+     initializeSearch();
   })
+}
+
+function initializeSearch() {
+	var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
+	    // console.log("searching for ", currSport);
+	    // console.log("considering ", item.key);
+	    return item.key === currSport;
+	});
+	console.log("sport data", sportData);
+	countryNames = [];
+	var countries = sportData.values.forEach((item) => {
+		countryNames.push(item.key);
+	});
+	console.log("countries", countryNames);
+	autocomplete(document.getElementById("searchbar"), countryNames, sportData, medalsvg);
 }
 
 function initializeData(data) {
@@ -315,10 +334,16 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    initializeSearch();
 
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
+    d3.csv('rankings.csv')
+      .then((data) => {
+        map = new Map(entriesBySportByYearByCountryRatio, data);
+        console.log("here are the rankings:", data)
+      });
   });
 
   // You can load JSON files directly via require.
