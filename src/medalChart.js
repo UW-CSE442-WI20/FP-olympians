@@ -473,10 +473,11 @@ function generateMedalChart(data, medalsvg) {
     tally.selectAll("#tallyGroup")
         .append("text")
         .attr("text-anchor", "middle")
+        .style("font-size", "11px")
         .attr("transform", function (d) {
-            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",15.5)";
+            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",13.5)";
         })
-        .style("fill", "white")
+        .style("fill", "black")
         .text(function(d) {
             return d.grpValue;
         });
