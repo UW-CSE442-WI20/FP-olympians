@@ -6,6 +6,8 @@
 	.st0{fill:#008751;}
 	.st1{fill:#FFFFFF;}
 </style>
-<rect id="_x32_" x="932" y="996.5" class="st0" width="225" height="150"/>
-<rect id="_x31_" x="994.5" y="996.5" class="st1" width="100" height="150"/>
+<g>
+	<rect id="_x32_" x="932" y="996.5" class="st0" width="225" height="150"/>
+	<rect id="_x31_" x="1007" y="996.5" class="st1" width="75" height="150"/>
+</g>
 </svg>
