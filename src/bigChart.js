@@ -5,11 +5,19 @@ const _ = require("underscore");
 
 const generateMedalChart = require("./medalChart");
 const SummaryCountry = require('./summaryChartCountry');
+
+
 var selectedCountry = undefined;
+var bigChartInstance = null;
+function yo() {
+  console.log("lol");
+  console.log(bigChartInstance.height)
+}
 class bigChart {
   constructor(data) {
 
     // Formatting lines
+    bigChartInstance = this;
 
     // getting width and height of graph
     this.width = 0;// = parseInt(bigsvg.style("width"), 10);
@@ -219,7 +227,7 @@ class bigChart {
         })
         .append("text")
         .style("text-anchor", "middle")
-        .attr("y", -10)
+        .attr("y", yScale(0) + 8)
         .text(function (d) { return d; })
         .style("fill", "gray")
       svg.selectAll(".parallelAxis")
@@ -278,9 +286,6 @@ class bigChart {
     var yRange = this.yRange;
     this.currSport = currSport;
 
-    console.log(data);
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
-
     console.log(svg);
 
     // this.lines.selectAll(".line-group")
@@ -326,7 +331,7 @@ class bigChart {
       .y(d => yScale(d.value));
 
 
-
+    console.log(data);
     var lineGroup = this.lines.selectAll(".line-group")
       .data(data, function (item) {
         return item;
@@ -344,9 +349,9 @@ class bigChart {
       .enter()
       .append('g')
       .attr('class', 'line-group')
-      .attr('id', d => d.key)
       .append('path')
-      .attr('class', d => 'line')
+      .attr('class', 'line')
+      .attr('id', d => d.key)
       .attr('d', d => line(d.values))
       // Draw color based on index? Or maybe based on country?
       .style('stroke', d => color(d.key))
@@ -389,7 +394,10 @@ class bigChart {
             .style('stroke', d => color(d.key))
         }
       })
-      .on("click", function (d) {
+      .on("click",
+      
+      
+      function (d) {
         // get the data for the selected athlete
         console.log(this);
         selectedCountry = selectedCountry === undefined ? d : undefined;
@@ -425,7 +433,10 @@ class bigChart {
         country.updateChart(countryData.key);
         console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
-      })
+      }
+      
+      
+      )
       .transition()
       .duration(1000)
       .style('opacity', lineOpacity)
@@ -489,7 +500,7 @@ class bigChart {
     this.brushRange = brushRange;
   }
 
-  yo() {
+  yo(d) {
     console.log("yo");
   }
 

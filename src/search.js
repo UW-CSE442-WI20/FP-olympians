@@ -26,11 +26,11 @@ function autocomplete(searchField, countryNamesBySport, sportData, medalsvg) {
       return false;
     }
 
-    // currSportSelections = document.getElementById('select-sport');
-    // currSport = currSportSelections.options[currSportSelections.value].text;
-    // var countryNames = _.find(d3.values(countryNamesBySport), function (item) {
-    //   return item.key == currSport;
-    // }).value;
+    currSportSelections = document.getElementById('select-sport');
+    currSport = currSportSelections.options[currSportSelections.value].text;
+    var countryNames = _.find(d3.values(countryNamesBySport), function (item) {
+      return item.key == currSport;
+    }).value;
   
     currentFocus = -1;
     /*create a DIV element that will contain the items (values):*/
@@ -67,7 +67,9 @@ function autocomplete(searchField, countryNamesBySport, sportData, medalsvg) {
           console.log("+++++++++++++++")
           console.log("index", countryIndex);
           console.log("country rows", sportData.values);
-          
+          let yuh = d3.select("#" + currSport)
+          console.log(yuh);
+          // yuh.on("click");
           generateMedalChart(sportData.values[countryIndex].values, medalsvg);
         });
         a.appendChild(b);
