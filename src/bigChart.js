@@ -203,10 +203,10 @@ class bigChart {
     }
 
     var duration = 250;
-    var lineOpacity = "0.50";
+    var lineOpacity = "0.5";
     var lineOpacityHover = "0.95";
-    var otherLinesOpacityHover = "0.25";
-    var otherLinesOpacitySelected = "0.1"
+    var otherLinesOpacityHover = "0.1";
+    var otherLinesOpacitySelected = "0.025"
     var lineStroke = "3px";
     var lineStrokeHover = "4.5px";
 
@@ -279,6 +279,11 @@ class bigChart {
 
     var country = this.summaryCountry
 
+    // reset the selectedCountry as we have changed to a different one
+    selectedCountry = undefined;
+
+    svg.selectAll(".country-text").remove();
+
     lineGroup
       .enter()
       .append('g')
@@ -329,7 +334,6 @@ class bigChart {
 
       
       .on("click", function (d) {
-        yo();
         // get the data for the selected athlete
         selectedCountry = selectedCountry === undefined ? d : undefined;
         if (selectedCountry != undefined) {
@@ -337,11 +341,14 @@ class bigChart {
             .style('opacity', otherLinesOpacitySelected)
           d3.select(this)
             .style('opacity', lineOpacityHover)
-            .style('stroke-width', lineStrokeHover);
+            .style('stroke-width', lineStrokeHover)
         } else {
+          // When clicking again
           d3.selectAll(".line")
             .style("opacity", lineOpacity)
             .style("stroke-width", lineStroke)
+            .style('stroke', d => color(d.key));
+          svg.selectAll(".country-text").remove();
           return;
         }
         console.log(entriesBySportThenCountryThenYear)
@@ -403,7 +410,7 @@ class bigChart {
         // xScale(d), 0], [xScale(d) + 5, this.height
         // d3.brushY().extent([0, 0], [100, 200])
 
-        
+
         // d3.select(this).call(brushRange[d] = d3.brushY().extent([[xScale(d) - 8, 0], [xScale(d) + 8, yScale(0)]]).on("brush", function () {
         //   console.log("yo");
         // }).on("brush", brush)) //TODO: change 600 to be this.height
