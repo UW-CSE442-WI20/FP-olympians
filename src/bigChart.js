@@ -483,7 +483,7 @@ class bigChart {
         }
       })
       .on("click", function (d) {
-        redrawBigChartClick(d.key, currSport, medalsvg, true)
+        redrawBigChartClick(d.key, true)
       })
       .transition()
       .duration(1000)
@@ -521,10 +521,11 @@ class bigChart {
   }
 }
 
-function redrawBigChartClick(currCountry, currSport, bigChartClick) {
+function redrawBigChartClick(currCountry, bigChartClick) {
   // console.log(this);
   var medalsvg = d3.select('#medalchart').select("svg");
-
+  currSportSelections = document.getElementById('select-sport');
+  var currSport = currSportSelections.options[currSportSelections.value].text // current sport
   console.log(bigChartInstance.entriesBySportThenCountryThenYear)
   // console.log(d);
   console.log("curr sport:", currSport);

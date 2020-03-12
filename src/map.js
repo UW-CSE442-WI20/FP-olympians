@@ -277,12 +277,10 @@ class worldMap {
         };
         datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
             // alert(geography.properties.name);
-            var name = countries[geography.properties.name]
-            currSportSelections = document.getElementById('select-sport');
-            currSport = currSportSelections.options[currSportSelections.value].text // current sport
+            var name = countries[geography.properties.name];
             medalsvg = d3.select('#medalchart').select("svg")
            
-            redrawBigChartClick(name, currSport, false);
+            redrawBigChartClick(name, false);
         });
       },
       fills: {
