@@ -229,6 +229,7 @@ class bigChart {
       .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
       .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
       .text("Athletes Participated");
+<<<<<<< HEAD
     svg.selectAll(".parallelAxis")
       .data(dimensions).enter()
       .append("g")
@@ -254,6 +255,33 @@ class bigChart {
         //d3.select(this).call(yAxis);
         d3.select(this).transition().duration(500).call(yAxis);
       })
+=======
+      svg.selectAll(".parallelAxis")
+        .data(dimensions).enter()
+        .append("g")
+        .attr('class', 'parallelAxis')
+        .attr("transform", function (d) {
+          return "translate(" + xScale(d) + ") ";
+        })
+        .append("text")
+        .style("text-anchor", "middle")
+        .attr("y", -10)
+        .text(function (d) { return d; })
+        .style("fill", "gray")
+      svg.selectAll(".parallelAxis")
+        .each(function (d) {
+          // add in the rectangle bars
+          d3.select(this).append("rect")
+            .attr("x", -6)
+            .attr("y", -6)
+            .attr("width", 14)
+            .attr("height", 335)
+            .attr("fill", "#525B68")
+            .attr("opacity", 0.8);
+          //d3.select(this).call(yAxis);
+          d3.select(this).transition().duration(500).call(yAxis);
+        })
+>>>>>>> 84f73b976908467f8a3349455892eb9a82dc7e9c
 
 
     this.redraw(bigsvg, currSport, medalsvg);

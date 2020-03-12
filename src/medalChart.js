@@ -477,7 +477,7 @@ function generateMedalChart(data, medalsvg) {
         .attr("text-anchor", "middle")
         .attr("font-size", "12px")
         .attr("transform", function (d) {
-            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",11.5)";
+            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",9)";
         })
         .style("fill", "white")
         .text(function(d) {

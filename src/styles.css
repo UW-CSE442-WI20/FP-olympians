@@ -52,12 +52,13 @@ p.selector {
 
   grid-template-areas:
     "header sidebar"
-    "content sidebar"
     "maparea sidebar"
-    "footer sidebar";
+    "content sidebar";
+    /* "footer sidebar"; */
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 90px 800px 320px 1fr;
+  grid-template-rows: 90px auto 1fr;
+  /* grid-template-rows: 90px 800px 320px 1fr; */
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
@@ -84,7 +85,7 @@ maparea {
   flex-direction: row;
   justify-content: flex-start;
   z-index: -1;
-  height: 200px;
+  height: 320px;
 }
 
 sidebar {
@@ -348,6 +349,7 @@ main {
   margin-right: 0.5rem;
   background: none;
   position: relative;
+  z-index: 3;
 }
 
 #medalChart {
