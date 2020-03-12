@@ -17,7 +17,6 @@ class rankRows {
     for (var i = 0; i < topCountryToRatio.length; i++) {
       // get country name
       countryName = topCountryToRatio[i].key.replace(/ /g,"");
-      console.log(countryName);
       if (topCountryToRatio[i].value > 0) {
         newDiv = rowDiv.append("div")
         .attr("id", "row" + countryName)
@@ -39,7 +38,6 @@ class rankRows {
         // get country name
         imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").replace("\'","-").toLowerCase();
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
-        console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
         // .attr("src", imgcountryName + "-flag.svg")
         .attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -50,7 +48,6 @@ class rankRows {
         // create text labels for each row
         // get country name
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
-        console.log(countryName);
         // mainDiv contains the right side of the rank item (the text)
         var mainDiv = this.topDivs[i].append("div")
         .attr("width", "90px")
@@ -211,7 +208,6 @@ class rankRows {
         this.previousRankings[i] = countryName;
       }
     }
-    //console.log("previous rankings after update: ", this.previousRankings);
   }
 
   // Update the rank rows based on new year selection.  Perform swaps between
@@ -229,7 +225,6 @@ class rankRows {
         countryName = topCountryToRatio[j].key.replace(/ /g,"");
         // found a swap
         if (topCountryToRatio[j].value > 0 && this.previousRankings[i] === countryName) {
-          console.log("swapping", countryName);
           oldswappedIndex.push(i);  // the old index position (finished)
           newswappedIndex.push(j);  // the new index position (finished)
           // perform swap
@@ -295,7 +290,6 @@ class rankRows {
 
         // add image
         imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").replace("\'","-").toLowerCase();
-        console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
         // .attr("src", imgcountryName + "-flag.svg")
         .attr("src","flags/" + imgcountryName + "-flag.svg")
