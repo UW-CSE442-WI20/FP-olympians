@@ -396,7 +396,7 @@ d3.csv('olympics.csv')
 
     d3.csv('rankings.csv')
       .then((data) => {
-        map = new Map(entriesBySportByYearByCountryRatio, data);
+        map = new Map(entriesBySportByYearByCountryRatio, data, currSport, medalsvg);
         console.log("here are the rankings:", data)
       });
   });
