@@ -232,31 +232,31 @@ class bigChart {
       .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
       .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
       .text("Athletes Participated");
-      svg.selectAll(".parallelAxis")
-        .data(dimensions).enter()
-        .append("g")
-        .attr('class', 'parallelAxis')
-        .attr("transform", function (d) {
-          return "translate(" + xScale(d) + ") ";
-        })
-        .append("text")
-        .style("text-anchor", "middle")
-        .attr("y", yScale(0) + 8)
-        .text(function (d) { return d; })
-        .style("fill", "gray")
-      svg.selectAll(".parallelAxis")
-        .each(function (d) {
-          // add in the rectangle bars
-          d3.select(this).append("rect")
-            .attr("x", -6)
-            .attr("y", -6)
-            .attr("width", 14)
-            .attr("height", 335)
-            .attr("fill", "#525B68")
-            .attr("opacity", 0.8);
-          //d3.select(this).call(yAxis);
-          d3.select(this).transition().duration(500).call(yAxis);
-        })
+    svg.selectAll(".parallelAxis")
+      .data(dimensions).enter()
+      .append("g")
+      .attr('class', 'parallelAxis')
+      .attr("transform", function (d) {
+        return "translate(" + xScale(d) + ") ";
+      })
+      .append("text")
+      .style("text-anchor", "middle")
+      .attr("y", yScale(0) + 8)
+      .text(function (d) { return d; })
+      .style("fill", "gray")
+    svg.selectAll(".parallelAxis")
+      .each(function (d) {
+        // add in the rectangle bars
+        d3.select(this).append("rect")
+          .attr("x", -6)
+          .attr("y", -6)
+          .attr("width", 14)
+          .attr("height", 335)
+          .attr("fill", "#525B68")
+          .attr("opacity", 0.8);
+        //d3.select(this).call(yAxis);
+        d3.select(this).transition().duration(500).call(yAxis);
+      })
 
 
     this.redraw(bigsvg, currSport, medalsvg);
@@ -407,10 +407,10 @@ class bigChart {
             .style('stroke', d => color(d.key))
         }
       })
-      .on("click", function(d) {
-      
-      redrawBigChartClick(d.key, currSport, medalsvg, true)
-     
+      .on("click", function (d) {
+
+        redrawBigChartClick(d.key, currSport, medalsvg, true)
+
       })
       .transition()
       .duration(1000)
@@ -454,16 +454,23 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
   } else {
     selectedCountry = currCountry;  // if its from another source
+    d3.selectAll(".country-text").remove();
   }
   if (selectedCountry != undefined) { // when a sport is about to be unselectede
     d3.selectAll(".line")
+      .transition()
+      .duration(700)
       .style('opacity', otherLinesOpacitySelected)
     d3.select("#" + currCountry.replace(/\s+/g, '')) // based on https://stackoverflow.com/questions/5963182/how-to-remove-spaces-from-a-string-using-javascript
+      .transition()
+      .duration(700)
       .style('opacity', lineOpacityHover)
       .style('stroke-width', lineStrokeHover)
   } else {
     // When this is undefined or when something is deslected, reset all strokes
     d3.selectAll(".line")
+      .transition()
+      .duration(500)
       .style("opacity", lineOpacity)
       .style("stroke-width", lineStroke)
       .style('stroke', d => bigChartInstance.color(d.key));
@@ -490,4 +497,4 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   generateMedalChart(countryData.values, medalsvg);
 }
 
-module.exports = { bigChart, redrawBigChartClick};
+module.exports = { bigChart, redrawBigChartClick };

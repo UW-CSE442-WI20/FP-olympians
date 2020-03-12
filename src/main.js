@@ -357,6 +357,9 @@ d3.csv('olympics.csv')
     initializeYearOptions();
     initializeDropdowns();
     initializeSearch();
+    // Clears the search
+    document.getElementById("searchbar").value = "";
+    console.log(document.getElementById("searchbar"))
 
     bigChartInstance = new bigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
