@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////////
 const d3 = require("d3");
 const _ = require("underscore");
+const {redrawBigChartClick} = require('./bigChart');
 const generateMedalChart = require("./medalChart");
 
 module.exports = 
@@ -47,11 +48,15 @@ function autocomplete(searchField, countryNames, sportData, medalsvg) {
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-          // console.log("search value", searchField.value);
+          console.log("search value", searchField.value); // country
+          currSportSelections = document.getElementById('select-sport');
+          currSport = currSportSelections.options[currSportSelections.value].text // current sport
+          console.log("curr sport ", currSport );
           const countryIndex = _.indexOf(countryNames, searchField.value);
-          // console.log("index", countryIndex);
-          // console.log("country rows", sportData.values);
-          generateMedalChart(sportData.values[countryIndex].values, medalsvg);
+          console.log("index", countryIndex);
+          console.log("country rows", sportData.values);
+          redrawBigChartClick(searchField.value, currSport, medalsvg, false);
+          // generateMedalChart(sportData.values[countryIndex].values, medalsvg);
         });
         a.appendChild(b);
       }

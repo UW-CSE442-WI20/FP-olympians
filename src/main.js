@@ -9,6 +9,7 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
+var countryNamesBySport = null;
 var countryNames = null;
 var currSport = "Swimming";
 var currYearIndex = 4; // 2016
@@ -17,7 +18,7 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
 const autocomplete = require("./search");
-const BigChart = require('./bigChart');
+const {bigChart} = require('./bigChart');
 const RankRows = require('./rankRows');
 const Map = require('./map');
 var bigChartInstance;
@@ -101,7 +102,7 @@ function initializeDropdowns() {
 		.append('svg')
 		.attr("width", "800")
 		.attr("height", 380);
-     bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
+     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
      initializeSearch();
   })
 }
@@ -193,6 +194,27 @@ function initializeData(data) {
     .entries(data);
 
 
+    countryNamesBySport = d3.nest()
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function(v) {
+      let uniqueCountries = _.uniq(v, function(d) {
+        return d.Team;
+      })
+      return uniqueCountries.map(function(item) {
+        return item.Team;
+      }).sort();
+    })
+    .entries(data);
+
+
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO");
+    console.log(countryNamesBySport);
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO")
+
+
 
   entriesBySportByYearAthleteCount = d3.nest()
   .key(function (d) {
@@ -214,6 +236,33 @@ function initializeData(data) {
     return uniqueNames.length;
   })
   .entries(data);
+
+  var years = ["2000", "2004", "2008", "2012", "2016"]
+  entriesBySportByYearAthleteCount.forEach(function(d) {
+    d.values.forEach(function(e) {
+      var arr = []
+      e.values.forEach(function(f) {
+        arr.push(f.key);
+      });
+      result = years.filter(f => !arr.includes(f));
+      result.forEach(function(z) {
+        e.values.push({"key": z, "value": 0});
+      });
+    })
+  });
+
+ // testing
+  // var years = ["2000", "2004", "2008", "2012", "2016"]
+  // entriesBySportByYearAthleteCount.forEach(function(d) {
+  //   d.values.forEach(function(e) {
+  //     var arr = []
+  //     e.values.forEach(function(f) {
+  //       arr.push(f.key);
+  //     });
+  //     result = years.filter(f => !arr.includes(f));
+  //     console.log("result", result)
+  //   })
+  // });
 
 console.log(entriesBySportByYearAthleteCount);
 
@@ -337,8 +386,11 @@ d3.csv('olympics.csv')
     initializeYearOptions();
     initializeDropdowns();
     initializeSearch();
+    // Clears the search
+    document.getElementById("searchbar").value = "";
+    console.log(document.getElementById("searchbar"))
 
-    bigChartInstance = new BigChart(data);
+    bigChartInstance = new bigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
     d3.csv('rankings.csv')
