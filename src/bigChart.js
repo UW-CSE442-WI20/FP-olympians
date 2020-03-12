@@ -521,14 +521,10 @@ class bigChart {
   }
 }
 
-function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
+function redrawBigChartClick(currCountry, currSport, bigChartClick) {
   // console.log(this);
-<<<<<<< HEAD
-  
-=======
-  // focus view
+  var medalsvg = d3.select('#medalchart').select("svg");
 
->>>>>>> master
   console.log(bigChartInstance.entriesBySportThenCountryThenYear)
   // console.log(d);
   console.log("curr sport:", currSport);
@@ -543,11 +539,6 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     // console.log("considering ", item.key);
     return item.key === currCountry;
   });
-<<<<<<< HEAD
-  if (countryData === undefined) {
-    return;
-  }
-=======
 
   if (countryData === undefined || countryData.values === undefined) {
     return;
@@ -556,7 +547,6 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   scrollDown();
   
 
->>>>>>> master
   if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
   } else {
@@ -588,12 +578,7 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     return;
   }
 
-<<<<<<< HEAD
-  var country = this.summaryCountry
-  bigChartInstance.summaryCountry.updateChart(countryData.key);
-=======
   // bigChartInstance.summaryCountry.updateChart(countryData.key);
->>>>>>> master
   console.log("checking countryData", countryData);
   generateMedalChart(countryData.values, medalsvg);
 }

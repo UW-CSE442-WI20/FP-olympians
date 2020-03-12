@@ -282,7 +282,7 @@ class worldMap {
             currSport = currSportSelections.options[currSportSelections.value].text // current sport
             medalsvg = d3.select('#medalchart').select("svg")
            
-            redrawBigChartClick(name, currSport, medalsvg, false);
+            redrawBigChartClick(name, currSport, false);
         });
       },
       fills: {
