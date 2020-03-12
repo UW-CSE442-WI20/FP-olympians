@@ -31,6 +31,12 @@ var rankRows = null;
 // instantiate rankRows
 function initializeRankChart() {
   rankRows = new RankRows(rankRowsDiv, topCountryToRatio);
+
+  // add in olympic rings here oops
+  d3.select("#header-logo").append("img")
+    .attr("src", "olympic_logos/olympic_rings.svg")
+    .attr("width", 100)
+    .attr("height", 100);
 }
 
 // create svg for bigChart

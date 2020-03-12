@@ -31,7 +31,10 @@ class rankRows {
         .style("display","flex")
         .style("flex-direction","row")
         .style("justify-content","flex-start")
-        .style("align-items","center");
+        .style("align-items","center")
+        .on("click", function(d) {
+          console.log("hellllo")
+        });
         this.topDivs.push(newDiv);
 
         // add image to each row here
