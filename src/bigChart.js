@@ -5,12 +5,32 @@ const _ = require("underscore");
 
 const generateMedalChart = require("./medalChart");
 const SummaryCountry = require('./summaryChartCountry');
+
+
 var selectedCountry = undefined;
+
+var bigChartInstance = null;
+
+var duration = 250;
+var lineOpacity = "0.5";
+var lineOpacityHover = "0.95";
+var otherLinesOpacityHover = "0.1";
+var otherLinesOpacitySelected = "0.025"
+var lineStroke = "3px";
+var lineStrokeHover = "4.5px";
+
+var circleOpacity = '0.85';
+var circleOpacityOnLineHover = "0.25"
+var circleRadius = 3;
+var circleRadiusHover = 6;
 
 class bigChart {
   constructor(data) {
 
+
+    bigChartInstance = this;
     // Formatting lines
+    bigChartInstance = this;
 
     // getting width and height of graph
     this.width = 0;// = parseInt(bigsvg.style("width"), 10);
@@ -111,6 +131,36 @@ class bigChart {
     this.yScale = yScale;
     // delete all lines
 
+	var dimensions = []
+    for (let i = 2000; i <= 2020; i += 4) {
+      dimensions.push(i);
+    }
+
+	var yearlabelsvg = d3.select("#bigchartlabels")
+      	.attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")");
+    yearlabelsvg.selectAll(".yearLogoLabel")
+      	.data(dimensions).enter()
+        .append("div")
+        .attr('class', 'yearLogoLabel')
+        .attr("transform", function (d) {
+        	console.log("supposedly getting year", d);
+          return "translate(" + xScale(d) + ") ";
+        });
+    yearlabelsvg.selectAll(".yearLogoLabel")
+      	.append("text")
+        .attr("class", "yearLabel")
+        .style("text-anchor", "middle")
+        .text(function (d) { return d; })
+        .style("fill", "gray");
+    yearlabelsvg.selectAll(".yearLogoLabel")
+    	  .append("img")
+        .attr("src", (d) => {
+        	console.log("src", d);
+        	return "olympic_logos/" + d + ".svg";
+        })
+        .attr("class", "yearLogo")
+        // .attr("width", "90px");
+        .attr("height", "60px");
 
     /* Add SVG */
     var svg = bigsvg
@@ -118,7 +168,7 @@ class bigChart {
       .attr("width", this.width + this.margins.left + this.margins.right)
       .attr("height", this.height + this.margins.top + this.margins.bottom)
       .append("g")
-      .attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")"); // this is just (30, 30 right now)
+      .attr("transform", "translate(" + this.margins.top + "," + (this.margins.top * 2) + ")"); // this is just (30, 30 right now)
 
     // /* Add line into SVG */
     // this.line = d3.line()
@@ -151,19 +201,12 @@ class bigChart {
     //   .attr("transform", `translate(0, ${this.height - this.margin})`)
     //   .call(xAxis);
 
-    var dimensions = []
-    for (let i = 2000; i <= 2020; i += 4) {
-      dimensions.push(i);
-    }
-
-
     // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
     //   return d != "name" && (y[d] = d3.scale.linear()
     //       .domain(d3.extent(cars, function(p) { return +p[d]; }))
     //       .range([height, 0]));
     // }));
 
-    console.log(dimensions);
     console.log(this.entriesBySportByYearAthleteCount);
     var yRange = this.yRange;
     this.entriesBySportByYearAthleteCount.forEach(function (sport) {
@@ -202,28 +245,23 @@ class bigChart {
 
     // set up y axis
     var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"))
-       .ticks(7)
-       .tickSize(0)
-       .tickPadding(-5);
+      .ticks(7)
+      .tickSize(0)
+      .tickPadding(-5);
 
     // now add titles to the axes
     bigsvg.append("text")
       .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
       .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
       .text("Athletes Participated");
-      svg.selectAll(".parallelAxis")
+    svg.selectAll(".parallelAxis")
         .data(dimensions).enter()
         .append("g")
         .attr('class', 'parallelAxis')
         .attr("transform", function (d) {
           return "translate(" + xScale(d) + ") ";
-        })
-        .append("text")
-        .style("text-anchor", "middle")
-        .attr("y", -10)
-        .text(function (d) { return d; })
-        .style("fill", "gray")
-      svg.selectAll(".parallelAxis")
+     	});
+    svg.selectAll(".parallelAxis")
         .each(function (d) {
           // add in the rectangle bars
           d3.select(this).append("rect")
@@ -235,7 +273,7 @@ class bigChart {
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
           d3.select(this).transition().duration(500).call(yAxis);
-        })
+        });
 
     // generateMedalChart([], medalsvg);
 
@@ -248,18 +286,18 @@ class bigChart {
       return;
     }
 
-    var duration = 250;
-    var lineOpacity = "0.5";
-    var lineOpacityHover = "0.95";
-    var otherLinesOpacityHover = "0.1";
-    var otherLinesOpacitySelected = "0.025"
-    var lineStroke = "3px";
-    var lineStrokeHover = "4.5px";
+    // var duration = 250;
+    // var lineOpacity = "0.5";
+    // var lineOpacityHover = "0.95";
+    // var otherLinesOpacityHover = "0.1";
+    // var otherLinesOpacitySelected = "0.025"
+    // var lineStroke = "3px";
+    // var lineStrokeHover = "4.5px";
 
-    var circleOpacity = '0.85';
-    var circleOpacityOnLineHover = "0.25"
-    var circleRadius = 3;
-    var circleRadiusHover = 6;
+    // var circleOpacity = '0.85';
+    // var circleOpacityOnLineHover = "0.25"
+    // var circleRadius = 3;
+    // var circleRadiusHover = 6;
 
     var width = this.width;
     var margin = this.margin;
@@ -279,9 +317,6 @@ class bigChart {
     var dimensions = this.dimensions;
     var yRange = this.yRange;
     this.currSport = currSport;
-
-    console.log(data);
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
 
     console.log(svg);
 
@@ -313,24 +348,23 @@ class bigChart {
     // set up y axis
     var yAxis = d3.axisLeft(yScale)
       // .tickFormat(d3.format("d"))
-       .ticks(7)
-       .tickSize(0)
-       .tickPadding(-5)
-       .tickFormat(function(e){
-        if(Math.floor(e) != e)
-        {
-            return;
+      .ticks(7)
+      .tickSize(0)
+      .tickPadding(-5)
+      .tickFormat(function (e) {
+        if (Math.floor(e) != e) {
+          return;
         }
 
         return e;
-    });
+      });
 
     var line = d3.line()
       .x(d => xScale(d.key))
       .y(d => yScale(d.value));
 
 
-
+    console.log(data);
     var lineGroup = this.lines.selectAll(".line-group")
       .data(data, function (item) {
         return item;
@@ -344,12 +378,23 @@ class bigChart {
 
     svg.selectAll(".country-text").remove();
 
+    // Create container for the tooltip but make it invisible until we need it
+    var tooltipContainer = d3.select('#bigchart').append("div")
+        .attr("id", "countryTooltip")
+        .style("position", "absolute")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
+        .style("visibility", "hidden");
+
     lineGroup
       .enter()
       .append('g')
       .attr('class', 'line-group')
       .append('path')
-      .attr('class', d => 'line')
+      .attr('class', 'line')
+      .attr('id', d => d.key.replace(/\s+/g, ''))
       .attr('d', d => line(d.values))
       // Draw color based on index? Or maybe based on country?
       .style('stroke', d => color(d.key))
@@ -364,20 +409,24 @@ class bigChart {
             .style('opacity', lineOpacityHover)
             .style('stroke-width', lineStrokeHover);
           // add text to show what country this is
-          svg.append("text")
-            .text(d.key)
-            .attr('class', 'country-text')
-            .attr("x", (width - margin) / 2)
-            .attr("y", 15)
-            .style('fill', color(d.key))
-            .style("pointer-events", "none");
+          tooltipContainer
+              .style("left", (d3.mouse(this)[0]) + "px")
+              .style("top", (d3.mouse(this)[1] + 50) + "px")
+              .style("visibility", "visible")
+              .style('color', color(d.key))
+              .append("text")
+              .attr("class", "countryTooltipText")
+              .style('color', color(d.key))
+              .text(d.key);
         }
-        else if (selectedCountry === d) {
+        else if (selectedCountry === d.key) {
           d3.select(this)
             .style('stroke', 'black')
         }
       })
       .on("mouseout", function (d) {
+        d3.selectAll(".countryTooltipText").remove();
+        d3.selectAll("#countryTooltip").style("visibility", "hidden");
         if (selectedCountry === undefined) {
           d3.selectAll(".line")
             .style("opacity", lineOpacity)
@@ -387,51 +436,13 @@ class bigChart {
           //   .style("stroke-width", lineStroke);
           svg.selectAll(".country-text").remove();
         }
-        else if (selectedCountry === d) {
+        else if (selectedCountry === d.key) {
           d3.select(this)
             .style('stroke', d => color(d.key))
         }
       })
       .on("click", function (d) {
-        // focus view
-        scrollDown();
-        // get the data for the selected athlete
-        selectedCountry = selectedCountry === undefined ? d : undefined;
-        if (selectedCountry != undefined) {
-          // update flag image
-          updateCountryFlag(selectedCountry);
-
-          d3.selectAll(".line")
-            .style('opacity', otherLinesOpacitySelected)
-          d3.select(this)
-            .style('opacity', lineOpacityHover)
-            .style('stroke-width', lineStrokeHover)
-        } else {
-          // When clicking again
-          d3.selectAll(".line")
-            .style("opacity", lineOpacity)
-            .style("stroke-width", lineStroke)
-            .style('stroke', d => color(d.key));
-          svg.selectAll(".country-text").remove();
-          return;
-        }
-        console.log(entriesBySportThenCountryThenYear)
-        console.log(d);
-        console.log("curr sport:", currSport);
-        var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
-          console.log("searching for ", currSport);
-          // console.log("considering ", item.key);
-          return item.key === currSport;
-        });
-        console.log(sportData);
-        var countryData = _.find(d3.values(sportData.values), function (item) {
-          console.log("searching for ", d.key);
-          // console.log("considering ", item.key);
-          return item.key === d.key;
-        });
-        // country.updateChart(countryData.key);
-        console.log("checking countryData", countryData);
-        generateMedalChart(countryData.values, medalsvg);
+        redrawBigChartClick(d.key, currSport, medalsvg, true)
       })
       .transition()
       .duration(1000)
@@ -439,41 +450,13 @@ class bigChart {
 
 
 
-      lineGroup.exit()
+    lineGroup.exit()
       .transition()
       .style('opacity', 0)
       .remove();
 
-
-    // // now add titles to the axes
-    // bigsvg.append("text")
-    //   .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-    //   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-    //   .text("Athletes Participated");
-    // svg.selectAll(".parallelAxis")
-    //   .data(dimensions).enter()
-    //   .append("g")
-    //   .attr('class', 'parallelAxis')
-    //   .attr("transform", function (d) {
-    //     return "translate(" + xScale(d) + ") ";
-    //   })
-    //   .append("text")
-    //   .style("text-anchor", "middle")
-    //   .attr("y", -10)
-    //   .text(function (d) { return d; })
-    //   .style("fill", "gray")
     svg.selectAll(".parallelAxis")
       .each(function (d) {
-        // add in the rectangle bars
-        //d3.select(this).remove("rect");
-        // d3.select(this).append("rect")
-        //   .attr("x", -6)
-        //   .attr("y", -6)
-        //   .attr("width", 12)
-        //   .attr("height", 320)
-        //   .attr("fill", "blue")
-        //   .attr("opacity", 0.8);
-        //d3.select(this).call(yAxis);
         d3.select(this).transition().duration(500).call(yAxis);
       })
 
@@ -495,12 +478,61 @@ class bigChart {
       })
     this.brushRange = brushRange;
   }
+}
 
-  yo() {
-    console.log("yo");
+function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
+  // console.log(this);
+  // focus view
+  scrollDown();
+
+  if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
+    selectedCountry = selectedCountry === undefined ? currCountry : undefined;
+  } else {
+    selectedCountry = currCountry;  // if its from another source
+    d3.selectAll(".country-text").remove();
   }
+  if (selectedCountry != undefined) { // when a sport is about to be unselectede
+    // update flag image
+    updateCountryFlag(selectedCountry);
 
-
+    d3.selectAll(".line")
+      .transition()
+      .duration(700)
+      .style('opacity', otherLinesOpacitySelected)
+    d3.select("#" + currCountry.replace(/\s+/g, '')) // based on https://stackoverflow.com/questions/5963182/how-to-remove-spaces-from-a-string-using-javascript
+      .transition()
+      .duration(700)
+      .style('opacity', lineOpacityHover)
+      .style('stroke-width', lineStrokeHover)
+  } else {
+    // When this is undefined or when something is deslected, reset all strokes
+    d3.selectAll(".line")
+      .transition()
+      .duration(500)
+      .style("opacity", lineOpacity)
+      .style("stroke-width", lineStroke)
+      .style('stroke', d => bigChartInstance.color(d.key));
+    d3.selectAll(".country-text").remove();
+    return;
+  }
+  console.log(bigChartInstance.entriesBySportThenCountryThenYear)
+  // console.log(d);
+  console.log("curr sport:", currSport);
+  var sportData = _.find(d3.values(bigChartInstance.entriesBySportThenCountryThenYear), function (item) {
+    console.log("searching for ", currSport);
+    // console.log("considering ", item.key);
+    return item.key === currSport;
+  });
+  console.log(sportData);
+  var countryData = _.find(d3.values(sportData.values), function (item) {
+    console.log("searching for ", currCountry);
+    // console.log("considering ", item.key);
+    return item.key === currCountry;
+  });
+  // var country = this.summaryCountry
+  // bigChartInstance.summaryCountry.updateChart(countryData.key);
+  console.log("checking countryData", countryData);
+  generateMedalChart(countryData.values, medalsvg);
 }
 
 // scroll chart into focus
@@ -516,9 +548,10 @@ function scrollDown() {
 
 // update the flag image on the side based on current country selection
 function updateCountryFlag(currCountry) {
+  console.log("currCountry", currCountry);
   // remove old flag
   d3.select("#flag-img").remove();
-  var imgcountryName = currCountry.key.replace(/ /g,"-").replace("\'","-").toLowerCase();
+  var imgcountryName = currCountry.replace(/ /g,"-").replace("\'","-").toLowerCase();
   // add new flag
   d3.select("#country-flag").append("img")
     .attr("src", "flags/" + imgcountryName + "-flag.svg")
@@ -537,5 +570,4 @@ function updateCountryFlag(currCountry) {
 //   var actives = dimensions.filter(function(p) { return !brushRange[p].empty()})
 //   console.log(actives);
 // }
-
-module.exports = bigChart;
+module.exports = { bigChart, redrawBigChartClick };

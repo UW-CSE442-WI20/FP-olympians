@@ -307,8 +307,10 @@ function generateMedalChart(data, medalsvg) {
     if (nodes.length == 0 && data.length > 0) {
       medalsvg.append("text")
           .attr("id", "medalTooltip")
-          .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 3) + ")")
-          .text("No medals to show for " + data[0].values[0].Team);
+          .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 1.5) + ")")
+          .text("No medals to show for " + data[0].values[0].Team)
+          .style("fill", "gray")
+          .style("font-size", "14px");
     }
 
     const yForceOffset = medalType => {
