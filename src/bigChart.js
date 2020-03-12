@@ -410,46 +410,7 @@ class bigChart {
       .on("click", function(d) {
       
       redrawBigChartClick(d.key, currSport, medalsvg, true)
-      
-      // function (d) {
-      //   // get the data for the selected athlete
-      //   console.log(this);
-      //   selectedCountry = selectedCountry === undefined ? d : undefined;
-      //   if (selectedCountry != undefined) {
-      //     d3.selectAll(".line")
-      //       .style('opacity', otherLinesOpacitySelected)
-      //     d3.select(this)
-      //       .style('opacity', lineOpacityHover)
-      //       .style('stroke-width', lineStrokeHover)
-      //   } else {
-      //     // When clicking again
-      //     d3.selectAll(".line")
-      //       .style("opacity", lineOpacity)
-      //       .style("stroke-width", lineStroke)
-      //       .style('stroke', d => color(d.key));
-      //     svg.selectAll(".country-text").remove();
-      //     return;
-      //   }
-      //   console.log(entriesBySportThenCountryThenYear)
-      //   console.log(d);
-      //   console.log("curr sport:", currSport);
-      //   var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
-      //     console.log("searching for ", currSport);
-      //     // console.log("considering ", item.key);
-      //     return item.key === currSport;
-      //   });
-      //   console.log(sportData);
-      //   var countryData = _.find(d3.values(sportData.values), function (item) {
-      //     console.log("searching for ", d.key);
-      //     // console.log("considering ", item.key);
-      //     return item.key === d.key;
-      //   });
-      //   country.updateChart(countryData.key);
-      //   console.log("checking countryData", countryData);
-      //   generateMedalChart(countryData.values, medalsvg);
-      // }
-      
-      
+     
       })
       .transition()
       .duration(1000)
