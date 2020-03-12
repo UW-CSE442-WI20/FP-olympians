@@ -34,10 +34,12 @@ function initializeRankChart() {
 }
 
 // create svg for bigChart
+d3.select("#bigchart").append("div")
+	.attr("id", "bigchartlabels");
 const bigsvg = d3.select('#bigchart')
   .append('svg')
   .attr('width', "800")
-  .attr('height',380);
+  .attr('height',"400");
 console.log("bigsvg", bigsvg);
 
 // create svg for medalChart
