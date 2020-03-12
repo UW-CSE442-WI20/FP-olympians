@@ -30942,7 +30942,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   } // Create container for the tooltip but make it invisible until we need it
 
 
-  var tooltipContainer = d3.select('#medalchart').append("div").attr("id", "medalTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
+  var tooltipContainer = d3.select('#medalchart').append("div").attr("id", "medalTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "3px").style("padding-top", "1px").style("padding-bottom", "1px").style("visibility", "hidden");
 
   function ticked() {
     var u = medalsvg.selectAll('#medal').data(nodes);
@@ -31222,7 +31222,7 @@ function () {
     this.margins = {
       top: 30,
       right: 35,
-      bottom: 0,
+      bottom: 6,
       left: 35
     }; // getting scale of graph
     // adding tiny chart
@@ -31414,7 +31414,8 @@ function () {
       });
       svg.selectAll(".parallelAxis").each(function (d) {
         // add in the rectangle bars
-        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 350).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
+        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 400) // .attr("height", 350)
+        .attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
 
         d3.select(this).transition().duration(500).call(yAxis);
       }); // generateMedalChart([], medalsvg);
@@ -31639,6 +31640,7 @@ function updateCountryFlag(currCountry) {
   var imgcountryName = currCountry.replace(/ /g, "-").replace("\'", "-").toLowerCase(); // add new flag
 
   d3.select("#country-flag").append("img").attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "flag-img").attr("width", 90).attr("height", 60);
+  document.getElementById("country-name").innerHTML = currCountry;
 } // function brushstart() {
 //   // d3.event.
 // }
@@ -31866,8 +31868,8 @@ function () {
         imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
-        d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
-        .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // create text labels for each row
+        d3.select("#row" + countryName).append("img") // .attr("src", imgcountryName + "-flag.svg")
+        .attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // create text labels for each row
         // get country name
 
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
@@ -31923,8 +31925,8 @@ function () {
           .style("width", "190px").style("height", "60px").style("margin-top", "6px").style("margin-bottom", "6px").style("background-color", "#B0C4DE").style("display", "flex").style("flex-direction", "row").style("justify-content", "flex-start").style("align-items", "center").style("opacity", 0.5).transition() // slide up from bottom
           .delay(500).style("top", i * 10 + "%").style("opacity", 1.0); // add image
 
-          d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
-          .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
+          d3.select("#row" + countryName).append("img") // .attr("src", imgcountryName + "-flag.svg")
+          .attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
           // mainDiv contains the right side of the rank item (the text)
 
           var mainDiv = d3.select("#row" + countryName).append("div").attr("width", "90px").attr("height", "40px").attr("id", "mainDiv" + countryName).style("padding", "5px").attr("display", "flex").attr("flex-direction", "column").attr("justify-content", "center").attr("align-content", "center"); // add country name label
@@ -32010,8 +32012,8 @@ function () {
 
           imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
           console.log(imgcountryName);
-          d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
-          .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
+          d3.select("#row" + countryName).append("img") // .attr("src", imgcountryName + "-flag.svg")
+          .attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
           // mainDiv contains the right side of the rank item (the text)
 
           var mainDiv = d3.select("#row" + countryName).append("div").attr("width", "90px").attr("height", "40px").attr("id", "mainDiv" + countryName).style("padding", "5px").attr("display", "flex").attr("flex-direction", "column").attr("justify-content", "center").attr("align-content", "center"); // add country name label
@@ -43358,7 +43360,7 @@ function initializeRankChart() {
 
 
 d3.select("#bigchart").append("div").attr("id", "bigchartlabels");
-var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', "400");
+var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', "440");
 console.log("bigsvg", bigsvg); // create svg for medalChart
 
 var medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380); // draw small chart elements here
@@ -43714,7 +43716,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62707" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62918" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
