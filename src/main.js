@@ -29,7 +29,7 @@ const rankRowsDiv = d3.select('#rankings');
 var rankRows = null;
 
 // instantiate rankRows
-function initializeRankChart() {
+function initializePage() {
   rankRows = new RankRows(rankRowsDiv, topCountryToRatio);
 
   // add in olympic rings here oops
@@ -43,6 +43,9 @@ function initializeRankChart() {
     "Click on a country's line to see its medals. Click on any line to deselect.";
   document.getElementById("explore-medals").innerHTML =
     "Click on an athlete's medal to see all of the medals they've won. Click again to deselect.";
+
+  // no country flag shown on start up
+  d3.select("#country-selected").style("display", "none");
 }
 
 // create svg for bigChart
@@ -129,6 +132,8 @@ function initializeDropdowns() {
      bigChartInstance.redraw(bigsvg, currSport, medalsvg);
      initializeSearch();
      updateSportIcon();
+     // remove country flag
+     d3.select("#country-selected").style("display", "none");
   })
 }
 
@@ -390,7 +395,7 @@ d3.csv('olympics.csv')
     initializeData(data);
 	// createRanking("Swimming");
     updateRanking(currSport, currYearIndex);
-    initializeRankChart();
+    initializePage();
     initializeYearOptions();
     initializeDropdowns();
     updateSportIcon();

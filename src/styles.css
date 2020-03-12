@@ -16,7 +16,9 @@ h1 {
   color: #E85F5A;
   margin-left: 80px;
   font-stretch: extra-expanded;
-  letter-spacing: 1.5;
+  text-shadow: 1px 1px #525B68;
+  letter-spacing: 5;
+  transform: scale(1, 1.25);
 }
 
 p.title {
@@ -55,11 +57,11 @@ p.selector {
   grid-template-areas:
     "header sidebar"
     "maparea sidebar"
-    "content sidebar";
-    /* "footer sidebar"; */
+    "content sidebar"
+    "footer sidebar";
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 90px auto 1fr;
+  grid-template-rows: 90px auto 1fr 1fr;
   /* grid-template-rows: 90px 800px 320px 1fr; */
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
@@ -575,9 +577,13 @@ input[type=submit] {
   align-items: center;
 }
 
-/* footer {
+footer {
   grid-area: footer;
   background-color: white;
   z-index: 1;
-  height: 120px;
-} */
+  height: 30px;
+  margin: 5px;
+  margin-left: 10px;
+  font-size: 11px;
+  color: gray;
+}
