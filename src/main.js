@@ -235,6 +235,33 @@ function initializeData(data) {
   })
   .entries(data);
 
+  var years = ["2000", "2004", "2008", "2012", "2016"]
+  entriesBySportByYearAthleteCount.forEach(function(d) {
+    d.values.forEach(function(e) {
+      var arr = []
+      e.values.forEach(function(f) {
+        arr.push(f.key);
+      });
+      result = years.filter(f => !arr.includes(f));
+      result.forEach(function(z) {
+        e.values.push({"key": z, "value": 0});
+      });
+    })
+  });
+
+ // testing
+  // var years = ["2000", "2004", "2008", "2012", "2016"]
+  // entriesBySportByYearAthleteCount.forEach(function(d) {
+  //   d.values.forEach(function(e) {
+  //     var arr = []
+  //     e.values.forEach(function(f) {
+  //       arr.push(f.key);
+  //     });
+  //     result = years.filter(f => !arr.includes(f));
+  //     console.log("result", result)
+  //   })
+  // });
+
 console.log(entriesBySportByYearAthleteCount);
 
 
