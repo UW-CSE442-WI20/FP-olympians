@@ -229,7 +229,7 @@ class bigChart {
             .attr("x", -6)
             .attr("y", -6)
             .attr("width", 14)
-            .attr("height", 320)
+            .attr("height", 335)
             .attr("fill", "#525B68")
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
