@@ -224,6 +224,7 @@ function initializeData(data) {
       result.forEach(function(z) {
         e.values.push({"key": z, "value": 0});
       });
+      e.values.sort((a, b) => a.key - b.key)
     })
   });
 
