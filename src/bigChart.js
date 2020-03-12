@@ -67,25 +67,40 @@ class bigChart {
     this.entriesBySportThenCountryThenYear;
 
     this.entriesBySportByYearAthleteCount = d3.nest()
-      .key(function (d) {
-        return d.Sport;
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Team;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Year;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function (v) {
+      let uniqueNames = _.uniq(v, function (item) {
+        return item.Name;
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Team;
+      return uniqueNames.length;
+    })
+    .entries(data);
+  
+    var years = ["2000", "2004", "2008", "2012", "2016"]
+    this.entriesBySportByYearAthleteCount.forEach(function(d) {
+      d.values.forEach(function(e) {
+        var arr = []
+        e.values.forEach(function(f) {
+          arr.push(f.key);
+        });
+        result = years.filter(f => !arr.includes(f));
+        result.forEach(function(z) {
+          e.values.push({"key": z, "value": 0});
+        });
+        e.values.sort((a, b) => a.key - b.key)
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Year;
-      })
-      .sortKeys(d3.ascending)
-      .rollup(function (v) {
-        let uniqueNames = _.uniq(v, function (item) {
-          return item.Name;
-        })
-        return uniqueNames.length;
-      })
-      .entries(data);
+    });
   }
 
   drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
