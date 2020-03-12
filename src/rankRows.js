@@ -38,7 +38,6 @@ class rankRows {
         // add image to each row here
         // get country name
         imgcountryName = topCountryToRatio[i].key.replace(/ /g,"-").toLowerCase();
-        console.log("THIS IS IMAGE COUNTRY NAME", imgcountryName);
         countryName = topCountryToRatio[i].key.replace(/ /g,"");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img")
