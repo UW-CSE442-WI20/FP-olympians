@@ -524,7 +524,6 @@ class bigChart {
 function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   // console.log(this);
   // focus view
-  scrollDown();
 
   console.log(bigChartInstance.entriesBySportThenCountryThenYear)
   // console.log(d);
@@ -544,6 +543,9 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   if (countryData === undefined) {
     return;
   }
+
+  scrollDown();
+  
 
   if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
