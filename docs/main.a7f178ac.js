@@ -30943,7 +30943,11 @@ var lineStrokeHover = "4.5px";
 var circleOpacity = '0.85';
 var circleOpacityOnLineHover = "0.25";
 var circleRadius = 3;
-var circleRadiusHover = 6;
+var circleRadiusHover = 6; // Create container for the tooltip but make it invisible until we need it
+
+var tooltipContainer = d3.select('#bigchart').append("div").attr("id", "countryTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
+tooltipContainer.append("div").attr("id", "countryTooltipTextDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+tooltipContainer.append("div").attr("id", "countryTooltipFlagDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
 
 var bigChart =
 /*#__PURE__*/
@@ -31239,11 +31243,7 @@ function () {
       // reset the selectedCountry as we have changed to a different one
 
       selectedCountry = undefined;
-      svg.selectAll(".country-text").remove(); // Create container for the tooltip but make it invisible until we need it
-
-      var tooltipContainer = d3.select('#bigchart').append("div").attr("id", "countryTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
-      tooltipContainer.append("div").attr("id", "countryTooltipTextDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
-      tooltipContainer.append("div").attr("id", "countryTooltipFlagDiv").style("background-color", "B0C4DE").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+      svg.selectAll(".country-text").remove();
       lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', 'line').attr('id', function (d) {
         return d.key.replace(/\s+/g, '');
       }).attr('d', function (d) {
@@ -43433,4 +43433,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.7056d89c.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.a7f178ac.js.map
