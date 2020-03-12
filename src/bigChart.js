@@ -390,6 +390,16 @@ class bigChart {
 
     svg.selectAll(".country-text").remove();
 
+    // Create container for the tooltip but make it invisible until we need it
+    var tooltipContainer = d3.select('#bigchart').append("div")
+        .attr("id", "countryTooltip")
+        .style("position", "absolute")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
+        .style("visibility", "hidden");
+
     lineGroup
       .enter()
       .append('g')
@@ -411,13 +421,15 @@ class bigChart {
             .style('opacity', lineOpacityHover)
             .style('stroke-width', lineStrokeHover);
           // add text to show what country this is
-          svg.append("text")
-            .text(d.key)
-            .attr('class', 'country-text')
-            .attr("x", (width - margin) / 2)
-            .attr("y", 15)
-            .style('fill', color(d.key))
-            .style("pointer-events", "none");
+          tooltipContainer
+              .style("left", (d3.mouse(this)[0]) + "px")
+              .style("top", (d3.mouse(this)[1] + 50) + "px")
+              .style("visibility", "visible")
+              .style('color', color(d.key))
+              .append("text")
+              .attr("class", "countryTooltipText")
+              .style('color', color(d.key))
+              .text(d.key);
         }
         else if (selectedCountry === d.key) {
           d3.select(this)
@@ -425,6 +437,8 @@ class bigChart {
         }
       })
       .on("mouseout", function (d) {
+        d3.selectAll(".countryTooltipText").remove();
+        d3.selectAll("#countryTooltip").style("visibility", "hidden");
         if (selectedCountry === undefined) {
           d3.selectAll(".line")
             .style("opacity", lineOpacity)
