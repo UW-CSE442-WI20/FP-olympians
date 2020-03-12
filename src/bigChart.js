@@ -6,9 +6,28 @@ const _ = require("underscore");
 const generateMedalChart = require("./medalChart");
 const SummaryCountry = require('./summaryChartCountry');
 var selectedCountry = undefined;
+
+var bigChartInstance = null;
+
+var duration = 250;
+var lineOpacity = "0.5";
+var lineOpacityHover = "0.95";
+var otherLinesOpacityHover = "0.1";
+var otherLinesOpacitySelected = "0.025"
+var lineStroke = "3px";
+var lineStrokeHover = "4.5px";
+
+var circleOpacity = '0.85';
+var circleOpacityOnLineHover = "0.25"
+var circleRadius = 3;
+var circleRadiusHover = 6;
+
+
 class bigChart {
   constructor(data) {
 
+
+    bigChartInstance = this;
     // Formatting lines
 
     // getting width and height of graph
@@ -201,40 +220,40 @@ class bigChart {
 
     // set up y axis
     var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"))
-       .ticks(7)
-       .tickSize(0)
-       .tickPadding(-5);
+      .ticks(7)
+      .tickSize(0)
+      .tickPadding(-5);
 
     // now add titles to the axes
     bigsvg.append("text")
       .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
       .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
       .text("Athletes Participated");
-      svg.selectAll(".parallelAxis")
-        .data(dimensions).enter()
-        .append("g")
-        .attr('class', 'parallelAxis')
-        .attr("transform", function (d) {
-          return "translate(" + xScale(d) + ") ";
-        })
-        .append("text")
-        .style("text-anchor", "middle")
-        .attr("y", -10)
-        .text(function (d) { return d; })
-        .style("fill", "gray")
-      svg.selectAll(".parallelAxis")
-        .each(function (d) {
-          // add in the rectangle bars
-          d3.select(this).append("rect")
-            .attr("x", -10)
-            .attr("y", -6)
-            .attr("width", 16)
-            .attr("height", 320)
-            .attr("fill", "#525B68")
-            .attr("opacity", 0.8);
-          //d3.select(this).call(yAxis);
-          d3.select(this).transition().duration(500).call(yAxis);
-        })
+    svg.selectAll(".parallelAxis")
+      .data(dimensions).enter()
+      .append("g")
+      .attr('class', 'parallelAxis')
+      .attr("transform", function (d) {
+        return "translate(" + xScale(d) + ") ";
+      })
+      .append("text")
+      .style("text-anchor", "middle")
+      .attr("y", -10)
+      .text(function (d) { return d; })
+      .style("fill", "gray")
+    svg.selectAll(".parallelAxis")
+      .each(function (d) {
+        // add in the rectangle bars
+        d3.select(this).append("rect")
+          .attr("x", -10)
+          .attr("y", -6)
+          .attr("width", 16)
+          .attr("height", 320)
+          .attr("fill", "#525B68")
+          .attr("opacity", 0.8);
+        //d3.select(this).call(yAxis);
+        d3.select(this).transition().duration(500).call(yAxis);
+      })
 
 
     this.redraw(bigsvg, currSport, medalsvg);
@@ -246,18 +265,18 @@ class bigChart {
       return;
     }
 
-    var duration = 250;
-    var lineOpacity = "0.5";
-    var lineOpacityHover = "0.95";
-    var otherLinesOpacityHover = "0.1";
-    var otherLinesOpacitySelected = "0.025"
-    var lineStroke = "3px";
-    var lineStrokeHover = "4.5px";
+    // var duration = 250;
+    // var lineOpacity = "0.5";
+    // var lineOpacityHover = "0.95";
+    // var otherLinesOpacityHover = "0.1";
+    // var otherLinesOpacitySelected = "0.025"
+    // var lineStroke = "3px";
+    // var lineStrokeHover = "4.5px";
 
-    var circleOpacity = '0.85';
-    var circleOpacityOnLineHover = "0.25"
-    var circleRadius = 3;
-    var circleRadiusHover = 6;
+    // var circleOpacity = '0.85';
+    // var circleOpacityOnLineHover = "0.25"
+    // var circleRadius = 3;
+    // var circleRadiusHover = 6;
 
     var width = this.width;
     var margin = this.margin;
@@ -309,17 +328,16 @@ class bigChart {
     // set up y axis
     var yAxis = d3.axisLeft(yScale)
       // .tickFormat(d3.format("d"))
-       .ticks(7)
-       .tickSize(0)
-       .tickPadding(-5)
-       .tickFormat(function(e){
-        if(Math.floor(e) != e)
-        {
-            return;
+      .ticks(7)
+      .tickSize(0)
+      .tickPadding(-5)
+      .tickFormat(function (e) {
+        if (Math.floor(e) != e) {
+          return;
         }
 
         return e;
-    });
+      });
 
     var line = d3.line()
       .x(d => xScale(d.key))
@@ -432,41 +450,13 @@ class bigChart {
 
 
 
-      lineGroup.exit()
+    lineGroup.exit()
       .transition()
       .style('opacity', 0)
       .remove();
 
-
-    // // now add titles to the axes
-    // bigsvg.append("text")
-    //   .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-    //   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-    //   .text("Athletes Participated");
-    // svg.selectAll(".parallelAxis")
-    //   .data(dimensions).enter()
-    //   .append("g")
-    //   .attr('class', 'parallelAxis')
-    //   .attr("transform", function (d) {
-    //     return "translate(" + xScale(d) + ") ";
-    //   })
-    //   .append("text")
-    //   .style("text-anchor", "middle")
-    //   .attr("y", -10)
-    //   .text(function (d) { return d; })
-    //   .style("fill", "gray")
     svg.selectAll(".parallelAxis")
       .each(function (d) {
-        // add in the rectangle bars
-        //d3.select(this).remove("rect");
-        // d3.select(this).append("rect")
-        //   .attr("x", -6)
-        //   .attr("y", -6)
-        //   .attr("width", 12)
-        //   .attr("height", 320)
-        //   .attr("fill", "blue")
-        //   .attr("opacity", 0.8);
-        //d3.select(this).call(yAxis);
         d3.select(this).transition().duration(500).call(yAxis);
       })
 
@@ -494,7 +484,58 @@ class bigChart {
   }
 
 
+
+
+
+
 }
+
+
+function redrawBigChartClick(currCountry, bigChartClick) {
+  // console.log(this);
+  if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
+    selectedCountry = selectedCountry === undefined ? currCountry : undefined;
+  } else {
+    selectedCountry = currCountry;  // if its 
+  }
+
+  if (selectedCountry != undefined) {
+    d3.selectAll(".line")
+      .style('opacity', otherLinesOpacitySelected)
+    d3.select()
+      .style('opacity', lineOpacityHover)
+      .style('stroke-width', lineStrokeHover)
+  } else {
+    // When clicking again
+    d3.selectAll(".line")
+      .style("opacity", lineOpacity)
+      .style("stroke-width", lineStroke)
+      .style('stroke', d => color(d.key));
+    svg.selectAll(".country-text").remove();
+    return;
+  }
+
+  console.log(bigChartInstance.entriesBySportThenCountryThenYear)
+  // console.log(d);
+  console.log("curr sport:", currSport);
+  var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
+    console.log("searching for ", currSport);
+    // console.log("considering ", item.key);
+    return item.key === currSport;
+  });
+  console.log(sportData);
+  var countryData = _.find(d3.values(sportData.values), function (item) {
+    console.log("searching for ", currCountry);
+    // console.log("considering ", item.key);
+    return item.key === currCountry;
+  });
+  country.updateChart(countryData.key);
+  console.log("checking countryData", countryData);
+  generateMedalChart(countryData.values, medalsvg);
+
+}
+
+
 
 
 // function brushstart() {
