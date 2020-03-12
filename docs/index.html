@@ -2,18 +2,19 @@
   <head>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
     <!-- <script src="../node_modules/datamaps/dist/datamaps.world.min.js"></script> -->
     <!-- <script src="/datamaps.world.min.js"></script> -->
     <meta charset="UTF-8">
-    <title>Looking Forward to the 2020 Olympics</title>
-    <link rel="stylesheet" href="https://uw-cse442-wi20.github.io/FP-olympians/styles.3da1c334.css">
+    <title>Olympics: Then and Now</title>
+    <link rel="stylesheet" href="https://uw-cse442-wi20.github.io/FP-olympians/styles.14434748.css">
   </head>
   <body>
     <div class="dashboard">
       <header>
         <!-- Header content -->
         <div>
-          <h1>Looking Forward to the 2020 Olympics</h1>
+          <h1>Olympics: Then and Now</h1>
         </div>
       </header>
 
@@ -44,7 +45,7 @@
       <maparea>
         <!-- Header content -->
         <div id="map-container">
-          <div id="map-text">map text here
+          <div id="map-text">Have you ever wondered which teams are the top teams in the Olympics??
             <button id="map-btn" type="button">Reset Map</button>
           </div>
           <div id="map" style="position: absolute; width:80%; object-fit: contain; margin: 0 auto;"> </div>
@@ -64,20 +65,24 @@
               Sport:
               <select id="select-sport"></select>
             </div>
+            <div id="sport-text">
+            </div>
             <div class="searchbar">
                 <div class="autocomplete">
-                  <input id="searchbar" name="searchbar" type="text" class="searchbar" placeholder="Search for a country">
+                  <input id="searchbar" name="searchbar" type="text" placeholder="Search for a country">
               </div>
             </div>
-            <div id="sport-text">This is some sport text
+            <div id="country-flag">
             </div>
-            <div id="countryTable">
-              <!-- Summary statistic for country -->
+            <div id="country-name">
+            </div>
+            <!-- <div id="countryTable">
+              Summary statistic for country
               <div id="table_wrap">
                   <h3 id="country"></h3>
                   <table id="country_table"></table>
               </div>
-            </div>
+            </div> -->
           </div>
           <div id="chart-container">
             <div id="bigchart">
@@ -91,13 +96,13 @@
         </div>
       </main>
 
-      <footer>
+      <!-- <footer> -->
         <!-- Footer content -->
-        this is the footer (hacky solution)
-      </footer>
+        <!-- this is the footer (hacky solution) -->
+      <!-- </footer> -->
     </div>
 
-    <script src="https://uw-cse442-wi20.github.io/FP-olympians/main.e078b281.js"></script>
+    <script src="https://uw-cse442-wi20.github.io/FP-olympians/main.c6c60b84.js"></script>
 
   </body>
 </html>
