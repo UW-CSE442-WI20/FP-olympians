@@ -283,7 +283,7 @@ class bigChart {
             .attr("x", -6)
             .attr("y", -6)
             .attr("width", 14)
-            .attr("height", 335)
+            .attr("height", 350)
             .attr("fill", "#525B68")
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
@@ -409,6 +409,7 @@ class bigChart {
         .style("align-items", "center")
     tooltipContainer.append("div")
         .attr("id", "countryTooltipFlagDiv")
+        .style("background-color", "B0C4DE")
         .style("display", "flex")
         .style("flex-direction", "column")
         .style("align-items", "center");
@@ -455,6 +456,25 @@ class bigChart {
               .attr("height", 40);
         }
         else if (selectedCountry === d.key) {
+          tooltipContainer
+              .style("left", (d3.mouse(this)[0]) + "px")
+              .style("top", (d3.mouse(this)[1]) + "px")
+              .style("visibility", "visible")
+              .style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv")
+              .append("text")
+              .attr("class", "countryTooltipText")
+              .style('color', color(d.key))
+              .text(d.key)
+          d3.select("#countryTooltipFlagDiv")
+              .append("img")
+              .attr("class", "countryTooltipFlag")
+              .attr("src", () => {
+                var imgName = (d.key).replace(/ /g,"-").replace("\'","-").toLowerCase();
+                return "flags/" + imgName + "-flag.svg";
+              })
+              .attr("width", 60)
+              .attr("height", 40);
           d3.select(this)
             .style('stroke', 'black')
         }
