@@ -238,9 +238,6 @@ class worldMap {
       return d.Team;
     }).entries(data)
 
-
-    console.log("here is the data:", res)
-
     this.data = d3.nest()
       .key(function(d) {
         return d.Team
@@ -264,7 +261,6 @@ class worldMap {
         }
       },
       done: function(datamap) {
-        console.log("inside of the done func")
         d3.select('.datamap').call(
           d3.zoom()
             .scaleExtent([0.7, 6])
@@ -280,12 +276,10 @@ class worldMap {
           d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
         };
         datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-            console.log("clicked!!!")
             // alert(geography.properties.name);
             var name = countries[geography.properties.name]
             currSportSelections = document.getElementById('select-sport');
             currSport = currSportSelections.options[currSportSelections.value].text // current sport
-            console.log("name of the country", name)
             medalsvg = d3.select('#medalchart').select("svg")
            
             redrawBigChartClick(name, currSport, medalsvg, false);
@@ -1330,7 +1324,6 @@ class worldMap {
       // in including color change?
     });
 
-    console.log("executing data");
     d3.select(window).on('resize', () => {
       this.map.resize();
     });
