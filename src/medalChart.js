@@ -357,7 +357,9 @@ function generateMedalChart(data, medalsvg) {
         .style("border", "solid")
         .style("border-width", "1px")
         .style("border-radius", "5px")
-        .style("padding", "10px")
+        .style("padding", "3px")
+        .style("padding-top", "1px")
+        .style("padding-bottom", "1px")
         .style("visibility", "hidden");
 
     function ticked() {

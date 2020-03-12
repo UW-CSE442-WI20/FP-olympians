@@ -37,7 +37,7 @@ class bigChart {
     this.height = 0;// = parseInt(bigsvg.style("height"), 10);
     this.margin = 50;
     // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
-    this.margins = { top: 30, right: 35, bottom: 0, left: 35 };
+    this.margins = { top: 30, right: 35, bottom: 6, left: 35 };
 
     // getting scale of graph
 
@@ -85,7 +85,7 @@ class bigChart {
       return uniqueNames.length;
     })
     .entries(data);
-  
+
     var years = ["2000", "2004", "2008", "2012", "2016"]
     this.entriesBySportByYearAthleteCount.forEach(function(d) {
       d.values.forEach(function(e) {
@@ -283,7 +283,7 @@ class bigChart {
             .attr("x", -6)
             .attr("y", -6)
             .attr("width", 14)
-            .attr("height", 335)
+            .attr("height", 400)
             .attr("fill", "#525B68")
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
@@ -594,6 +594,7 @@ function updateCountryFlag(currCountry) {
     .attr("id", "flag-img")
     .attr("width", 90)
     .attr("height", 60);
+  document.getElementById("country-name").innerHTML = currCountry;
 }
 
 
