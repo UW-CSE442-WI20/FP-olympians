@@ -31265,7 +31265,7 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     return item.key === currCountry;
   });
 
-  if (countryData === undefined) {
+  if (countryData === undefined || countryData.values === undefined) {
     return;
   }
 
@@ -42005,7 +42005,6 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currS
   var res = d3.nest().key(function (d) {
     return d.Team;
   }).entries(data);
-  console.log("here is the data:", res);
   this.data = d3.nest().key(function (d) {
     return d.Team;
   }).entries(data);
@@ -42024,7 +42023,6 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currS
       }
     },
     done: function done(datamap) {
-      console.log("inside of the done func");
       d3.select('.datamap').call(d3.zoom().scaleExtent([0.7, 6]).on('zoom', function () {
         datamap.svg.selectAll('g').attr('transform', d3.event.transform);
       }));
@@ -42035,13 +42033,11 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currS
       };
 
       datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
-        console.log("clicked!!!"); // alert(geography.properties.name);
-
+        // alert(geography.properties.name);
         var name = countries[geography.properties.name];
         currSportSelections = document.getElementById('select-sport');
         currSport = currSportSelections.options[currSportSelections.value].text; // current sport
 
-        console.log("name of the country", name);
         medalsvg = d3.select('#medalchart').select("svg");
         redrawBigChartClick(name, currSport, medalsvg, false);
       });
@@ -43084,7 +43080,6 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currS
     // in including color change?
 
   });
-  console.log("executing data");
   d3.select(window).on('resize', function () {
     _this.map.resize();
   });
@@ -43511,4 +43506,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.8c269849.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.c6c60b84.js.map
