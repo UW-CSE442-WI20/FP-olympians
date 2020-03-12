@@ -233,10 +233,11 @@ function generateMedalChart(data, medalsvg) {
     //       return 'tick mark';
     //     });
 
-    // const xSmallAxis = d3.axisBottom(xSmallScale)
-    //     .tickPadding(30)
-    //     .tickValues(getTickValues(2000, 2020))
-    //     .tickFormat(d3.format("Y"))
+     const xSmallAxis = d3.axisBottom(xSmallScale)
+        .tickPadding(10)
+        .tickSize(0)
+        .tickValues(getTickValues(2000, 2020))
+        .tickFormat(d3.format("Y"))
     const ySmallAxis = d3.axisLeft(ySmallScale)
 
     // add title: country name
@@ -248,11 +249,11 @@ function generateMedalChart(data, medalsvg) {
         .text(data[0].values[0].Team);  // Country Name
 
     // add axis groups to medalsvg
-    // const xSmallAxisGroup = medalsvg.append("g")
-    //     .attr("class", "axis x")
-    //     .attr("id", "xAxisMedals")
-    //     .attr("transform", "translate(0," + innerHeight + ")")
-    //     .call(xSmallAxis);
+    const xSmallAxisGroup = medalsvg.append("g")
+        .attr("class", "axis x")
+        .attr("id", "xAxisMedals")
+        .attr("transform", "translate(0," + innerHeight + ")")
+        .call(xSmallAxis);
 
     var x1 = d3.scaleBand();
     var medalTypes = groupData[0].values.map(function (d) {
@@ -476,7 +477,7 @@ function generateMedalChart(data, medalsvg) {
         .attr("text-anchor", "middle")
         .attr("font-size", "12px")
         .attr("transform", function (d) {
-            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",11.5)";
+            return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",9)";
         })
         .style("fill", "white")
         .text(function(d) {

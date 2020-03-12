@@ -30755,7 +30755,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   medalsvg.selectAll("text").remove();
   medalsvg.selectAll("g").transition();
   var margin = {
-    top: 20,
+    top: 0,
     right: 10,
     bottom: 30,
     left: 10
@@ -30792,7 +30792,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   var xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]); //[0, 950]);
 
-  var ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.bottom, innerHeight]);
+  var ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.top, innerHeight]);
 
   var getTickValues = function getTickValues(startTick, endTick) {
     var values = [];
@@ -30834,10 +30834,12 @@ module.exports = function generateMedalChart(data, medalsvg) {
   //     });
 
 
-  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(30).tickValues(getTickValues(2000, 2020)).tickFormat(d3.format("Y"));
+  var xSmallAxis = d3.axisBottom(xSmallScale).tickPadding(10).tickSize(0).tickValues(getTickValues(2000, 2020)).tickFormat(d3.format("Y"));
   var ySmallAxis = d3.axisLeft(ySmallScale); // add title: country name
 
-  medalsvg.append("text").attr("x", width / 2).attr("y", height - innerHeight - 1.3 * margin["top"]).style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
+  medalsvg.append("text").attr("x", width / 2).attr("y", height + margin["bottom"] + 18) // 11 is r of circle
+  //.attr("y", height - innerHeight - 1.3 * margin["top"])
+  .style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
   // add axis groups to medalsvg
 
   var xSmallAxisGroup = medalsvg.append("g").attr("class", "axis x").attr("id", "xAxisMedals").attr("transform", "translate(0," + innerHeight + ")").call(xSmallAxis);
@@ -30867,15 +30869,15 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   var cxTallyOffset = function cxTallyOffset(medalType) {
     if (medalType === 'Bronze') {
-      return 0.35;
+      return 0.3;
     } else if (medalType === 'Silver') {
       return 0.5;
     } else {
-      return 0.65;
+      return 0.7;
     }
   };
 
-  var medalRadius = 10; // radius of medal circles
+  var medalRadius = 8; // radius of medal circles
   /////////////////////////////////// d3.force
 
   if (nodes.length == 0) {
@@ -30884,11 +30886,11 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   var yForceOffset = function yForceOffset(medalType) {
     if (medalType === 'Bronze') {
-      return 1;
+      return .4;
     } else if (medalType === 'Silver') {
-      return 2;
+      return 1.4;
     } else {
-      return 3;
+      return 2.4;
     }
   };
 
@@ -30897,7 +30899,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   })).force('y', d3.forceY().y(function (d) {
     return ySmallScale(yForceOffset(d.grpName)); // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
   })).force('collision', d3.forceCollide().radius(function (d) {
-    return 11;
+    return 9; //11;
   })).force("bounds", boundingBox).on('tick', ticked); // Custom force to put all nodes in a box
 
   function boundingBox() {
@@ -31000,9 +31002,9 @@ module.exports = function generateMedalChart(data, medalsvg) {
     return hoverColor(d.grpName);
   }).attr("r", 11).attr("cx", function (d) {
     return cxTallyOffset(d.grpName) * xSmallScale.bandwidth();
-  }).attr("cy", 10);
-  tally.selectAll("#tallyGroup").append("text").attr("text-anchor", "middle").attr("transform", function (d) {
-    return "translate(" + cxTallyOffset(d.grpName) * xSmallScale.bandwidth() + ",15.5)";
+  }).attr("cy", 4);
+  tally.selectAll("#tallyGroup").append("text").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", function (d) {
+    return "translate(" + cxTallyOffset(d.grpName) * xSmallScale.bandwidth() + ",11.5)";
   }).style("fill", "white").text(function (d) {
     return d.grpValue;
   });
@@ -31355,7 +31357,7 @@ function () {
     this.margins = {
       top: 30,
       right: 35,
-      bottom: 10,
+      bottom: 0,
       left: 35
     }; // getting scale of graph
     // adding tiny chart
@@ -31449,17 +31451,17 @@ function () {
         return values;
       };
       /* Add Axis into SVG */
-
-
-      var xAxis = d3.axisBottom(xScale).ticks(5); // const xAxis = d3.axisBottom(xScale))
+      //var xAxis = d3.axisBottom(xScale).ticks(5);
+      // const xAxis = d3.axisBottom(xScale))
       //     .tickPadding(30)
       //     .tickValues(getTickValues(2000, 2020))
       //     .tickFormat(d3.format("Y"))
-
-      var yAxis = d3.axisLeft(yScale).ticks(5); // svg.append("g")
+      //var yAxis; // = d3.axisLeft(yScale).ticks(5);
+      // svg.append("g")
       //   .attr("class", "x axis")
       //   .attr("transform", `translate(0, ${this.height - this.margin})`)
       //   .call(xAxis);
+
 
       var dimensions = [];
 
@@ -31501,6 +31503,25 @@ function () {
       this.yRange = yRange;
       this.svg = svg;
       console.log(this.yRange);
+      var actualHeight = this.height - this.margins.top - this.margins.bottom;
+      var yScale = d3.scaleLinear().domain([0, yRange[currSport]]).range([actualHeight, 0]); // set up y axis
+
+      var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d")).ticks(7).tickSize(0).tickPadding(-5); // now add titles to the axes
+
+      bigsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+      .attr("transform", "translate(" + this.margins.left + "," + this.height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+      .text("Athletes Participated");
+      svg.selectAll(".parallelAxis").data(dimensions).enter().append("g").attr('class', 'parallelAxis').attr("transform", function (d) {
+        return "translate(" + xScale(d) + ") ";
+      }).append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
+        return d;
+      }).style("fill", "gray");
+      svg.selectAll(".parallelAxis").each(function (d) {
+        // add in the rectangle bars
+        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 320).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
+
+        d3.select(this).transition().duration(500).call(yAxis);
+      });
       this.redraw(bigsvg, currSport, medalsvg);
     }
   }, {
@@ -31558,8 +31579,16 @@ function () {
       console.log(yRange[currSport]);
       console.log(this.height);
       console.log(actualHeight);
-      var yScale = d3.scaleLinear().domain([0, yRange[currSport]]).range([actualHeight, 0]);
-      yAxis = d3.axisLeft(yScale);
+      var yScale = d3.scaleLinear().domain([0, yRange[currSport]]).range([actualHeight, 0]); // set up y axis
+
+      var yAxis = d3.axisLeft(yScale) // .tickFormat(d3.format("d"))
+      .ticks(7).tickSize(0).tickPadding(-5).tickFormat(function (e) {
+        if (Math.floor(e) != e) {
+          return;
+        }
+
+        return e;
+      });
       var line = d3.line().x(function (d) {
         return xScale(d.key);
       }).y(function (d) {
@@ -31585,7 +31614,7 @@ function () {
           d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
           d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
 
-          svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key));
+          svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key)).style("pointer-events", "none");
         } else if (selectedCountry === d) {
           d3.select(this).style('stroke', 'black');
         }
@@ -31639,17 +31668,35 @@ function () {
         console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
       }).transition().duration(1000).style('opacity', lineOpacity);
-      lineGroup.exit().transition().style('opacity', 0).remove(); // now add titles to the axes
+      lineGroup.exit().transition().style('opacity', 0).remove(); // // now add titles to the axes
+      // bigsvg.append("text")
+      //   .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
+      //   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+      //   .text("Athletes Participated");
+      // svg.selectAll(".parallelAxis")
+      //   .data(dimensions).enter()
+      //   .append("g")
+      //   .attr('class', 'parallelAxis')
+      //   .attr("transform", function (d) {
+      //     return "translate(" + xScale(d) + ") ";
+      //   })
+      //   .append("text")
+      //   .style("text-anchor", "middle")
+      //   .attr("y", -10)
+      //   .text(function (d) { return d; })
+      //   .style("fill", "gray")
 
-      bigsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-      .attr("transform", "translate(" + this.margins.left + "," + this.height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-      .text("Athletes Participated");
-      svg.selectAll(".parallelAxis").data(dimensions).enter().append("g").attr('class', 'parallelAxis').attr("transform", function (d) {
-        return "translate(" + xScale(d) + ") ";
-      }).append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
-        return d;
-      }).style("fill", "black");
       svg.selectAll(".parallelAxis").each(function (d) {
+        // add in the rectangle bars
+        //d3.select(this).remove("rect");
+        // d3.select(this).append("rect")
+        //   .attr("x", -6)
+        //   .attr("y", -6)
+        //   .attr("width", 12)
+        //   .attr("height", 320)
+        //   .attr("fill", "blue")
+        //   .attr("opacity", 0.8);
+        //d3.select(this).call(yAxis);
         d3.select(this).transition().duration(500).call(yAxis);
       });
       var brushRange = {};
@@ -31723,7 +31770,6 @@ function () {
         // get country name
 
         imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
-        console.log("THIS IS IMAGE COUNTRY NAME", imgcountryName);
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -42039,7 +42085,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
       highlightOnHover: true,
       highlightBorderWidth: 1,
       popupTemplate: function popupTemplate(geography, data) {
-        return '<div class="hoverinfo">' + geography.properties.name + '\'s top sport(s): ' + data.first + data.second + data.third;
+        return '<div class="hoverinfo">' + geography.properties.name + '\'s top sport(s): ' + data.first + data.second + data.third + '</div>';
       }
     },
     done: function done(datamap) {
@@ -43182,7 +43228,7 @@ var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
 var countryNames = null;
-var currSport = "Archery";
+var currSport = "Swimming";
 var currYearIndex = 4; // 2016
 
 var topCountryToRatio = null; // top 10 results for ranking
@@ -43247,7 +43293,7 @@ function initializeDropdowns() {
   } // default selection
 
 
-  select.options[0].selected = true; // add event listener to find out when the sport changes
+  select.options[25].selected = true; // add event listener to find out when the sport changes
 
   select.addEventListener('change', function () {
     currSportSelections = document.getElementById('select-sport');
@@ -43268,7 +43314,7 @@ function initializeDropdowns() {
 
 
     medalsvg.remove();
-    medalsvg = d3.select('#medalchart').append('svg').attr("width", "1000").attr("height", 380);
+    medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380);
     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
     initializeSearch();
   });
@@ -43496,7 +43542,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60333" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63295" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
