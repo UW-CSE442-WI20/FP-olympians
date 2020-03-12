@@ -48,13 +48,9 @@ function autocomplete(searchField, countryNames, sportData, medalsvg) {
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-          console.log("search value", searchField.value); // country
           currSportSelections = document.getElementById('select-sport');
           currSport = currSportSelections.options[currSportSelections.value].text // current sport
-          console.log("curr sport ", currSport );
           const countryIndex = _.indexOf(countryNames, searchField.value);
-          console.log("index", countryIndex);
-          console.log("country rows", sportData.values);
           redrawBigChartClick(searchField.value, currSport, medalsvg, false);
           // generateMedalChart(sportData.values[countryIndex].values, medalsvg);
         });

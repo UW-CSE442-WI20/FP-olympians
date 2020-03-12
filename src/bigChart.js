@@ -156,9 +156,6 @@ class bigChart {
     //   .domain([2000, 2020]) // getXDomain()
     //   .range([this.margins.left, this.width - this.margins.left - this.margins.right - 30]); // used to start at 0
 
-    console.log("big chart x scale lower range:", this.margins.left);
-    console.log("big chart x scale upper range:", this.width - this.margins.left - this.margins.right - 30);
-
     var yScale = d3.scaleLinear()
       .domain([0, 80])
       .range([this.height - this.margins.top - this.margins.bottom, 0]);
@@ -180,7 +177,6 @@ class bigChart {
         .append("div")
         .attr('class', 'yearLogoLabel')
         .attr("transform", function (d) {
-        	console.log("supposedly getting year", d);
           return "translate(" + xScale(d) + ") ";
         });
     yearlabelsvg.selectAll(".yearLogoLabel")
@@ -192,7 +188,6 @@ class bigChart {
     yearlabelsvg.selectAll(".yearLogoLabel")
     	  .append("img")
         .attr("src", (d) => {
-        	console.log("src", d);
         	return "olympic_logos/" + d + ".svg";
         })
         .attr("class", "yearLogo")
@@ -244,7 +239,6 @@ class bigChart {
     //       .range([height, 0]));
     // }));
 
-    console.log(this.entriesBySportByYearAthleteCount);
     var yRange = this.yRange;
     this.entriesBySportByYearAthleteCount.forEach(function (sport) {
       if (sport.key.length == 0) {
@@ -262,7 +256,6 @@ class bigChart {
           }
         })
       })
-      console.log(sport.key + ": " + maxVal);
       yRange[sport.key] = maxVal;
       // d3.scaleLinear()
       //   .domain([0, maxVal])
@@ -272,7 +265,6 @@ class bigChart {
     this.dimensions = dimensions;
     this.yRange = yRange;
     this.svg = svg;
-    console.log(this.yRange);
 
     var actualHeight = this.height - this.margins.top - this.margins.bottom;
 
@@ -343,11 +335,8 @@ class bigChart {
 
     var color = this.color;
     var svg = this.svg
-    console.log("+++++++++++++++++++++++++");
-    console.log("finding currSport: ", currSport)
     var entriesBySportByYearAthleteCount = this.entriesBySportByYearAthleteCount;
     var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
-    console.log(currSport)
     var data = _.find(d3.values(entriesBySportByYearAthleteCount), function (item) {
       return item.key == currSport;
     }).values;
@@ -355,8 +344,6 @@ class bigChart {
     var dimensions = this.dimensions;
     var yRange = this.yRange;
     this.currSport = currSport;
-
-    console.log(svg);
 
     // this.lines.selectAll(".line-group")
     // .transition()
@@ -376,9 +363,6 @@ class bigChart {
     var actualHeight = this.height - this.margins.top - this.margins.bottom;
 
     var xScale = this.xScale;
-    console.log(yRange[currSport])
-    console.log(this.height);
-    console.log(actualHeight);
     var yScale = d3.scaleLinear()
       .domain([0, yRange[currSport]])
       .range([actualHeight, 0]);
@@ -402,7 +386,6 @@ class bigChart {
       .y(d => yScale(d.value));
 
 
-    console.log(data);
     var lineGroup = this.lines.selectAll(".line-group")
       .data(data, function (item) {
         return item;
@@ -593,8 +576,7 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     return;
   }
 
-  var country = this.summaryCountry
-  bigChartInstance.summaryCountry.updateChart(countryData.key);
+  // bigChartInstance.summaryCountry.updateChart(countryData.key);
   console.log("checking countryData", countryData);
   generateMedalChart(countryData.values, medalsvg);
 }
@@ -612,7 +594,6 @@ function scrollDown() {
 
 // update the flag image on the side based on current country selection
 function updateCountryFlag(currCountry) {
-  console.log("currCountry", currCountry);
   // remove old flag
   d3.select("#flag-img").remove();
   var imgcountryName = currCountry.replace(/ /g,"-").replace("\'","-").toLowerCase();
