@@ -37,6 +37,12 @@ function initializeRankChart() {
     .attr("src", "olympic_logos/olympic_rings.svg")
     .attr("width", 100)
     .attr("height", 100);
+
+  // add in explanation text here
+  document.getElementById("explore-countries").innerHTML =
+    "Click on a country's line to see its medals. Click on any line to deselect.";
+  document.getElementById("explore-medals").innerHTML =
+    "Click on an athlete's medal to see all of the medals they've won. Click again to deselect.";
 }
 
 // create svg for bigChart

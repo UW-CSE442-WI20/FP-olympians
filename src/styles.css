@@ -355,6 +355,32 @@ main {
   padding-top: 60px;
 }
 
+#country-selected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  color: black;
+  background-color: #E9EEF6;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+#explain-interaction {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#explore-countries {
+  color: gray;
+  font-size: 14px;
+}
+
+#explore-medals {
+  color: gray;
+  font-size: 14px;
+}
+
 #chart-container {
   display: flex;
   flex-direction: column;
