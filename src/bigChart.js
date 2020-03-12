@@ -66,25 +66,40 @@ class bigChart {
     this.entriesBySportThenCountryThenYear;
 
     this.entriesBySportByYearAthleteCount = d3.nest()
-      .key(function (d) {
-        return d.Sport;
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Team;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Year;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function (v) {
+      let uniqueNames = _.uniq(v, function (item) {
+        return item.Name;
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Team;
+      return uniqueNames.length;
+    })
+    .entries(data);
+  
+    var years = ["2000", "2004", "2008", "2012", "2016"]
+    this.entriesBySportByYearAthleteCount.forEach(function(d) {
+      d.values.forEach(function(e) {
+        var arr = []
+        e.values.forEach(function(f) {
+          arr.push(f.key);
+        });
+        result = years.filter(f => !arr.includes(f));
+        result.forEach(function(z) {
+          e.values.push({"key": z, "value": 0});
+        });
+        e.values.sort((a, b) => a.key - b.key)
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Year;
-      })
-      .sortKeys(d3.ascending)
-      .rollup(function (v) {
-        let uniqueNames = _.uniq(v, function (item) {
-          return item.Name;
-        })
-        return uniqueNames.length;
-      })
-      .entries(data);
+    });
   }
 
   drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
@@ -386,7 +401,17 @@ class bigChart {
         .style("border-width", "1px")
         .style("border-radius", "5px")
         .style("padding", "10px")
-        .style("visibility", "hidden");
+        .style("visibility", "hidden")
+    tooltipContainer.append("div")
+        .attr("id", "countryTooltipTextDiv")
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("align-items", "center")
+    tooltipContainer.append("div")
+        .attr("id", "countryTooltipFlagDiv")
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("align-items", "center");
 
     lineGroup
       .enter()
@@ -411,13 +436,23 @@ class bigChart {
           // add text to show what country this is
           tooltipContainer
               .style("left", (d3.mouse(this)[0]) + "px")
-              .style("top", (d3.mouse(this)[1] + 50) + "px")
+              .style("top", (d3.mouse(this)[1]) + "px")
               .style("visibility", "visible")
-              .style('color', color(d.key))
+              .style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv")
               .append("text")
               .attr("class", "countryTooltipText")
               .style('color', color(d.key))
-              .text(d.key);
+              .text(d.key)
+          d3.select("#countryTooltipFlagDiv")
+              .append("img")
+              .attr("class", "countryTooltipFlag")
+              .attr("src", () => {
+                var imgName = (d.key).replace(/ /g,"-").replace("\'","-").toLowerCase();
+                return "flags/" + imgName + "-flag.svg";
+              })
+              .attr("width", 60)
+              .attr("height", 40);
         }
         else if (selectedCountry === d.key) {
           d3.select(this)
@@ -426,6 +461,7 @@ class bigChart {
       })
       .on("mouseout", function (d) {
         d3.selectAll(".countryTooltipText").remove();
+        d3.selectAll(".countryTooltipFlag").remove();
         d3.selectAll("#countryTooltip").style("visibility", "hidden");
         if (selectedCountry === undefined) {
           d3.selectAll(".line")

@@ -266,6 +266,7 @@ function initializeData(data) {
       result.forEach(function(z) {
         e.values.push({"key": z, "value": 0});
       });
+      e.values.sort((a, b) => a.key - b.key)
     })
   });
 
@@ -414,7 +415,7 @@ d3.csv('olympics.csv')
 
     d3.csv('rankings.csv')
       .then((data) => {
-        map = new Map(entriesBySportByYearByCountryRatio, data);
+        map = new Map(entriesBySportByYearByCountryRatio, data, currSport, medalsvg);
         console.log("here are the rankings:", data)
       });
   });
