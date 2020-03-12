@@ -13,8 +13,10 @@ body {
 
 h1 {
   text-align: center;
-  color: #5080CE;
-  /* margin-left: 60px; */
+  color: #E85F5A;
+  margin-left: 80px;
+  font-stretch: extra-expanded;
+  letter-spacing: 1.5;
 }
 
 p.title {
@@ -74,7 +76,8 @@ header {
   background-color: white;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
+  margin-left: 50px;
   z-index: 2;
 }
 
@@ -151,7 +154,7 @@ sidebar {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: #F9ECEC;
+  background-color: #FAF1F1;
   color: black;
   text-align: left;
   font-size: 0.85em;
@@ -161,7 +164,7 @@ sidebar {
   padding-bottom: 10px;
   top: -5px;
   right: 105%;
-  box-shadow: 4px 2px 2px #6C8CBF;
+  /* box-shadow: 4px 2px 2px #6C8CBF; */
 
   /* Position the tooltip */
   position: absolute;
@@ -180,7 +183,7 @@ sidebar {
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent #F9ECEC;
+  border-color: transparent transparent transparent #FAF1F1;
 }
 
 #year-selector {
@@ -278,10 +281,13 @@ main {
 #map-text {
   /* margin-top: 320px; */
   margin-top: 150px;
+  margin-left: 14px;
   width: 200px;
   height: 320px;
-  background-color: gray;
+  background-color: white;
   padding: 10px;
+  text-align: left;
+  color: gray;
 }
 
 #map-container {
@@ -308,8 +314,8 @@ main {
 }
 
 #map-btn {
-  background-color: #FC8D59;
-  margin: 10px;
+  background-color: #6C8CBF;
+  margin: 30px;
   border: none;
   color: white;
   padding: 10px 14px;
@@ -322,7 +328,7 @@ main {
 }
 
 #map-btn:hover {
-  background-color: #EFAD7A; /* Green */
+  background-color: #FC8D59; /* Green */
   color: white;
   z-index: 2;
 }
@@ -347,6 +353,32 @@ main {
   justify-content: flex-start;
   align-items: center;
   padding-top: 60px;
+}
+
+#country-selected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  color: black;
+  background-color: #E9EEF6;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+#explain-interaction {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#explore-countries {
+  color: gray;
+  font-size: 14px;
+}
+
+#explore-medals {
+  color: gray;
+  font-size: 14px;
 }
 
 #chart-container {
@@ -393,6 +425,7 @@ main {
 #xAxisMedals text {
   color: gray;
   font-size: 14px;
+  font-weight: lighter;
 }
 
 .line {
@@ -550,4 +583,4 @@ input[type=submit] {
 } */
 
 
-/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.14434748.css.map */
+/*# sourceMappingURL=/styles.8986bff4.css.map */
