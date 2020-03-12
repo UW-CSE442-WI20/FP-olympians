@@ -40,7 +40,6 @@ const bigsvg = d3.select('#bigchart')
   .append('svg')
   .attr('width', "800")
   .attr('height',"440");
-console.log("bigsvg", bigsvg);
 
 // create svg for medalChart
 let medalsvg = d3.select('#medalchart')
@@ -58,7 +57,6 @@ function updateSportIcon() {
   d3.select("#sports-logo").remove();
   // get image name
   var sportName = currSport.replace(/ /g,"-").toLowerCase();
-  console.log("sportName", sportName);
   if (sportName === "softball") {
     sportName = "baseball";
   }
@@ -101,10 +99,7 @@ function initializeDropdowns() {
 	select.addEventListener('change', function() {
 	   currSportSelections = document.getElementById('select-sport');
      currSport = entriesBySport[currSportSelections.value].key;
-     console.log("HERE", entriesBySport);
-     console.log(currSportSelections.value);
-     console.log("currSport is ", currSport);
-     console.log("currYear is ", currYearIndex);
+
      // update ranking based on sport selection
      var exist = updateRanking(currSport, currYearIndex);
      if (exist) {
@@ -127,16 +122,12 @@ function initializeDropdowns() {
 
 function initializeSearch() {
 	var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
-	    // console.log("searching for ", currSport);
-	    // console.log("considering ", item.key);
 	    return item.key === currSport;
 	});
-	console.log("sport data", sportData);
 	countryNames = [];
 	var countries = sportData.values.forEach((item) => {
 		countryNames.push(item.key);
 	});
-	console.log("countries", countryNames);
 	autocomplete(document.getElementById("searchbar"), countryNames, sportData, medalsvg);
 }
 
@@ -187,7 +178,6 @@ function initializeData(data) {
 		.sortKeys(d3.ascending)
 		.entries(data);
 
-  //console.log("figuring out medal count");
 	entriesBySportByYearMedalCount = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -195,7 +185,6 @@ function initializeData(data) {
     .sortKeys(d3.ascending)
     .entries(data);
 
-  console.log("figuring out medal count");
   entriesBySportByYearMedalCount = d3.nest()
     .key(function (d) {
       return d.Sport;
@@ -283,10 +272,6 @@ function initializeData(data) {
   //   })
   // });
 
-console.log(entriesBySportByYearAthleteCount);
-
-
-
 	entriesBySportThenCountryThenYear = d3.nest()
 		.key(function(d) {
 			return d.Sport;
@@ -302,20 +287,18 @@ console.log(entriesBySportByYearAthleteCount);
 		.sortKeys(d3.ascending)
 		.entries(data)
 
-  entriesBySportByYearByCountryRatio = d3.nest()
-  	.key(function(d) {
-  		return d.Sport;
-  	})
-  	.key(function(d) {
-  		return d.Year;
-  	})
-    .key(function(d) {
-      return d.Team;
-    })
-    .sortKeys(d3.ascending)
-  	.entries(data);
-    //console.log("ratio nesting", entriesBySportByYearByCountryRatio);
-
+  	entriesBySportByYearByCountryRatio = d3.nest()
+	  	.key(function(d) {
+	  		return d.Sport;
+	  	})
+	  	.key(function(d) {
+	  		return d.Year;
+	  	})
+	    .key(function(d) {
+	      return d.Team;
+	    })
+	    .sortKeys(d3.ascending)
+	  	.entries(data);
 
 }
 
@@ -344,7 +327,6 @@ function updateRanking(currSport, currYearIndex) {
   yearsData = _.find(d3.values(entriesBySportByYearByCountryRatio), function (item) {
       return item.key === currSport;
   });
-  console.log("yearsData", yearsData);
   // get all the data for all the countries across a given year (currYear)
   countries = _.find(d3.values(yearsData.values), function (item) {
       return item.key === yearOptions[currYearIndex];
@@ -359,17 +341,13 @@ function updateRanking(currSport, currYearIndex) {
   // Store back in a list of key:value objects: country -> medal:athlete ratio.
   if (countries == null) {
     // no competition of this sport in currYear (ex. baseball dropped in 2012 and 2016)
-    console.log("No " + currSport + " in " + yearOptions[currYearIndex]);
     document.getElementById("ranking-info").innerHTML = "No " + currSport;
     return false;
   } else {
 
     countries.values.forEach(function(d) {
-    // console.log("country:", d.values);
     var countryName = d.key;
     var athletes = d.values;
-    // console.log("country name:", countryName);
-    // console.log("athletes:", athletes);
     var num_medals = 0.0;
     var num_athletes = 0.0;
     athletes.forEach(function(a) {
@@ -397,7 +375,6 @@ function updateRanking(currSport, currYearIndex) {
 // over the network, e.g.
 d3.csv('olympics.csv')
   .then((data) => {
-    console.log('Dynamically loaded CSV data', data);
     initializeData(data);
 	// createRanking("Swimming");
     updateRanking(currSport, currYearIndex);
@@ -408,7 +385,6 @@ d3.csv('olympics.csv')
     initializeSearch();
     // Clears the search
     document.getElementById("searchbar").value = "";
-    console.log(document.getElementById("searchbar"));
 
     bigChartInstance = new bigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
@@ -416,7 +392,6 @@ d3.csv('olympics.csv')
     d3.csv('rankings.csv')
       .then((data) => {
         map = new Map(entriesBySportByYearByCountryRatio, data, currSport, medalsvg);
-        console.log("here are the rankings:", data)
       });
   });
 

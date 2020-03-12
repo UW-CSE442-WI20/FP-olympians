@@ -14,8 +14,6 @@ let athleteFilter = false;
 
 module.exports =
 function generateMedalChart(data, medalsvg) {
-    // console.log("generating medal counts chart!")
-    // console.log("DATA****", data);
     const minYear = 2000;
     const maxYear = 2020;
 
@@ -34,9 +32,7 @@ function generateMedalChart(data, medalsvg) {
     const getMedalCount = (year, medal) => {
         var numMedals = 0;
         data.forEach(function (item) {
-            // console.log("getting ", medal, " medal count for item:", item)
             item.values.forEach(function(athlete) {
-                // console.log("examining athlete:", athlete, "with medal:", athlete.Medal)
                 if (athlete.Medal === medal && athlete.Year === parseInt(year)) numMedals++;
             })
 
@@ -47,9 +43,7 @@ function generateMedalChart(data, medalsvg) {
     const getEvents = (year, medal) => {
         var events = [];
         data.forEach(function (item) {
-            // console.log("getting events for item:", item)
             item.values.forEach(function(athlete) {
-                // console.log("examining athlete:", athlete, "with medal:", athlete.Medal)
                 if (athlete.Medal === medal && athlete.Year === parseInt(year)) events.push(athlete.Event);
             })
         })
@@ -59,9 +53,7 @@ function generateMedalChart(data, medalsvg) {
     const getAthletes = (year, medal) => {
         var athletes = [];
         data.forEach(function (item) {
-            // console.log("getting events for item:", item)
             item.values.forEach(function(athlete) {
-                // console.log("examining athlete:", athlete, "with medal:", athlete.Medal)
                 if (athlete.Medal === medal && athlete.Year === parseInt(year)) athletes.push(athlete.Name);
             })
         })
@@ -127,7 +119,6 @@ function generateMedalChart(data, medalsvg) {
                 }))
         }
     });
-    console.log("medal tallies", medalTallies);
 
     var nodes = []
     let medalCounts = []
@@ -143,8 +134,6 @@ function generateMedalChart(data, medalsvg) {
                 })
             }));
     });
-    console.log("medal counts", medalCounts);
-    // console.log("nodes:", nodes);
 
     medalsvg.selectAll("g").transition();
     medalsvg.selectAll("g").remove();
@@ -159,7 +148,6 @@ function generateMedalChart(data, medalsvg) {
 
     // Set the width and height of the graph
     var divbox = document.getElementById("medalchart").getBoundingClientRect();
-    console.log("divbox", divbox);
     var width = parseInt(medalsvg.style("width"), 10);
     var height = parseInt(medalsvg.style("height"), 10);
     width = width - margin.left - margin.right;
@@ -199,40 +187,6 @@ function generateMedalChart(data, medalsvg) {
         return values;
     }
 
-    // console.log("before map", groupData);
-    // let tickVals = getXDomain().map(item => (item - 2));
-    // console.log("ticks", tickVals);
-    // let xAxisWeekGenerator = d3.axisBottom(xSmallScale)
-    //     .tickValues(tickVals)
-    //     .tickSize(10)
-    //     .tickPadding(5)
-    //     .tickFormat((d, i) => {
-    //       // let index = Math.floor(i / 2);
-    //       // console.log(tickVals[i] + 2)
-    //       return tickVals[i] + 2;
-    //       // return graphData[index].x;
-    //     });
-
-    // const xAxisWeekGenerator = d3.axisBottom(xSmallScale)
-    //     .tickPadding(30)
-    //     .tickSize(-innerHeight, 0, 0)
-    //     .tickValues([2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020])
-    //     .tickFormat(d3.format("Y"))
-
-    // let xAxisWeekUi = medalsvg.append('g')
-    //     .attr('class', 'axis x')
-    //     .attr("id", "xAxisMedals")
-    //     .attr('transform', "translate(0," + innerHeight + ")")
-    //     .call(xAxisWeekGenerator);
-
-    //   xAxisWeekUi.selectAll('.tick')
-    //     .attr('class', (d, i) => {
-    //       if (i % 2 === 0) {
-    //         return 'tick label';
-    //       }
-    //       return 'tick mark';
-    //     });
-
      const xSmallAxis = d3.axisBottom(xSmallScale)
         .tickPadding(10)
         .tickSize(0)
@@ -244,7 +198,6 @@ function generateMedalChart(data, medalsvg) {
     medalsvg.append("text")
         .attr("x", width / 2)
         .attr("y", height + margin["bottom"] + 18)  // 11 is r of circle
-        //.attr("y", height - innerHeight - 1.3 * margin["top"])
         .style("text-anchor", "middle")
         .text(function() {
           if (data.length > 0) return data[0].values[0].Team;  // Country Name
@@ -345,7 +298,6 @@ function generateMedalChart(data, medalsvg) {
             // If the positions exceed the box, set them to the boundary position.
             var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.6) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
             node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius);
-            // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));
             node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
         }
     }
@@ -405,14 +357,11 @@ function generateMedalChart(data, medalsvg) {
                         .style("stroke", "none");
                 })
                 .on("click", function(d) {
-                    // var yearX = xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 1)
-                    // console.log("max X = " + (yearX + xSmallScale.bandwidth() - 10) + ", node X = " + d.x + ", min X = " + (yearX - xSmallScale.bandwidth() + 10));
                     currSelectedAthlete = d.grpAthlete;
                     athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
                 })
                 .attr("cx", (d) => {
-                    //return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.1);
                     return xSmallScale.bandwidth() * ((d.year - minYear) / 4 + 0.5)
                 })
                 .attr("cy", 0)
@@ -437,7 +386,6 @@ function generateMedalChart(data, medalsvg) {
     d3.select("body").on("keydown", () => {
         // recolor all medals when esc key is pressed to original medal color
         if (d3.event.keyCode == 81) {
-            // console.log("escape key pressed");
             athleteFilter = !athleteFilter;
             d3.selectAll("#medal")
                 .style("fill", function(d) {
@@ -466,7 +414,6 @@ function generateMedalChart(data, medalsvg) {
 
     tally.selectAll("#tallyGroup")
         .data(function (d) {
-            console.log("medal tally data values", d.values)
             return d.values;
         })
         .enter().append("g")
@@ -503,11 +450,7 @@ function redrawMedals(slice, currSelectedAthlete) {
         else return "#F2CE4B";
     }
 
-    // console.log("redrawing medals with selected athlete:", currSelectedAthlete);
     d3.selectAll("#medal")
-        // .style("stroke", function(d) {
-        //     return d.grpAthlete === currSelectedAthlete ? "black" : undefined;
-        // })
         .style("fill", function(d) {
             currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? color(d.grpName) : "#d5e8e8";
