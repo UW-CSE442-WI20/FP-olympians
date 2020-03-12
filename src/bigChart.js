@@ -24,6 +24,28 @@ var circleOpacityOnLineHover = "0.25"
 var circleRadius = 3;
 var circleRadiusHover = 6;
 
+// Create container for the tooltip but make it invisible until we need it
+const tooltipContainer = d3.select('#bigchart').append("div")
+    .attr("id", "countryTooltip")
+    .style("position", "absolute")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .style("visibility", "hidden")
+tooltipContainer.append("div")
+    .attr("id", "countryTooltipTextDiv")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+tooltipContainer.append("div")
+    .attr("id", "countryTooltipFlagDiv")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center");
+
+
+
 class bigChart {
   constructor(data) {
 
@@ -392,27 +414,6 @@ class bigChart {
     selectedCountry = undefined;
 
     svg.selectAll(".country-text").remove();
-
-    // Create container for the tooltip but make it invisible until we need it
-    var tooltipContainer = d3.select('#bigchart').append("div")
-        .attr("id", "countryTooltip")
-        .style("position", "absolute")
-        .style("border", "solid")
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
-        .style("visibility", "hidden")
-    tooltipContainer.append("div")
-        .attr("id", "countryTooltipTextDiv")
-        .style("display", "flex")
-        .style("flex-direction", "column")
-        .style("align-items", "center")
-    tooltipContainer.append("div")
-        .attr("id", "countryTooltipFlagDiv")
-        .style("background-color", "B0C4DE")
-        .style("display", "flex")
-        .style("flex-direction", "column")
-        .style("align-items", "center");
 
     lineGroup
       .enter()
