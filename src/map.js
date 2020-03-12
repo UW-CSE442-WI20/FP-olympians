@@ -21,11 +21,11 @@ class worldMap {
         highlightBorderColor: '#bada55',
         popupOnHover: true,
         highlightOnHover: true,
-        highlightBorderWidth: 3,
+        highlightBorderWidth: 1,
         popupTemplate: function(geography, data) {
           return '<div class="hoverinfo">' + geography.properties.name +
             '\'s top sport(s): ' + data.first +
-             data.second + data.third;
+             data.second + data.third + '</div>';
         }
       },
       done: function(datamap) {
@@ -37,7 +37,7 @@ class worldMap {
               datamap.svg.selectAll('g').attr('transform', d3.event.transform);
             })
         );
-        document.getElementById('btn').onclick = function() {
+        document.getElementById('map-btn').onclick = function() {
           datamap.svg.selectAll("g")
             .transition()
             .duration(500)
@@ -46,7 +46,7 @@ class worldMap {
         };
       },
       fills: {
-        defaultFill: 'green'
+        defaultFill: '#6C8CBF'
       },
       data: {
         'AFG': {

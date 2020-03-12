@@ -13,14 +13,14 @@ body {
 
 h1 {
   text-align: left;
-  color: black;
+  color: #6C8CBF;
   margin-left: 60px;
 }
 
 p.title {
   text-align: center;
   color: white;
-  font-weight: normal;
+  font-weight: bold;
   margin: 0.5rem;
   padding: 0;
 }
@@ -31,20 +31,41 @@ p.selector {
   font-weight: bold;
 }
 
+.parallelAxis path {
+  stroke: none;
+}
+
+.parallelAxis text {
+  color: white;
+  font-weight: bold;
+  text-align: left;
+}
+
 .dashboard {
   display: grid;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
 
   grid-template-areas:
     "header sidebar"
-    "content sidebar";
-    /* "footer footer"; */
+    "content sidebar"
+    "maparea sidebar"
+    "footer sidebar";
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 120px auto;
+  grid-template-rows: 90px 800px 320px 1fr;
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
   width: 100vw;
+  background-color: white;
+  /* background-color: rgba(28, 22, 43, 0.65); */
+  /* background-image: linear-gradient(to bottom, rgba(82, 91, 104, 1), rgba(82, 91, 104, 0.6)); */
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
 }
 
 header {
@@ -53,6 +74,17 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  z-index: 2;
+}
+
+maparea {
+  grid-area: maparea;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  z-index: -1;
+  height: 200px;
 }
 
 sidebar {
@@ -63,12 +95,15 @@ sidebar {
   width: 210px;
   overflow-y: scroll;
   grid-area: sidebar;
-  background-color: black;
+  /* background-color: #F9ECEC; */
+  background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%);
   padding: 2px;
   display: flex;
   flex-direction: column;
-  z-index: 1;
+  justify-content: space-between;
+  z-index: 2;
 }
+
 
 /* #scrollmenu {
   background-color: #333;
@@ -88,13 +123,15 @@ sidebar {
   background-color: #777;
 } */
 #rankingheader {
-  height: 95px;
+  /* height: 95px; */
   padding: 0px;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
   margin-right: 0rem;
-  background-color: black;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
 }
 
 #rank-title {
@@ -113,7 +150,7 @@ sidebar {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: #FFFAFA;
+  background-color: #F9ECEC;
   color: black;
   text-align: left;
   font-size: 0.85em;
@@ -123,11 +160,11 @@ sidebar {
   padding-bottom: 10px;
   top: -5px;
   right: 105%;
-  box-shadow: 4px 2px 2px #000080;
+  box-shadow: 4px 2px 2px #6C8CBF;
 
   /* Position the tooltip */
   position: absolute;
-  z-index: 1;
+  z-index: 2;
 }
 
 .tooltip:hover .tooltiptext {
@@ -142,7 +179,7 @@ sidebar {
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent #FFFAFA;
+  border-color: transparent transparent transparent #F9ECEC;
 }
 
 #year-selector {
@@ -159,7 +196,7 @@ sidebar {
 .button {
   display: block;
   width: 40%;
-  background-color: black;
+  background-color: #6C8CBF;
   border: none;
   border-radius: 4px;
   color: #FFFAFA;
@@ -174,7 +211,8 @@ sidebar {
 }
 
 .button:hover {
-  background-color: #FFFAFA;
+  background-color: #FC8D59;
+  /* background-color: #F9ECEC; */
   color: black;
   opacity: 1;
 }
@@ -187,13 +225,15 @@ sidebar {
   height: 700px;
   /* position: relative; */
   position: absolute;
-  top: 120px;
+  top: 150px;
   padding: 1px;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background-color: black;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
 }
 
 .dropdown {
@@ -205,6 +245,7 @@ sidebar {
   margin: 0.5rem;
 	padding: 0.5rem;
   color: black;
+  z-index: 2;
 }
 
 .dropdown select{
@@ -220,32 +261,116 @@ sidebar {
 
 main {
   grid-area: content;
-  background-color: white;
+  background-color: none;
+  /* background-image: linear-gradient(to bottom, rgba(28, 22, 43, 0.65), rgba(20, 14, 36, 0.31)); */
   margin: 0;
   padding: 0;
 }
 
-.container {
+#sport-text {
+  margin-top: 50px;
+  width: 200px;
+  background-color: gray;
+}
+
+#map-text {
+  /* margin-top: 320px; */
+  margin-top: 150px;
+  width: 200px;
+  height: 320px;
+  background-color: gray;
+}
+
+#map-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  justify-content: center;
+  align-content: center;
+  margin-top: -150px;
+  margin-bottom: -300px;
+  /* margin-top: -320px;
+  margin-bottom: -250px; */
+  margin-right: 15px;
+  /* width: 1000px;
+  height: 50%; */
+  z-index: 0;
+  width:100%;
+  height: 320px;
+}
+
+.datamap {
+  background-color: #F9ECEC;
+}
+
+#map-btn {
+  z-index: 2;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  padding: 0;
+  background-color: white;
+  z-index: 2;
+}
+
+#left-container {
+  height: 800px;
+  width: 200px;
   display: flex;
   flex-direction: column;
-  flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;
-  margin: 0;
-  padding: 0;
+}
+
+#chart-container {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  height: 800px;
 }
 
 #bigchart {
   display: inline-block;
-  /* width: 1000px; */
+  width: 800px;
   height: 380px;
   padding: 5px;
+  padding-bottom: 0px;
   margin-top: 0.5rem;
+  margin-bottom: 0rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background: none;
+  position: relative;
+}
+
+#medalChart {
+  display: inline-block;
+  width: 800px;
+  height: 410px;
+  padding: 5px;
+  padding-top: 0px;
+  margin-top: -140px;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  background-color: white;
+  background-color: none;
   position: relative;
+}
+
+#xAxisMedals path {
+  stroke: none;
+}
+
+#xAxisMedals text {
+  color: gray;
+  font-size: 14px;
 }
 
 .line {
@@ -255,17 +380,22 @@ main {
 
 
 #country_table {
-  width:100%;
-  height:100px;
-  min-width:400px;
-  margin-right:3px;
-  position:absolute;
+  width: 200px;
+  height: 100px;
+  min-width: 40px;
+  margin-right: 3px;
+  position: absolute;
 }
 
 #table_wrap {
-  width:100%;
-  margin-right:5px;
-  position:relative;
+  width: 200px;
+  margin-right: 5px;
+  position: relative;
+}
+
+#map {
+  padding: 0;
+}
 
 #xAxisMedals .tick.label line {
     display: none;
@@ -288,10 +418,79 @@ main {
 
 }
 
-/* footer {
+.searchbar {
+  z-index: 2;
+  max-height: 0px;
+  overflow: visible;
+  display: flex;
+}
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#searchbarautocomplete-list {
+  overflow: scroll;
+  max-height: 250px;
+  text-align: left;
+}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+
+.autocomplete-items {
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  font-size: 14px;
+  /*position the autocomplete items to be the same width as the container:*/
+  width: 100%;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #6C8CBF;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #F9ECEC;
+}
+
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+
+footer {
   grid-area: footer;
-  background-color: beige;
-} */
+  background-color: white;
+  z-index: 1;
+  height: 120px;
+}
 
 
 /*# sourceMappingURL=/styles.8986bff4.css.map */
