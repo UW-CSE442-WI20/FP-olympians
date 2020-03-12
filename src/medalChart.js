@@ -155,7 +155,7 @@ function generateMedalChart(data, medalsvg) {
     medalsvg.selectAll("text").remove();
     medalsvg.selectAll("g").transition();
 
-    var margin = { top: 20, right: 10, bottom: 30, left: 10 };
+    var margin = { top: 0, right: 10, bottom: 30, left: 10 };
 
     // Set the width and height of the graph
     var divbox = document.getElementById("medalchart").getBoundingClientRect();
@@ -189,7 +189,7 @@ function generateMedalChart(data, medalsvg) {
     }
 
     const xSmallScale = d3.scaleBand().domain(getXDomain()).range([margin.left, innerWidth]); //[0, 950]);
-    const ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.bottom, innerHeight]);
+    const ySmallScale = d3.scaleLinear().domain([10, 0]).range([margin.top, innerHeight]);
 
     const getTickValues = (startTick, endTick) => {
         var values = [];
@@ -233,8 +233,9 @@ function generateMedalChart(data, medalsvg) {
     //       return 'tick mark';
     //     });
 
-    const xSmallAxis = d3.axisBottom(xSmallScale)
-        .tickPadding(30)
+     const xSmallAxis = d3.axisBottom(xSmallScale)
+        .tickPadding(10)
+        .tickSize(0)
         .tickValues(getTickValues(2000, 2020))
         .tickFormat(d3.format("Y"))
     const ySmallAxis = d3.axisLeft(ySmallScale)
@@ -242,7 +243,8 @@ function generateMedalChart(data, medalsvg) {
     // add title: country name
     medalsvg.append("text")
         .attr("x", width / 2)
-        .attr("y", height - innerHeight - 1.3 * margin["top"])
+        .attr("y", height + margin["bottom"] + 18)  // 11 is r of circle
+        //.attr("y", height - innerHeight - 1.3 * margin["top"])
         .style("text-anchor", "middle")
         .text(data[0].values[0].Team);  // Country Name
 
@@ -283,15 +285,15 @@ function generateMedalChart(data, medalsvg) {
 
     const cxTallyOffset = medalType => {
         if (medalType === 'Bronze') {
-            return 0.35;
+            return 0.3;
         } else if (medalType === 'Silver') {
             return 0.5;
         } else {
-            return 0.65;
+            return 0.7;
         }
     }
 
-    const medalRadius = 10; // radius of medal circles
+    const medalRadius = 8; // radius of medal circles
 
     /////////////////////////////////// d3.force
 
@@ -304,11 +306,11 @@ function generateMedalChart(data, medalsvg) {
 
     const yForceOffset = medalType => {
         if (medalType === 'Bronze') {
-            return 1;
+            return .4;
         } else if (medalType === 'Silver') {
-            return 2;
+            return 1.4;
         } else {
-            return 3;
+            return 2.4;
         }
     }
 
@@ -323,7 +325,7 @@ function generateMedalChart(data, medalsvg) {
           // return ySmallScale(d.grpValue / 4 * cxOffset(d.grpName));
         }))
       .force('collision', d3.forceCollide().radius(function(d) {
-        return 11;
+        return 9;//11;
       }))
       .force("bounds", boundingBox)
       .on('tick', ticked);
@@ -468,7 +470,7 @@ function generateMedalChart(data, medalsvg) {
         .attr("cx", function (d) {
             return cxTallyOffset(d.grpName) * xSmallScale.bandwidth();
         })
-        .attr("cy", 10);
+        .attr("cy", 4);
 
     tally.selectAll("#tallyGroup")
         .append("text")

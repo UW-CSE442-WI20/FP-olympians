@@ -9,15 +9,16 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
+var countryNamesBySport = null;
 var countryNames = null;
-var currSport = "Archery";
+var currSport = "Swimming";
 var currYearIndex = 4; // 2016
 var topCountryToRatio = null;  // top 10 results for ranking
 var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
 const autocomplete = require("./search");
-const BigChart = require('./bigChart');
+const {bigChart} = require('./bigChart');
 const RankRows = require('./rankRows');
 const Map = require('./map');
 var bigChartInstance;
@@ -33,10 +34,12 @@ function initializeRankChart() {
 }
 
 // create svg for bigChart
+d3.select("#bigchart").append("div")
+	.attr("id", "bigchartlabels");
 const bigsvg = d3.select('#bigchart')
   .append('svg')
   .attr('width', "800")
-  .attr('height',380);
+  .attr('height',"400");
 console.log("bigsvg", bigsvg);
 
 // create svg for medalChart
@@ -76,7 +79,7 @@ function initializeDropdowns() {
     }
 	}
   // default selection
-  select.options[0].selected = true;
+  select.options[25].selected = true;
 	// add event listener to find out when the sport changes
 	select.addEventListener('change', function() {
 	   currSportSelections = document.getElementById('select-sport');
@@ -97,9 +100,9 @@ function initializeDropdowns() {
      medalsvg.remove();
      medalsvg = d3.select('#medalchart')
 		.append('svg')
-		.attr("width", "1000")
+		.attr("width", "800")
 		.attr("height", 380);
-     bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
+     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
      initializeSearch();
   })
 }
@@ -191,6 +194,27 @@ function initializeData(data) {
     .entries(data);
 
 
+    countryNamesBySport = d3.nest()
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function(v) {
+      let uniqueCountries = _.uniq(v, function(d) {
+        return d.Team;
+      })
+      return uniqueCountries.map(function(item) {
+        return item.Team;
+      }).sort();
+    })
+    .entries(data);
+
+
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO");
+    console.log(countryNamesBySport);
+    console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO")
+
+
 
   entriesBySportByYearAthleteCount = d3.nest()
   .key(function (d) {
@@ -212,6 +236,34 @@ function initializeData(data) {
     return uniqueNames.length;
   })
   .entries(data);
+
+  var years = ["2000", "2004", "2008", "2012", "2016"]
+  entriesBySportByYearAthleteCount.forEach(function(d) {
+    d.values.forEach(function(e) {
+      var arr = []
+      e.values.forEach(function(f) {
+        arr.push(f.key);
+      });
+      result = years.filter(f => !arr.includes(f));
+      result.forEach(function(z) {
+        e.values.push({"key": z, "value": 0});
+      });
+      e.values.sort((a, b) => a.key - b.key)
+    })
+  });
+
+ // testing
+  // var years = ["2000", "2004", "2008", "2012", "2016"]
+  // entriesBySportByYearAthleteCount.forEach(function(d) {
+  //   d.values.forEach(function(e) {
+  //     var arr = []
+  //     e.values.forEach(function(f) {
+  //       arr.push(f.key);
+  //     });
+  //     result = years.filter(f => !arr.includes(f));
+  //     console.log("result", result)
+  //   })
+  // });
 
 console.log(entriesBySportByYearAthleteCount);
 
@@ -335,13 +387,16 @@ d3.csv('olympics.csv')
     initializeYearOptions();
     initializeDropdowns();
     initializeSearch();
+    // Clears the search
+    document.getElementById("searchbar").value = "";
+    console.log(document.getElementById("searchbar"))
 
-    bigChartInstance = new BigChart(data);
+    bigChartInstance = new bigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
     d3.csv('rankings.csv')
       .then((data) => {
-        map = new Map(entriesBySportByYearByCountryRatio, data);
+        map = new Map(entriesBySportByYearByCountryRatio, data, currSport, medalsvg);
         console.log("here are the rankings:", data)
       });
   });

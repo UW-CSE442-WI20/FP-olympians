@@ -1,9 +1,10 @@
 const d3 = require('d3');
 const _ = require("underscore");
+const {redrawBigChartClick} = require('./bigChart');
 const Datamap = require('../node_modules/datamaps/dist/datamaps.world.min.js')
 
 class worldMap {
-  constructor(entriesBySportByYearByCountryRatio, data) {
+  constructor(entriesBySportByYearByCountryRatio, data, currSport, medalsvg) {
     this.entriesBySportByYearByCountryRatio = entriesBySportByYearByCountryRatio;
 
     this.data = d3.nest()
@@ -25,7 +26,7 @@ class worldMap {
         popupTemplate: function(geography, data) {
           return '<div class="hoverinfo">' + geography.properties.name +
             '\'s top sport(s): ' + data.first +
-             data.second + data.third;
+             data.second + data.third + '</div>';
         }
       },
       done: function(datamap) {
@@ -44,6 +45,10 @@ class worldMap {
             .attr("transform", d3.zoomIdentity);
           d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
         };
+        datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+            console.log("clicked!!!")
+            redrawBigChartClick(geography.properties.name, currSport, medalsvg, false);
+        });
       },
       fills: {
         defaultFill: '#6C8CBF'

@@ -52,13 +52,12 @@ p.selector {
 
   grid-template-areas:
     "header sidebar"
+    "content sidebar"
     "maparea sidebar"
-    "content sidebar";
-    /* "footer sidebar"; */
+    "footer sidebar";
 
   grid-template-columns: 1fr 210px;
-  grid-template-rows: 90px auto 1fr;
-  /* grid-template-rows: 90px 800px 320px 1fr; */
+  grid-template-rows: 90px 800px 320px 1fr;
   /* grid-template-rows: auto 1fr auto; */
   grid-gap: 1px;
   height: 100vh;
@@ -85,7 +84,7 @@ maparea {
   flex-direction: row;
   justify-content: flex-start;
   z-index: -1;
-  height: 320px;
+  height: 200px;
 }
 
 sidebar {
@@ -349,7 +348,6 @@ main {
   margin-right: 0.5rem;
   background: none;
   position: relative;
-  z-index: 3;
 }
 
 #medalChart {
@@ -358,7 +356,7 @@ main {
   height: 410px;
   padding: 5px;
   padding-top: 0px;
-  margin-top: -50px;
+  margin-top: -140px;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -417,21 +415,7 @@ main {
   position: relative;
   text-align: center;
   color: black;
-}
 
-#countryTooltip {
-  text-anchor: middle;
-  font-family: sans-serif;
-  font-size: 11px;
-  font-weight: bold;
-  background-color: white;
-  pointer-events: none;
-  position: relative;
-  text-align: center;
-  color: black;
-  display:flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .searchbar {
@@ -500,19 +484,6 @@ input[type=submit] {
   color: #ffffff;
 }
 
-#bigchartlabels {
-  max-height: 40px;
-  overflow: visible;
-  display: flex;
-  flex-direction: row;
-}
-
-.yearLogoLabel {
-  width: 15.75%;
-  display:flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 footer {
   grid-area: footer;
@@ -520,3 +491,6 @@ footer {
   z-index: 1;
   height: 120px;
 }
+
+
+/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.3da1c334.css.map */
