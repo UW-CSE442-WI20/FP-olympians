@@ -18,7 +18,7 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"];
 
 // Include local JS files:
 const autocomplete = require("./search");
-const BigChart = require('./bigChart');
+const {bigChart} = require('./bigChart');
 const RankRows = require('./rankRows');
 const Map = require('./map');
 var bigChartInstance;
@@ -117,7 +117,7 @@ function initializeSearch() {
 		countryNames.push(item.key);
 	});
 	console.log("countries", countryNames);
-	autocomplete(document.getElementById("searchbar"), countryNamesBySport, sportData, medalsvg);
+	autocomplete(document.getElementById("searchbar"), countryNames, sportData, medalsvg);
 }
 
 function initializeData(data) {
@@ -358,7 +358,7 @@ d3.csv('olympics.csv')
     initializeDropdowns();
     initializeSearch();
 
-    bigChartInstance = new BigChart(data);
+    bigChartInstance = new bigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
 
     d3.csv('rankings.csv')

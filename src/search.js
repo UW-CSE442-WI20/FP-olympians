@@ -5,17 +5,15 @@
 ///////////////////////////////////////////////////////
 const d3 = require("d3");
 const _ = require("underscore");
+const {redrawBigChartClick} = require('./bigChart');
 const generateMedalChart = require("./medalChart");
 
-
 module.exports = 
-function autocomplete(searchField, countryNamesBySport, sportData, medalsvg) {
+function autocomplete(searchField, countryNames, sportData, medalsvg) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
   /*execute a function when someone writes in the text field:*/
-
-
   searchField.addEventListener("input", function(e) {
     // a is the autocomplete outer div element
     // b is the temporary variable used to store each option in the div
@@ -25,13 +23,6 @@ function autocomplete(searchField, countryNamesBySport, sportData, medalsvg) {
     if (!val) {
       return false;
     }
-
-    currSportSelections = document.getElementById('select-sport');
-    currSport = currSportSelections.options[currSportSelections.value].text;
-    var countryNames = _.find(d3.values(countryNamesBySport), function (item) {
-      return item.key == currSport;
-    }).value;
-  
     currentFocus = -1;
     /*create a DIV element that will contain the items (values):*/
     a = document.createElement("DIV");
@@ -57,20 +48,15 @@ function autocomplete(searchField, countryNamesBySport, sportData, medalsvg) {
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
-          // console.log("search value", searchField.value);
+          console.log("search value", searchField.value); // country
+          currSportSelections = document.getElementById('select-sport');
+          currSport = currSportSelections.options[currSportSelections.value].text // current sport
+          console.log("curr sport ", currSport );
           const countryIndex = _.indexOf(countryNames, searchField.value);
-          console.log("+++++++++++++++")
-          console.log(searchField.value);
-          console.log(sportData.values[countryIndex].values);
-          // console.log(d3.select("#" + searchField.value))
-          // d3.select("#"+searchField.value).on("click");
-          console.log("+++++++++++++++")
           console.log("index", countryIndex);
           console.log("country rows", sportData.values);
-          let yuh = d3.select("#" + currSport)
-          console.log(yuh);
-          // yuh.on("click");
-          generateMedalChart(sportData.values[countryIndex].values, medalsvg);
+          redrawBigChartClick(searchField.value, currSport, medalsvg, false);
+          // generateMedalChart(sportData.values[countryIndex].values, medalsvg);
         });
         a.appendChild(b);
       }
