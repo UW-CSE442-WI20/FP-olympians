@@ -110,6 +110,36 @@ class bigChart {
     this.yScale = yScale;
     // delete all lines
 
+	var dimensions = []
+    for (let i = 2000; i <= 2020; i += 4) {
+      dimensions.push(i);
+    }
+
+	var yearlabelsvg = d3.select("#bigchartlabels")
+      	.attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")");
+    yearlabelsvg.selectAll(".yearLogoLabel")
+      	.data(dimensions).enter()
+        .append("div")
+        .attr('class', 'yearLogoLabel')
+        .attr("transform", function (d) {
+        	console.log("supposedly getting year", d);
+          return "translate(" + xScale(d) + ") ";
+        });
+    yearlabelsvg.selectAll(".yearLogoLabel")
+      	.append("text")
+        .attr("class", "yearLabel")
+        .style("text-anchor", "middle")
+        .text(function (d) { return d; })
+        .style("fill", "gray");
+    yearlabelsvg.selectAll(".yearLogoLabel")
+    	  .append("img")
+        .attr("src", (d) => { 
+        	console.log("src", d); 
+        	return "olympic_logos/" + d + ".svg"; 
+        })
+        .attr("class", "yearLogo")
+        .attr("width", 90)
+        .attr("height", 60);
 
     /* Add SVG */
     var svg = bigsvg
@@ -117,7 +147,7 @@ class bigChart {
       .attr("width", this.width + this.margins.left + this.margins.right)
       .attr("height", this.height + this.margins.top + this.margins.bottom)
       .append("g")
-      .attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")"); // this is just (30, 30 right now)
+      .attr("transform", "translate(" + this.margins.top + "," + (this.margins.top * 2) + ")"); // this is just (30, 30 right now)
 
     // /* Add line into SVG */
     // this.line = d3.line()
@@ -150,19 +180,12 @@ class bigChart {
     //   .attr("transform", `translate(0, ${this.height - this.margin})`)
     //   .call(xAxis);
 
-    var dimensions = []
-    for (let i = 2000; i <= 2020; i += 4) {
-      dimensions.push(i);
-    }
-
-
     // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
     //   return d != "name" && (y[d] = d3.scale.linear()
     //       .domain(d3.extent(cars, function(p) { return +p[d]; }))
     //       .range([height, 0]));
     // }));
 
-    console.log(dimensions);
     console.log(this.entriesBySportByYearAthleteCount);
     var yRange = this.yRange;
     this.entriesBySportByYearAthleteCount.forEach(function (sport) {
@@ -210,19 +233,14 @@ class bigChart {
       .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
       .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
       .text("Athletes Participated");
-      svg.selectAll(".parallelAxis")
+    svg.selectAll(".parallelAxis")
         .data(dimensions).enter()
         .append("g")
         .attr('class', 'parallelAxis')
         .attr("transform", function (d) {
           return "translate(" + xScale(d) + ") ";
-        })
-        .append("text")
-        .style("text-anchor", "middle")
-        .attr("y", -10)
-        .text(function (d) { return d; })
-        .style("fill", "gray")
-      svg.selectAll(".parallelAxis")
+     	});
+    svg.selectAll(".parallelAxis")
         .each(function (d) {
           // add in the rectangle bars
           d3.select(this).append("rect")
@@ -234,8 +252,7 @@ class bigChart {
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
           d3.select(this).transition().duration(500).call(yAxis);
-        })
-
+    	});
 
     this.redraw(bigsvg, currSport, medalsvg);
   }
