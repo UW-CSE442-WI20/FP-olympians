@@ -12,9 +12,9 @@ body {
 }
 
 h1 {
-  text-align: left;
-  color: #6C8CBF;
-  margin-left: 60px;
+  text-align: center;
+  color: #5080CE;
+  /* margin-left: 60px; */
 }
 
 p.title {
@@ -74,7 +74,7 @@ header {
   background-color: white;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   z-index: 2;
 }
 
@@ -243,6 +243,7 @@ sidebar {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
+  width: 100%;
   margin: 0.5rem;
 	padding: 0.5rem;
   color: black;
@@ -252,10 +253,10 @@ sidebar {
 .dropdown select{
   position: relative;
 	/* width: fill; */
-  width: 90%;
+  width: 95%;
   height: 50px;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
   font-size: 14px;
   /* padding: 0.5rem; */
 }
@@ -269,9 +270,9 @@ main {
 }
 
 #sport-text {
-  margin-top: 50px;
+  margin-top: 0px;
   width: 200px;
-  background-color: gray;
+  background-color: white;
 }
 
 #map-text {
@@ -302,7 +303,7 @@ main {
 }
 
 .datamap {
-  background-color: #F9ECEC;
+  background-color: #E0EAF0;
 }
 
 #map-btn {
@@ -358,6 +359,7 @@ main {
   height: 410px;
   padding: 5px;
   padding-top: 0px;
+  /* margin-top: -130px; */
   margin-top: -50px;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
@@ -416,7 +418,7 @@ main {
   pointer-events: none;
   position: relative;
   text-align: center;
-  color: black;
+  color: gray;
 }
 
 #countryTooltip {
@@ -436,9 +438,12 @@ main {
 
 .searchbar {
   z-index: 2;
-  max-height: 0px;
+  /* max-height: 0px; */
   overflow: visible;
   display: flex;
+  height: 20px;
+  margin-bottom: 50px;
+  padding: 0;
 }
 
 .autocomplete {
@@ -514,9 +519,9 @@ input[type=submit] {
   align-items: center;
 }
 
-footer {
+/* footer {
   grid-area: footer;
   background-color: white;
   z-index: 1;
   height: 120px;
-}
+} */

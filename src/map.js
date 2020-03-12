@@ -51,7 +51,7 @@ class worldMap {
         });
       },
       fills: {
-        defaultFill: '#6C8CBF'
+        defaultFill: '#5080CE'
       },
       data: {
         'AFG': {

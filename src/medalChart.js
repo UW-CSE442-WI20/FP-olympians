@@ -246,7 +246,10 @@ function generateMedalChart(data, medalsvg) {
         .attr("y", height + margin["bottom"] + 18)  // 11 is r of circle
         //.attr("y", height - innerHeight - 1.3 * margin["top"])
         .style("text-anchor", "middle")
-        .text(data[0].values[0].Team);  // Country Name
+        .text(function() {
+          if (data.length > 0) return data[0].values[0].Team;  // Country Name
+          else return "";
+        });
 
     // add axis groups to medalsvg
     const xSmallAxisGroup = medalsvg.append("g")
@@ -256,9 +259,13 @@ function generateMedalChart(data, medalsvg) {
         .call(xSmallAxis);
 
     var x1 = d3.scaleBand();
-    var medalTypes = groupData[0].values.map(function (d) {
-        return d.grpName;
-    });
+    var medalTypes = function() {
+      if (data.length > 0) {
+        groupData[0].values.map(function (d) {
+          return d.grpName;
+        });
+      } else return [];
+  }
     x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
     const color = medalType => {
@@ -297,11 +304,13 @@ function generateMedalChart(data, medalsvg) {
 
     /////////////////////////////////// d3.force
 
-    if (nodes.length == 0) {
+    if (nodes.length == 0 && data.length > 0) {
       medalsvg.append("text")
           .attr("id", "medalTooltip")
-          .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 3) + ")")
-          .text("No medals to show for " + data[0].values[0].Team);
+          .attr("transform", "translate(" + (width / 2) + "," + (innerHeight / 1.5) + ")")
+          .text("No medals to show for " + data[0].values[0].Team)
+          .style("fill", "gray")
+          .style("font-size", "14px");
     }
 
     const yForceOffset = medalType => {
@@ -334,7 +343,7 @@ function generateMedalChart(data, medalsvg) {
     function boundingBox() {
         for (let node of nodes) {
             // If the positions exceed the box, set them to the boundary position.
-            var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
+            var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.6) // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
             node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius);
             // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));
             node.y = Math.max(Math.min(innerHeight - medalRadius, node.y), 0 + medalRadius);
@@ -439,7 +448,7 @@ function generateMedalChart(data, medalsvg) {
     // now add titles to the axes
     medalsvg.append("text")
         .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-        .attr("transform", "translate(" + margin.left + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+        .attr("transform", "translate(" + (margin.left+1.5) + "," + (45 + (height / 2)) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
         .text("Medals Won");
 
     var tally = medalsvg

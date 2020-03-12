@@ -30585,14 +30585,22 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   medalsvg.append("text").attr("x", width / 2).attr("y", height + margin["bottom"] + 18) // 11 is r of circle
   //.attr("y", height - innerHeight - 1.3 * margin["top"])
-  .style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
-  // add axis groups to medalsvg
+  .style("text-anchor", "middle").text(function () {
+    if (data.length > 0) return data[0].values[0].Team; // Country Name
+    else return "";
+  }); // add axis groups to medalsvg
 
   var xSmallAxisGroup = medalsvg.append("g").attr("class", "axis x").attr("id", "xAxisMedals").attr("transform", "translate(0," + innerHeight + ")").call(xSmallAxis);
   var x1 = d3.scaleBand();
-  var medalTypes = groupData[0].values.map(function (d) {
-    return d.grpName;
-  });
+
+  var medalTypes = function medalTypes() {
+    if (data.length > 0) {
+      groupData[0].values.map(function (d) {
+        return d.grpName;
+      });
+    } else return [];
+  };
+
   x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
   var color = function color(medalType) {
@@ -30626,8 +30634,8 @@ module.exports = function generateMedalChart(data, medalsvg) {
   var medalRadius = 8; // radius of medal circles
   /////////////////////////////////// d3.force
 
-  if (nodes.length == 0) {
-    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 3 + ")").text("No medals to show for " + data[0].values[0].Team);
+  if (nodes.length == 0 && data.length > 0) {
+    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 1.5 + ")").text("No medals to show for " + data[0].values[0].Team).style("fill", "gray").style("font-size", "14px");
   }
 
   var yForceOffset = function yForceOffset(medalType) {
@@ -30657,7 +30665,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
       for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var node = _step.value;
         // If the positions exceed the box, set them to the boundary position.
-        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5); // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
+        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.6); // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
 
         node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius); // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));
 
@@ -30734,7 +30742,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   }); // now add titles to the axes
 
   medalsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-  .attr("transform", "translate(" + margin.left + "," + height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+  .attr("transform", "translate(" + (margin.left + 1.5) + "," + (45 + height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
   .text("Medals Won");
   var tally = medalsvg.selectAll(".tally").data(medalTallies).enter().append("g").attr("class", "g") // .attr("transform", "translate(" + (width / 2) + "," + (height + 0.5 * margin.bottom) + ")")
   .attr("transform", function (d) {
@@ -30749,9 +30757,9 @@ module.exports = function generateMedalChart(data, medalsvg) {
   }).attr("r", 11).attr("cx", function (d) {
     return cxTallyOffset(d.grpName) * xSmallScale.bandwidth();
   }).attr("cy", 4);
-  tally.selectAll("#tallyGroup").append("text").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", function (d) {
-    return "translate(" + cxTallyOffset(d.grpName) * xSmallScale.bandwidth() + ",11.5)";
-  }).style("fill", "white").text(function (d) {
+  tally.selectAll("#tallyGroup").append("text").attr("text-anchor", "middle").style("font-size", "11px").attr("transform", function (d) {
+    return "translate(" + cxTallyOffset(d.grpName) * xSmallScale.bandwidth() + ",8)";
+  }).style("fill", "black").text(function (d) {
     return d.grpValue;
   });
 };
@@ -30776,168 +30784,7 @@ function redrawMedals(slice, currSelectedAthlete) {
     return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
   });
 }
-},{"d3":"UzF0","underscore":"h15N"}],"zfSF":[function(require,module,exports) {
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-// SEARCH BAR
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-var d3 = require("d3");
-
-var _ = require("underscore");
-
-var generateMedalChart = require("./medalChart");
-
-module.exports = function autocomplete(searchField, countryNames, sportData, medalsvg) {
-  /*the autocomplete function takes two arguments,
-  the text field element and an array of possible autocompleted values:*/
-  var currentFocus;
-  /*execute a function when someone writes in the text field:*/
-
-  searchField.addEventListener("input", function (e) {
-    // a is the autocomplete outer div element
-    // b is the temporary variable used to store each option in the div
-    var a,
-        b,
-        val = this.value;
-    /*close any already open lists of autocompleted values*/
-
-    closeAllLists();
-
-    if (!val) {
-      return false;
-    }
-
-    currentFocus = -1;
-    /*create a DIV element that will contain the items (values):*/
-
-    a = document.createElement("DIV");
-    a.setAttribute("id", this.id + "autocomplete-list");
-    a.setAttribute("class", "autocomplete-items");
-    /*append the DIV element as a child of the autocomplete container:*/
-
-    this.parentNode.appendChild(a);
-    /*for each item in the array...*/
-
-    for (var i = 0; i < countryNames.length; i++) {
-      /*check if the item starts with the same letters as the text field value:*/
-      if (countryNames[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-        /*create a DIV element for each matching element:*/
-        b = document.createElement("DIV");
-        /*make the matching letters bold:*/
-
-        b.innerHTML = "<strong>" + countryNames[i].substr(0, val.length) + "</strong>";
-        b.innerHTML += countryNames[i].substr(val.length);
-        /*insert a input field that will hold the current array item's value:*/
-
-        b.innerHTML += "<input type='hidden' value='" + countryNames[i] + "'>";
-        /*execute a function when someone clicks on the item value (DIV element):*/
-
-        b.addEventListener("click", function (e) {
-          /*insert the value for the autocomplete text field:*/
-          searchField.value = this.getElementsByTagName("input")[0].value;
-          /*close the list of autocompleted values,
-          (or any other open lists of autocompleted values:*/
-
-          closeAllLists(); // console.log("search value", searchField.value);
-
-          var countryIndex = _.indexOf(countryNames, searchField.value); // console.log("index", countryIndex);
-          // console.log("country rows", sportData.values);
-
-
-          generateMedalChart(sportData.values[countryIndex].values, medalsvg);
-        });
-        a.appendChild(b);
-      }
-    }
-  });
-  /*execute a function presses a key on the keyboard:*/
-
-  searchField.addEventListener("keydown", function (e) {
-    var currSuggestion = document.getElementById(this.id + "autocomplete-list");
-
-    if (currSuggestion) {
-      currSuggestion = currSuggestion.getElementsByTagName("div");
-    }
-
-    if (e.keyCode == 40) {
-      /*If the arrow DOWN key is pressed,
-      increase the currentFocus variable:*/
-      currentFocus++;
-      /*and and make the current item more visible:*/
-
-      addActive(currSuggestion);
-    } else if (e.keyCode == 38) {
-      //up
-
-      /*If the arrow UP key is pressed,
-      decrease the currentFocus variable:*/
-      currentFocus--;
-      /*and and make the current item more visible:*/
-
-      addActive(currSuggestion);
-    } else if (e.keyCode == 13) {
-      /*If the ENTER key is pressed, prevent the form from being submitted,*/
-      e.preventDefault();
-
-      if (currentFocus > -1) {
-        /*and simulate a click on the "active" item:*/
-        if (currSuggestion) {
-          currSuggestion[currentFocus].click();
-        }
-      }
-    }
-  });
-
-  function addActive(item) {
-    /*a function to classify an item as "active":*/
-    if (!item) {
-      return false;
-    }
-    /*start by removing the "active" class on all items:*/
-
-
-    removeActive(item);
-
-    if (currentFocus >= item.length) {
-      currentFocus = 0;
-    }
-
-    if (currentFocus < 0) {
-      currentFocus = item.length - 1;
-    }
-    /*add class "autocomplete-active":*/
-
-
-    item[currentFocus].classList.add("autocomplete-active");
-  }
-
-  function removeActive(item) {
-    /*a function to remove the "active" class from all autocomplete items:*/
-    for (var i = 0; i < item.length; i++) {
-      item[i].classList.remove("autocomplete-active");
-    }
-  }
-
-  function closeAllLists(elmnt) {
-    /*close all autocomplete lists in the document,
-    except the one passed as an argument:*/
-    var x = document.getElementsByClassName("autocomplete-items");
-
-    for (var i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != searchField) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-  /*execute a function when someone clicks in the document:*/
-
-
-  document.addEventListener("click", function (e) {
-    closeAllLists(e.target);
-  });
-};
-},{"d3":"UzF0","underscore":"h15N","./medalChart":"mtk6"}],"AGkO":[function(require,module,exports) {
+},{"d3":"UzF0","underscore":"h15N"}],"AGkO":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -31085,6 +30932,18 @@ var generateMedalChart = require("./medalChart");
 var SummaryCountry = require('./summaryChartCountry');
 
 var selectedCountry = undefined;
+var bigChartInstance = null;
+var duration = 250;
+var lineOpacity = "0.5";
+var lineOpacityHover = "0.95";
+var otherLinesOpacityHover = "0.1";
+var otherLinesOpacitySelected = "0.025";
+var lineStroke = "3px";
+var lineStrokeHover = "4.5px";
+var circleOpacity = '0.85';
+var circleOpacityOnLineHover = "0.25";
+var circleRadius = 3;
+var circleRadiusHover = 6;
 
 var bigChart =
 /*#__PURE__*/
@@ -31092,8 +30951,10 @@ function () {
   function bigChart(data) {
     _classCallCheck(this, bigChart);
 
-    // Formatting lines
-    // getting width and height of graph
+    bigChartInstance = this; // Formatting lines
+
+    bigChartInstance = this; // getting width and height of graph
+
     this.width = 0; // = parseInt(bigsvg.style("width"), 10);
 
     this.height = 0; // = parseInt(bigsvg.style("height"), 10);
@@ -31108,8 +30969,8 @@ function () {
     }; // getting scale of graph
     // adding tiny chart
 
-    this.columnNames = ["Year", "Athletes", "Medals"];
-    this.summaryCountry = new SummaryCountry(data, this.columnNames); // getting color sceme
+    this.columnNames = ["Year", "Athletes", "Medals"]; // this.summaryCountry = new SummaryCountry(data, this.columnNames);
+    // getting color sceme
 
     this.color = d3.scaleOrdinal(d3.schemeCategory10); // getting lineScale
 
@@ -31138,6 +30999,27 @@ function () {
 
       return uniqueNames.length;
     }).entries(data);
+    var years = ["2000", "2004", "2008", "2012", "2016"];
+    this.entriesBySportByYearAthleteCount.forEach(function (d) {
+      d.values.forEach(function (e) {
+        var arr = [];
+        e.values.forEach(function (f) {
+          arr.push(f.key);
+        });
+        result = years.filter(function (f) {
+          return !arr.includes(f);
+        });
+        result.forEach(function (z) {
+          e.values.push({
+            "key": z,
+            "value": 0
+          });
+        });
+        e.values.sort(function (a, b) {
+          return a.key - b.key;
+        });
+      });
+    });
   }
 
   _createClass(bigChart, [{
@@ -31150,8 +31032,8 @@ function () {
       this.height = parseInt(bigsvg.style("height"), 10);
       this.width = this.width - this.margins.left - this.margins.right;
       this.height = this.height - this.margins.top - this.margins.bottom;
-      this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
-      this.summaryCountry.createChart('Afghanistan');
+      this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear; //this.summaryCountry.createChart('Afghanistan');
+
       var minYear = 2000;
       var maxYear = 2020; // from medalchart
 
@@ -31177,9 +31059,28 @@ function () {
       this.xScale = xScale;
       this.yScale = yScale; // delete all lines
 
+      var dimensions = [];
+
+      for (var i = 2000; i <= 2020; i += 4) {
+        dimensions.push(i);
+      }
+
+      var yearlabelsvg = d3.select("#bigchartlabels").attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")");
+      yearlabelsvg.selectAll(".yearLogoLabel").data(dimensions).enter().append("div").attr('class', 'yearLogoLabel').attr("transform", function (d) {
+        console.log("supposedly getting year", d);
+        return "translate(" + xScale(d) + ") ";
+      });
+      yearlabelsvg.selectAll(".yearLogoLabel").append("text").attr("class", "yearLabel").style("text-anchor", "middle").text(function (d) {
+        return d;
+      }).style("fill", "gray");
+      yearlabelsvg.selectAll(".yearLogoLabel").append("img").attr("src", function (d) {
+        console.log("src", d);
+        return "olympic_logos/" + d + ".svg";
+      }).attr("class", "yearLogo") // .attr("width", "90px");
+      .attr("height", "60px");
       /* Add SVG */
 
-      var svg = bigsvg.append("svg").attr("width", this.width + this.margins.left + this.margins.right).attr("height", this.height + this.margins.top + this.margins.bottom).append("g").attr("transform", "translate(" + this.margins.top + "," + this.margins.top + ")"); // this is just (30, 30 right now)
+      var svg = bigsvg.append("svg").attr("width", this.width + this.margins.left + this.margins.right).attr("height", this.height + this.margins.top + this.margins.bottom).append("g").attr("transform", "translate(" + this.margins.top + "," + this.margins.top * 2 + ")"); // this is just (30, 30 right now)
       // /* Add line into SVG */
       // this.line = d3.line()
       //   .x(d => xScale(d.key))
@@ -31207,20 +31108,13 @@ function () {
       //   .attr("class", "x axis")
       //   .attr("transform", `translate(0, ${this.height - this.margin})`)
       //   .call(xAxis);
-
-
-      var dimensions = [];
-
-      for (var i = 2000; i <= 2020; i += 4) {
-        dimensions.push(i);
-      } // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
+      // x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
       //   return d != "name" && (y[d] = d3.scale.linear()
       //       .domain(d3.extent(cars, function(p) { return +p[d]; }))
       //       .range([height, 0]));
       // }));
 
 
-      console.log(dimensions);
       console.log(this.entriesBySportByYearAthleteCount);
       var yRange = this.yRange;
       this.entriesBySportByYearAthleteCount.forEach(function (sport) {
@@ -31259,15 +31153,14 @@ function () {
       .text("Athletes Participated");
       svg.selectAll(".parallelAxis").data(dimensions).enter().append("g").attr('class', 'parallelAxis').attr("transform", function (d) {
         return "translate(" + xScale(d) + ") ";
-      }).append("text").style("text-anchor", "middle").attr("y", -10).text(function (d) {
-        return d;
-      }).style("fill", "gray");
+      });
       svg.selectAll(".parallelAxis").each(function (d) {
         // add in the rectangle bars
-        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 320).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
+        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 350).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
 
         d3.select(this).transition().duration(500).call(yAxis);
-      });
+      }); // generateMedalChart([], medalsvg);
+
       this.redraw(bigsvg, currSport, medalsvg);
     }
   }, {
@@ -31275,19 +31168,19 @@ function () {
     value: function redraw(bigsvg, currSport, medalsvg) {
       if (currSport.length === "") {
         return;
-      }
+      } // var duration = 250;
+      // var lineOpacity = "0.5";
+      // var lineOpacityHover = "0.95";
+      // var otherLinesOpacityHover = "0.1";
+      // var otherLinesOpacitySelected = "0.025"
+      // var lineStroke = "3px";
+      // var lineStrokeHover = "4.5px";
+      // var circleOpacity = '0.85';
+      // var circleOpacityOnLineHover = "0.25"
+      // var circleRadius = 3;
+      // var circleRadiusHover = 6;
 
-      var duration = 250;
-      var lineOpacity = "0.5";
-      var lineOpacityHover = "0.95";
-      var otherLinesOpacityHover = "0.1";
-      var otherLinesOpacitySelected = "0.025";
-      var lineStroke = "3px";
-      var lineStrokeHover = "4.5px";
-      var circleOpacity = '0.85';
-      var circleOpacityOnLineHover = "0.25";
-      var circleRadius = 3;
-      var circleRadiusHover = 6;
+
       var width = this.width;
       var margin = this.margin; // let lines = d3.select('.lines');
 
@@ -31306,8 +31199,6 @@ function () {
       var dimensions = this.dimensions;
       var yRange = this.yRange;
       this.currSport = currSport;
-      console.log(data);
-      console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx");
       console.log(svg); // this.lines.selectAll(".line-group")
       // .transition()
       // .style('opacity',0)
@@ -31318,6 +31209,7 @@ function () {
       //   return item.key;
       // })
 
+      generateMedalChart([], medalsvg);
       /* Add line into SVG */
 
       var actualHeight = this.height - this.margins.top - this.margins.bottom;
@@ -31340,15 +31232,20 @@ function () {
       }).y(function (d) {
         return yScale(d.value);
       });
+      console.log(data);
       var lineGroup = this.lines.selectAll(".line-group").data(data, function (item) {
         return item;
-      });
-      var country = this.summaryCountry; // reset the selectedCountry as we have changed to a different one
+      }); // var country = this.summaryCountry
+      // reset the selectedCountry as we have changed to a different one
 
       selectedCountry = undefined;
-      svg.selectAll(".country-text").remove();
-      lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', function (d) {
-        return 'line';
+      svg.selectAll(".country-text").remove(); // Create container for the tooltip but make it invisible until we need it
+
+      var tooltipContainer = d3.select('#bigchart').append("div").attr("id", "countryTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
+      tooltipContainer.append("div").attr("id", "countryTooltipTextDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+      tooltipContainer.append("div").attr("id", "countryTooltipFlagDiv").style("background-color", "B0C4DE").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+      lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', 'line').attr('id', function (d) {
+        return d.key.replace(/\s+/g, '');
       }).attr('d', function (d) {
         return line(d.values);
       }) // Draw color based on index? Or maybe based on country?
@@ -31360,89 +31257,42 @@ function () {
           d3.selectAll(".line").style('opacity', otherLinesOpacityHover);
           d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover); // add text to show what country this is
 
-          svg.append("text").text(d.key).attr('class', 'country-text').attr("x", (width - margin) / 2).attr("y", 15).style('fill', color(d.key)).style("pointer-events", "none");
-        } else if (selectedCountry === d) {
+          tooltipContainer.style("left", d3.mouse(this)[0] + "px").style("top", d3.mouse(this)[1] + "px").style("visibility", "visible").style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv").append("text").attr("class", "countryTooltipText").style('color', color(d.key)).text(d.key);
+          d3.select("#countryTooltipFlagDiv").append("img").attr("class", "countryTooltipFlag").attr("src", function () {
+            var imgName = d.key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
+            return "flags/" + imgName + "-flag.svg";
+          }).attr("width", 60).attr("height", 40);
+        } else if (selectedCountry === d.key) {
+          tooltipContainer.style("left", d3.mouse(this)[0] + "px").style("top", d3.mouse(this)[1] + "px").style("visibility", "visible").style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv").append("text").attr("class", "countryTooltipText").style('color', color(d.key)).text(d.key);
+          d3.select("#countryTooltipFlagDiv").append("img").attr("class", "countryTooltipFlag").attr("src", function () {
+            var imgName = d.key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
+            return "flags/" + imgName + "-flag.svg";
+          }).attr("width", 60).attr("height", 40);
           d3.select(this).style('stroke', 'black');
         }
       }).on("mouseout", function (d) {
+        d3.selectAll(".countryTooltipText").remove();
+        d3.selectAll(".countryTooltipFlag").remove();
+        d3.selectAll("#countryTooltip").style("visibility", "hidden");
+
         if (selectedCountry === undefined) {
           d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke); // d3.select(this)
           //   .style('opacity', lineOpacity)
           //   .style("stroke-width", lineStroke);
 
           svg.selectAll(".country-text").remove();
-        } else if (selectedCountry === d) {
+        } else if (selectedCountry === d.key) {
           d3.select(this).style('stroke', function (d) {
             return color(d.key);
           });
         }
       }).on("click", function (d) {
-        // get the data for the selected athlete
-        selectedCountry = selectedCountry === undefined ? d : undefined;
-
-        if (selectedCountry != undefined) {
-          d3.selectAll(".line").style('opacity', otherLinesOpacitySelected);
-          d3.select(this).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
-        } else {
-          // When clicking again
-          d3.selectAll(".line").style("opacity", lineOpacity).style("stroke-width", lineStroke).style('stroke', function (d) {
-            return color(d.key);
-          });
-          svg.selectAll(".country-text").remove();
-          return;
-        }
-
-        console.log(entriesBySportThenCountryThenYear);
-        console.log(d);
-        console.log("curr sport:", currSport);
-
-        var sportData = _.find(d3.values(entriesBySportThenCountryThenYear), function (item) {
-          console.log("searching for ", currSport); // console.log("considering ", item.key);
-
-          return item.key === currSport;
-        });
-
-        console.log(sportData);
-
-        var countryData = _.find(d3.values(sportData.values), function (item) {
-          console.log("searching for ", d.key); // console.log("considering ", item.key);
-
-          return item.key === d.key;
-        });
-
-        country.updateChart(countryData.key);
-        console.log("checking countryData", countryData);
-        generateMedalChart(countryData.values, medalsvg);
+        redrawBigChartClick(d.key, currSport, medalsvg, true);
       }).transition().duration(1000).style('opacity', lineOpacity);
-      lineGroup.exit().transition().style('opacity', 0).remove(); // // now add titles to the axes
-      // bigsvg.append("text")
-      //   .attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-      //   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
-      //   .text("Athletes Participated");
-      // svg.selectAll(".parallelAxis")
-      //   .data(dimensions).enter()
-      //   .append("g")
-      //   .attr('class', 'parallelAxis')
-      //   .attr("transform", function (d) {
-      //     return "translate(" + xScale(d) + ") ";
-      //   })
-      //   .append("text")
-      //   .style("text-anchor", "middle")
-      //   .attr("y", -10)
-      //   .text(function (d) { return d; })
-      //   .style("fill", "gray")
-
+      lineGroup.exit().transition().style('opacity', 0).remove();
       svg.selectAll(".parallelAxis").each(function (d) {
-        // add in the rectangle bars
-        //d3.select(this).remove("rect");
-        // d3.select(this).append("rect")
-        //   .attr("x", -6)
-        //   .attr("y", -6)
-        //   .attr("width", 12)
-        //   .attr("height", 320)
-        //   .attr("fill", "blue")
-        //   .attr("opacity", 0.8);
-        //d3.select(this).call(yAxis);
         d3.select(this).transition().duration(500).call(yAxis);
       });
       var brushRange = {};
@@ -31456,15 +31306,86 @@ function () {
       });
       this.brushRange = brushRange;
     }
-  }, {
-    key: "yo",
-    value: function yo() {
-      console.log("yo");
-    }
   }]);
 
   return bigChart;
-}(); // function brushstart() {
+}();
+
+function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
+  // console.log(this);
+  // focus view
+  scrollDown();
+
+  if (bigChartClick === true) {
+    // if we are clicking, we want to figure out if its an on or off toggle
+    selectedCountry = selectedCountry === undefined ? currCountry : undefined;
+  } else {
+    selectedCountry = currCountry; // if its from another source
+
+    d3.selectAll(".country-text").remove();
+  }
+
+  if (selectedCountry != undefined) {
+    // when a sport is about to be unselectede
+    // update flag image
+    updateCountryFlag(selectedCountry);
+    d3.selectAll(".line").transition().duration(700).style('opacity', otherLinesOpacitySelected);
+    d3.select("#" + currCountry.replace(/\s+/g, '')) // based on https://stackoverflow.com/questions/5963182/how-to-remove-spaces-from-a-string-using-javascript
+    .transition().duration(700).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
+  } else {
+    // When this is undefined or when something is deslected, reset all strokes
+    d3.selectAll(".line").transition().duration(500).style("opacity", lineOpacity).style("stroke-width", lineStroke).style('stroke', function (d) {
+      return bigChartInstance.color(d.key);
+    });
+    d3.selectAll(".country-text").remove();
+    return;
+  }
+
+  console.log(bigChartInstance.entriesBySportThenCountryThenYear); // console.log(d);
+
+  console.log("curr sport:", currSport);
+
+  var sportData = _.find(d3.values(bigChartInstance.entriesBySportThenCountryThenYear), function (item) {
+    console.log("searching for ", currSport); // console.log("considering ", item.key);
+
+    return item.key === currSport;
+  });
+
+  console.log(sportData);
+
+  var countryData = _.find(d3.values(sportData.values), function (item) {
+    console.log("searching for ", currCountry); // console.log("considering ", item.key);
+
+    return item.key === currCountry;
+  }); // var country = this.summaryCountry
+  // bigChartInstance.summaryCountry.updateChart(countryData.key);
+
+
+  console.log("checking countryData", countryData);
+  generateMedalChart(countryData.values, medalsvg);
+} // scroll chart into focus
+
+
+function scrollDown() {
+  var elmnt = document.getElementById("main-container");
+  elmnt.scrollIntoView({
+    behavior: "smooth"
+  }); // $('html, body').animate({
+  //     scrollTop: $("#main-container").offset().top
+  // }, 1000);
+  //
+  // console.log("animation");
+} // update the flag image on the side based on current country selection
+
+
+function updateCountryFlag(currCountry) {
+  console.log("currCountry", currCountry); // remove old flag
+
+  d3.select("#flag-img").remove();
+  var imgcountryName = currCountry.replace(/ /g, "-").replace("\'", "-").toLowerCase(); // add new flag
+
+  d3.select("#country-flag").append("img").attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "flag-img").attr("width", 90).attr("height", 60);
+} // function brushstart() {
 //   // d3.event.
 // }
 // function brush() {
@@ -31474,8 +31395,181 @@ function () {
 // }
 
 
-module.exports = bigChart;
-},{"d3":"UzF0","underscore":"h15N","./medalChart":"mtk6","./summaryChartCountry":"AGkO"}],"V6gp":[function(require,module,exports) {
+module.exports = {
+  bigChart: bigChart,
+  redrawBigChartClick: redrawBigChartClick
+};
+},{"d3":"UzF0","underscore":"h15N","./medalChart":"mtk6","./summaryChartCountry":"AGkO"}],"zfSF":[function(require,module,exports) {
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+// SEARCH BAR
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+var d3 = require("d3");
+
+var _ = require("underscore");
+
+var _require = require('./bigChart'),
+    redrawBigChartClick = _require.redrawBigChartClick;
+
+var generateMedalChart = require("./medalChart");
+
+module.exports = function autocomplete(searchField, countryNames, sportData, medalsvg) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+
+  searchField.addEventListener("input", function (e) {
+    // a is the autocomplete outer div element
+    // b is the temporary variable used to store each option in the div
+    var a,
+        b,
+        val = this.value;
+    /*close any already open lists of autocompleted values*/
+
+    closeAllLists();
+
+    if (!val) {
+      return false;
+    }
+
+    currentFocus = -1;
+    /*create a DIV element that will contain the items (values):*/
+
+    a = document.createElement("DIV");
+    a.setAttribute("id", this.id + "autocomplete-list");
+    a.setAttribute("class", "autocomplete-items");
+    /*append the DIV element as a child of the autocomplete container:*/
+
+    this.parentNode.appendChild(a);
+    /*for each item in the array...*/
+
+    for (var i = 0; i < countryNames.length; i++) {
+      /*check if the item starts with the same letters as the text field value:*/
+      if (countryNames[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        /*create a DIV element for each matching element:*/
+        b = document.createElement("DIV");
+        /*make the matching letters bold:*/
+
+        b.innerHTML = "<strong>" + countryNames[i].substr(0, val.length) + "</strong>";
+        b.innerHTML += countryNames[i].substr(val.length);
+        /*insert a input field that will hold the current array item's value:*/
+
+        b.innerHTML += "<input type='hidden' value='" + countryNames[i] + "'>";
+        /*execute a function when someone clicks on the item value (DIV element):*/
+
+        b.addEventListener("click", function (e) {
+          /*insert the value for the autocomplete text field:*/
+          searchField.value = this.getElementsByTagName("input")[0].value;
+          /*close the list of autocompleted values,
+          (or any other open lists of autocompleted values:*/
+
+          closeAllLists();
+          console.log("search value", searchField.value); // country
+
+          currSportSelections = document.getElementById('select-sport');
+          currSport = currSportSelections.options[currSportSelections.value].text; // current sport
+
+          console.log("curr sport ", currSport);
+
+          var countryIndex = _.indexOf(countryNames, searchField.value);
+
+          console.log("index", countryIndex);
+          console.log("country rows", sportData.values);
+          redrawBigChartClick(searchField.value, currSport, medalsvg, false); // generateMedalChart(sportData.values[countryIndex].values, medalsvg);
+        });
+        a.appendChild(b);
+      }
+    }
+  });
+  /*execute a function presses a key on the keyboard:*/
+
+  searchField.addEventListener("keydown", function (e) {
+    var currSuggestion = document.getElementById(this.id + "autocomplete-list");
+
+    if (currSuggestion) {
+      currSuggestion = currSuggestion.getElementsByTagName("div");
+    }
+
+    if (e.keyCode == 40) {
+      /*If the arrow DOWN key is pressed,
+      increase the currentFocus variable:*/
+      currentFocus++;
+      /*and and make the current item more visible:*/
+
+      addActive(currSuggestion);
+    } else if (e.keyCode == 38) {
+      //up
+
+      /*If the arrow UP key is pressed,
+      decrease the currentFocus variable:*/
+      currentFocus--;
+      /*and and make the current item more visible:*/
+
+      addActive(currSuggestion);
+    } else if (e.keyCode == 13) {
+      /*If the ENTER key is pressed, prevent the form from being submitted,*/
+      e.preventDefault();
+
+      if (currentFocus > -1) {
+        /*and simulate a click on the "active" item:*/
+        if (currSuggestion) {
+          currSuggestion[currentFocus].click();
+        }
+      }
+    }
+  });
+
+  function addActive(item) {
+    /*a function to classify an item as "active":*/
+    if (!item) {
+      return false;
+    }
+    /*start by removing the "active" class on all items:*/
+
+
+    removeActive(item);
+
+    if (currentFocus >= item.length) {
+      currentFocus = 0;
+    }
+
+    if (currentFocus < 0) {
+      currentFocus = item.length - 1;
+    }
+    /*add class "autocomplete-active":*/
+
+
+    item[currentFocus].classList.add("autocomplete-active");
+  }
+
+  function removeActive(item) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < item.length; i++) {
+      item[i].classList.remove("autocomplete-active");
+    }
+  }
+
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != searchField) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+
+
+  document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+  });
+};
+},{"d3":"UzF0","underscore":"h15N","./bigChart":"FthO","./medalChart":"mtk6"}],"V6gp":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -31515,7 +31609,7 @@ function () {
         this.topDivs.push(newDiv); // add image to each row here
         // get country name
 
-        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
+        imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
         countryName = topCountryToRatio[i].key.replace(/ /g, "");
         console.log(imgcountryName);
         d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
@@ -31568,7 +31662,7 @@ function () {
       for (var i = 0; i < topCountryToRatio.length; i++) {
         if (topCountryToRatio[i].value > 0) {
           countryName = topCountryToRatio[i].key.replace(/ /g, "");
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase(); // add in new element
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").replace("\'", "-").toLowerCase(); // add in new element
 
           rowDiv.append("div").attr("id", "row" + countryName) // new country
           .style("position", "absolute").style("top", "90%") // .style("left", 0)
@@ -31660,7 +31754,7 @@ function () {
           .style("position", "absolute").style("top", i * 10 + "%") // .style("left", 0)
           .style("width", "190px").style("height", "60px").style("margin-top", "6px").style("margin-bottom", "6px").style("background-color", "#B0C4DE").style("display", "flex").style("flex-direction", "row").style("justify-content", "flex-start").style("align-items", "center").style("opacity", 0.0).transition().delay(100).style("opacity", 1.0); // add image
 
-          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").toLowerCase();
+          imgcountryName = topCountryToRatio[i].key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
           console.log(imgcountryName);
           d3.select("#row" + countryName).append("img").attr("src", imgcountryName + "-flag.svg") //.attr("src","flags/" + imgcountryName + "-flag.svg")
           .attr("id", "img" + countryName).attr("width", 90).attr("height", 60); // add text labels
@@ -41809,9 +41903,12 @@ var d3 = require('d3');
 
 var _ = require("underscore");
 
+var _require = require('./bigChart'),
+    redrawBigChartClick = _require.redrawBigChartClick;
+
 var Datamap = require('../node_modules/datamaps/dist/datamaps.world.min.js');
 
-var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
+var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currSport, medalsvg) {
   var _this = this;
 
   _classCallCheck(this, worldMap);
@@ -41844,9 +41941,14 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
         datamap.svg.selectAll("g").transition().duration(500).attr("transform", d3.zoomIdentity);
         d3.select('.datamap').call(d3.zoom().transform, d3.zoomIdentity);
       };
+
+      datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
+        console.log("clicked!!!");
+        redrawBigChartClick(geography.properties.name, currSport, medalsvg, false);
+      });
     },
     fills: {
-      defaultFill: '#6C8CBF'
+      defaultFill: '#5080CE'
     },
     data: {
       'AFG': {
@@ -42960,7 +43062,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data) {
 ;
 
 module.exports = worldMap;
-},{"d3":"UzF0","underscore":"h15N","../node_modules/datamaps/dist/datamaps.world.min.js":"tScR"}],"epB2":[function(require,module,exports) {
+},{"d3":"UzF0","underscore":"h15N","./bigChart":"FthO","../node_modules/datamaps/dist/datamaps.world.min.js":"tScR"}],"epB2":[function(require,module,exports) {
 var d3 = require('d3');
 
 var _ = require("underscore"); // Global variables
@@ -42973,6 +43075,7 @@ var entriesBySportByYearMedalCount = null;
 var entriesBySportByYearAthleteCount = null;
 var entriesBySportByYearByCountryRatio = null;
 var entriesByCountry = null;
+var countryNamesBySport = null;
 var countryNames = null;
 var currSport = "Swimming";
 var currYearIndex = 4; // 2016
@@ -42983,7 +43086,8 @@ var yearOptions = ["2000", "2004", "2008", "2012", "2016"]; // Include local JS 
 
 var autocomplete = require("./search");
 
-var BigChart = require('./bigChart');
+var _require = require('./bigChart'),
+    bigChart = _require.bigChart;
 
 var RankRows = require('./rankRows');
 
@@ -42999,15 +43103,31 @@ function initializeRankChart() {
 } // create svg for bigChart
 
 
-var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', 380);
+d3.select("#bigchart").append("div").attr("id", "bigchartlabels");
+var bigsvg = d3.select('#bigchart').append('svg').attr('width', "800").attr('height', "400");
 console.log("bigsvg", bigsvg); // create svg for medalChart
 
 var medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380); // draw small chart elements here
 
 var topRanks = [1, 2, 3]; // Basic Test Example
 // draw the three top rank elements
-//smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
-// Set up year buttons
+//smallChartInstance.drawTopRanks(s
+
+function updateSportIcon() {
+  // remove old image
+  d3.select("#sports-logo").remove(); // get image name
+
+  var sportName = currSport.replace(/ /g, "-").toLowerCase();
+  console.log("sportName", sportName);
+
+  if (sportName === "softball") {
+    sportName = "baseball";
+  } // add new image
+
+
+  d3.select("#sport-text").append("img").attr("src", "sports_logos/" + sportName + ".png").attr("id", "sports-logo").attr("width", 200).attr("height", 200);
+} // Set up year buttons
+
 
 function initializeYearOptions() {
   var leftYear = document.getElementById("left-year");
@@ -43063,6 +43183,7 @@ function initializeDropdowns() {
     medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380);
     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
     initializeSearch();
+    updateSportIcon();
   });
 }
 
@@ -43130,6 +43251,20 @@ function initializeData(data) {
       return d.Medal.length > 0 ? 1 : 0;
     });
   }).sortKeys(d3.ascending).entries(data);
+  countryNamesBySport = d3.nest().key(function (d) {
+    return d.Sport;
+  }).sortKeys(d3.ascending).rollup(function (v) {
+    var uniqueCountries = _.uniq(v, function (d) {
+      return d.Team;
+    });
+
+    return uniqueCountries.map(function (item) {
+      return item.Team;
+    }).sort();
+  }).entries(data);
+  console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO");
+  console.log(countryNamesBySport);
+  console.log("YOOOOOOOOOOOOOOOOOOOOOOOOO");
   entriesBySportByYearAthleteCount = d3.nest().key(function (d) {
     return d.Sport;
   }).sortKeys(d3.ascending).key(function (d) {
@@ -43143,6 +43278,39 @@ function initializeData(data) {
 
     return uniqueNames.length;
   }).entries(data);
+  var years = ["2000", "2004", "2008", "2012", "2016"];
+  entriesBySportByYearAthleteCount.forEach(function (d) {
+    d.values.forEach(function (e) {
+      var arr = [];
+      e.values.forEach(function (f) {
+        arr.push(f.key);
+      });
+      result = years.filter(function (f) {
+        return !arr.includes(f);
+      });
+      result.forEach(function (z) {
+        e.values.push({
+          "key": z,
+          "value": 0
+        });
+      });
+      e.values.sort(function (a, b) {
+        return a.key - b.key;
+      });
+    });
+  }); // testing
+  // var years = ["2000", "2004", "2008", "2012", "2016"]
+  // entriesBySportByYearAthleteCount.forEach(function(d) {
+  //   d.values.forEach(function(e) {
+  //     var arr = []
+  //     e.values.forEach(function(f) {
+  //       arr.push(f.key);
+  //     });
+  //     result = years.filter(f => !arr.includes(f));
+  //     console.log("result", result)
+  //   })
+  // });
+
   console.log(entriesBySportByYearAthleteCount);
   entriesBySportThenCountryThenYear = d3.nest().key(function (d) {
     return d.Sport;
@@ -43249,11 +43417,15 @@ d3.csv('olympics.csv').then(function (data) {
   initializeRankChart();
   initializeYearOptions();
   initializeDropdowns();
-  initializeSearch();
-  bigChartInstance = new BigChart(data);
+  updateSportIcon();
+  initializeSearch(); // Clears the search
+
+  document.getElementById("searchbar").value = "";
+  console.log(document.getElementById("searchbar"));
+  bigChartInstance = new bigChart(data);
   bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);
   d3.csv('rankings.csv').then(function (data) {
-    map = new Map(entriesBySportByYearByCountryRatio, data);
+    map = new Map(entriesBySportByYearByCountryRatio, data, currSport, medalsvg);
     console.log("here are the rankings:", data);
   });
 }); // You can load JSON files directly via require.
@@ -43261,4 +43433,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.e078b281.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.13ace2b3.js.map
