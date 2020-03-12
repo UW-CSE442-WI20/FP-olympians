@@ -154,7 +154,7 @@ sidebar {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: #F9ECEC;
+  background-color: #FAF1F1;
   color: black;
   text-align: left;
   font-size: 0.85em;
@@ -164,7 +164,7 @@ sidebar {
   padding-bottom: 10px;
   top: -5px;
   right: 105%;
-  box-shadow: 4px 2px 2px #6C8CBF;
+  /* box-shadow: 4px 2px 2px #6C8CBF; */
 
   /* Position the tooltip */
   position: absolute;
@@ -183,7 +183,7 @@ sidebar {
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent #F9ECEC;
+  border-color: transparent transparent transparent #FAF1F1;
 }
 
 #year-selector {

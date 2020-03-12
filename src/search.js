@@ -51,7 +51,7 @@ function autocomplete(searchField, countryNames, sportData, medalsvg) {
           currSportSelections = document.getElementById('select-sport');
           currSport = currSportSelections.options[currSportSelections.value].text // current sport
           const countryIndex = _.indexOf(countryNames, searchField.value);
-          redrawBigChartClick(searchField.value, currSport, medalsvg, false);
+          redrawBigChartClick(searchField.value, false);
           // generateMedalChart(sportData.values[countryIndex].values, medalsvg);
         });
         a.appendChild(b);
