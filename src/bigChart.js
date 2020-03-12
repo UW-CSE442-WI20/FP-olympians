@@ -496,6 +496,24 @@ class bigChart {
 
 function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   // console.log(this);
+  
+  console.log(bigChartInstance.entriesBySportThenCountryThenYear)
+  // console.log(d);
+  console.log("curr sport:", currSport);
+  var sportData = _.find(d3.values(bigChartInstance.entriesBySportThenCountryThenYear), function (item) {
+    console.log("searching for ", currSport);
+    // console.log("considering ", item.key);
+    return item.key === currSport;
+  });
+  console.log(sportData);
+  var countryData = _.find(d3.values(sportData.values), function (item) {
+    console.log("searching for ", currCountry);
+    // console.log("considering ", item.key);
+    return item.key === currCountry;
+  });
+  if (countryData === undefined) {
+    return;
+  }
   if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
   } else {
@@ -523,20 +541,7 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     d3.selectAll(".country-text").remove();
     return;
   }
-  console.log(bigChartInstance.entriesBySportThenCountryThenYear)
-  // console.log(d);
-  console.log("curr sport:", currSport);
-  var sportData = _.find(d3.values(bigChartInstance.entriesBySportThenCountryThenYear), function (item) {
-    console.log("searching for ", currSport);
-    // console.log("considering ", item.key);
-    return item.key === currSport;
-  });
-  console.log(sportData);
-  var countryData = _.find(d3.values(sportData.values), function (item) {
-    console.log("searching for ", currCountry);
-    // console.log("considering ", item.key);
-    return item.key === currCountry;
-  });
+
   var country = this.summaryCountry
   bigChartInstance.summaryCountry.updateChart(countryData.key);
   console.log("checking countryData", countryData);
