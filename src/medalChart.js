@@ -210,6 +210,15 @@ function generateMedalChart(data, medalsvg) {
         .attr("id", "xAxisMedals")
         .attr("transform", "translate(0," + innerHeight + ")")
         .call(xSmallAxis);
+    xSmallAxisGroup.selectAll("text")
+        .attr("font-weight", "normal")
+        .style("stroke", function(d) {
+          if (d3.select(this).text() === "2020") {
+            return "#B0C4DE";
+          } else {
+            return "gray";
+          }
+        });
 
     var x1 = d3.scaleBand();
     var medalTypes = function() {
@@ -357,6 +366,7 @@ function generateMedalChart(data, medalsvg) {
                         .style("stroke", "none");
                 })
                 .on("click", function(d) {
+                    scrollDown();
                     currSelectedAthlete = d.grpAthlete;
                     athleteFilter = !athleteFilter;
                     redrawMedals(u, currSelectedAthlete);
@@ -437,7 +447,8 @@ function generateMedalChart(data, medalsvg) {
         .attr("transform", function (d) {
             return "translate(" + (cxTallyOffset(d.grpName) * xSmallScale.bandwidth()) + ",8)";
         })
-        .style("fill", "black")
+        .style("font-weight", "bold")
+        .style("fill", "white")
         .text(function(d) {
             return d.grpValue;
         });
@@ -463,4 +474,15 @@ function redrawMedals(slice, currSelectedAthlete) {
             currSelectedAthlete = athleteFilter ? currSelectedAthlete : d.grpAthlete;
             return d.grpAthlete === currSelectedAthlete ? "auto" : "none";
         });
+}
+
+// scroll chart into focus
+function scrollDown() {
+ var elmnt = document.getElementById("medalchart");
+ elmnt.scrollIntoView({behavior: "smooth"});
+       // $('html, body').animate({
+       //     scrollTop: $("#main-container").offset().top
+       // }, 1000);
+       //
+       // console.log("animation");
 }

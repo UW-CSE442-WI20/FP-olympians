@@ -31,6 +31,7 @@ const tooltipContainer = d3.select('#bigchart').append("div")
     .style("border", "solid")
     .style("border-width", "1px")
     .style("border-radius", "5px")
+    .style("background-color", "#F0F4F9")
     .style("padding", "10px")
     .style("visibility", "hidden")
 tooltipContainer.append("div")
@@ -287,22 +288,34 @@ class bigChart {
         .data(dimensions).enter()
         .append("g")
         .attr('class', 'parallelAxis')
+        .text(function(d) { return d; })
         .attr("transform", function (d) {
+          // console.log("is the year here", d);
           return "translate(" + xScale(d) + ") ";
      	});
     svg.selectAll(".parallelAxis")
         .each(function (d) {
+          console.log("this", this);
           // add in the rectangle bars
           d3.select(this).append("rect")
-            .attr("x", -6)
+            .attr("x", -8)
             .attr("y", -6)
-            .attr("width", 14)
+            .attr("width", 16)
             .attr("height", 400)
             // .attr("height", 350)
-            .attr("fill", "#525B68")
-            .attr("opacity", 0.8);
-          //d3.select(this).call(yAxis);
+            //.attr("fill", "#525B68")
+            .attr("opacity", 0.9)
           d3.select(this).transition().duration(500).call(yAxis);
+          var yr = d3.select(this).text();
+          // console.log("yr", yr);
+          d3.select(this).selectAll("rect")
+              .attr("fill", function(d) {
+                if (yr === "2020") {
+                  return "#B0C4DE";  // light blue
+                } else {
+                  return "#525B68";  // gray
+                }
+              });
         });
 
     // generateMedalChart([], medalsvg);
@@ -483,7 +496,7 @@ class bigChart {
         }
       })
       .on("click", function (d) {
-        redrawBigChartClick(d.key, currSport, medalsvg, true)
+        redrawBigChartClick(d.key, true)
       })
       .transition()
       .duration(1000)
@@ -521,10 +534,11 @@ class bigChart {
   }
 }
 
-function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
+function redrawBigChartClick(currCountry, bigChartClick) {
   // console.log(this);
-  // focus view
-
+  var medalsvg = d3.select('#medalchart').select("svg");
+  currSportSelections = document.getElementById('select-sport');
+  var currSport = currSportSelections.options[currSportSelections.value].text // current sport
   console.log(bigChartInstance.entriesBySportThenCountryThenYear)
   // console.log(d);
   console.log("curr sport:", currSport);
@@ -540,12 +554,12 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     return item.key === currCountry;
   });
 
-  if (countryData === undefined) {
+  if (countryData === undefined || countryData.values === undefined) {
     return;
   }
 
   scrollDown();
-  
+
 
   if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
