@@ -138,8 +138,8 @@ class bigChart {
         	return "olympic_logos/" + d + ".svg"; 
         })
         .attr("class", "yearLogo")
-        .attr("width", 90)
-        .attr("height", 60);
+        // .attr("width", "90px");
+        .attr("height", "60px");
 
     /* Add SVG */
     var svg = bigsvg
