@@ -243,7 +243,7 @@ sidebar {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 80%;
   margin: 0.5rem;
 	padding: 0.5rem;
   color: black;
@@ -281,6 +281,7 @@ main {
   width: 200px;
   height: 320px;
   background-color: gray;
+  padding: 10px;
 }
 
 #map-container {
@@ -307,6 +308,22 @@ main {
 }
 
 #map-btn {
+  background-color: #FC8D59;
+  margin: 10px;
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  z-index: 2;
+}
+
+#map-btn:hover {
+  background-color: #EFAD7A; /* Green */
+  color: white;
   z-index: 2;
 }
 
@@ -323,12 +340,13 @@ main {
 }
 
 #left-container {
-  height: 800px;
+  height: 740px;
   width: 200px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  padding-top: 60px;
 }
 
 #chart-container {
@@ -442,8 +460,9 @@ main {
   overflow: visible;
   display: flex;
   height: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 70px;
   padding: 0;
+  width: 80%;
 }
 
 .autocomplete {
@@ -462,7 +481,7 @@ input {
   border: 1px solid transparent;
   background-color: #f1f1f1;
   padding: 10px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 input[type=text] {
@@ -505,6 +524,10 @@ input[type=submit] {
   color: #ffffff;
 }
 
+#country-name {
+  margin: 10px;
+}
+
 #bigchartlabels {
   max-height: 40px;
   overflow: visible;
@@ -527,4 +550,4 @@ input[type=submit] {
 } */
 
 
-/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.724106de.css.map */
+/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.14434748.css.map */
