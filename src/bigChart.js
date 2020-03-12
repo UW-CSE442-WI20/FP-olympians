@@ -540,7 +540,7 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     return item.key === currCountry;
   });
 
-  if (countryData === undefined) {
+  if (countryData === undefined || countryData.values === undefined) {
     return;
   }
 
