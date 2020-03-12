@@ -24,6 +24,27 @@ var circleOpacityOnLineHover = "0.25"
 var circleRadius = 3;
 var circleRadiusHover = 6;
 
+// Create container for the tooltip but make it invisible until we need it
+const tooltipContainer = d3.select('#bigchart').append("div")
+    .attr("id", "countryTooltip")
+    .style("position", "absolute")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .style("visibility", "hidden")
+tooltipContainer.append("div")
+    .attr("id", "countryTooltipTextDiv")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+tooltipContainer.append("div")
+    .attr("id", "countryTooltipFlagDiv")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center");
+
+
 
 class bigChart {
   constructor(data) {
@@ -38,13 +59,13 @@ class bigChart {
     this.height = 0;// = parseInt(bigsvg.style("height"), 10);
     this.margin = 50;
     // this.margins = { top: 30, right: 10, bottom: 10, left: 10 };
-    this.margins = { top: 30, right: 35, bottom: 0, left: 35 };
+    this.margins = { top: 30, right: 35, bottom: 6, left: 35 };
 
     // getting scale of graph
 
     // adding tiny chart
     this.columnNames = ["Year", "Athletes", "Medals"];
-    this.summaryCountry = new SummaryCountry(data, this.columnNames);
+    // this.summaryCountry = new SummaryCountry(data, this.columnNames);
 
     // getting color sceme
     this.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -67,25 +88,40 @@ class bigChart {
     this.entriesBySportThenCountryThenYear;
 
     this.entriesBySportByYearAthleteCount = d3.nest()
-      .key(function (d) {
-        return d.Sport;
+    .key(function (d) {
+      return d.Sport;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Team;
+    })
+    .sortKeys(d3.ascending)
+    .key(function (d) {
+      return d.Year;
+    })
+    .sortKeys(d3.ascending)
+    .rollup(function (v) {
+      let uniqueNames = _.uniq(v, function (item) {
+        return item.Name;
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Team;
+      return uniqueNames.length;
+    })
+    .entries(data);
+
+    var years = ["2000", "2004", "2008", "2012", "2016"]
+    this.entriesBySportByYearAthleteCount.forEach(function(d) {
+      d.values.forEach(function(e) {
+        var arr = []
+        e.values.forEach(function(f) {
+          arr.push(f.key);
+        });
+        result = years.filter(f => !arr.includes(f));
+        result.forEach(function(z) {
+          e.values.push({"key": z, "value": 0});
+        });
+        e.values.sort((a, b) => a.key - b.key)
       })
-      .sortKeys(d3.ascending)
-      .key(function (d) {
-        return d.Year;
-      })
-      .sortKeys(d3.ascending)
-      .rollup(function (v) {
-        let uniqueNames = _.uniq(v, function (item) {
-          return item.Name;
-        })
-        return uniqueNames.length;
-      })
-      .entries(data);
+    });
   }
 
   drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear) {
@@ -100,7 +136,7 @@ class bigChart {
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
 
-    this.summaryCountry.createChart('Afghanistan');
+    //this.summaryCountry.createChart('Afghanistan');
 
     const minYear = 2000;
     const maxYear = 2020;
@@ -119,9 +155,6 @@ class bigChart {
     // var xScale = d3.scaleLinear()
     //   .domain([2000, 2020]) // getXDomain()
     //   .range([this.margins.left, this.width - this.margins.left - this.margins.right - 30]); // used to start at 0
-
-    console.log("big chart x scale lower range:", this.margins.left);
-    console.log("big chart x scale upper range:", this.width - this.margins.left - this.margins.right - 30);
 
     var yScale = d3.scaleLinear()
       .domain([0, 80])
@@ -144,7 +177,6 @@ class bigChart {
         .append("div")
         .attr('class', 'yearLogoLabel')
         .attr("transform", function (d) {
-        	console.log("supposedly getting year", d);
           return "translate(" + xScale(d) + ") ";
         });
     yearlabelsvg.selectAll(".yearLogoLabel")
@@ -155,9 +187,8 @@ class bigChart {
         .style("fill", "gray");
     yearlabelsvg.selectAll(".yearLogoLabel")
     	  .append("img")
-        .attr("src", (d) => { 
-        	console.log("src", d); 
-        	return "olympic_logos/" + d + ".svg"; 
+        .attr("src", (d) => {
+        	return "olympic_logos/" + d + ".svg";
         })
         .attr("class", "yearLogo")
         // .attr("width", "90px");
@@ -208,7 +239,6 @@ class bigChart {
     //       .range([height, 0]));
     // }));
 
-    console.log(this.entriesBySportByYearAthleteCount);
     var yRange = this.yRange;
     this.entriesBySportByYearAthleteCount.forEach(function (sport) {
       if (sport.key.length == 0) {
@@ -226,7 +256,6 @@ class bigChart {
           }
         })
       })
-      console.log(sport.key + ": " + maxVal);
       yRange[sport.key] = maxVal;
       // d3.scaleLinear()
       //   .domain([0, maxVal])
@@ -236,7 +265,6 @@ class bigChart {
     this.dimensions = dimensions;
     this.yRange = yRange;
     this.svg = svg;
-    console.log(this.yRange);
 
     var actualHeight = this.height - this.margins.top - this.margins.bottom;
 
@@ -269,12 +297,15 @@ class bigChart {
             .attr("x", -6)
             .attr("y", -6)
             .attr("width", 14)
-            .attr("height", 335)
+            .attr("height", 400)
+            // .attr("height", 350)
             .attr("fill", "#525B68")
             .attr("opacity", 0.8);
           //d3.select(this).call(yAxis);
           d3.select(this).transition().duration(500).call(yAxis);
-    	});
+        });
+
+    // generateMedalChart([], medalsvg);
 
     this.redraw(bigsvg, currSport, medalsvg);
   }
@@ -304,11 +335,8 @@ class bigChart {
 
     var color = this.color;
     var svg = this.svg
-    console.log("+++++++++++++++++++++++++");
-    console.log("finding currSport: ", currSport)
     var entriesBySportByYearAthleteCount = this.entriesBySportByYearAthleteCount;
     var entriesBySportThenCountryThenYear = this.entriesBySportThenCountryThenYear;
-    console.log(currSport)
     var data = _.find(d3.values(entriesBySportByYearAthleteCount), function (item) {
       return item.key == currSport;
     }).values;
@@ -316,8 +344,6 @@ class bigChart {
     var dimensions = this.dimensions;
     var yRange = this.yRange;
     this.currSport = currSport;
-
-    console.log(svg);
 
     // this.lines.selectAll(".line-group")
     // .transition()
@@ -329,15 +355,14 @@ class bigChart {
     //   return item.key;
     // })
 
+    generateMedalChart([], medalsvg);
+
 
     /* Add line into SVG */
 
     var actualHeight = this.height - this.margins.top - this.margins.bottom;
 
     var xScale = this.xScale;
-    console.log(yRange[currSport])
-    console.log(this.height);
-    console.log(actualHeight);
     var yScale = d3.scaleLinear()
       .domain([0, yRange[currSport]])
       .range([actualHeight, 0]);
@@ -361,29 +386,18 @@ class bigChart {
       .y(d => yScale(d.value));
 
 
-    console.log(data);
     var lineGroup = this.lines.selectAll(".line-group")
       .data(data, function (item) {
         return item;
       })
 
 
-    var country = this.summaryCountry
+    // var country = this.summaryCountry
 
     // reset the selectedCountry as we have changed to a different one
     selectedCountry = undefined;
 
     svg.selectAll(".country-text").remove();
-
-    // Create container for the tooltip but make it invisible until we need it
-    var tooltipContainer = d3.select('#bigchart').append("div")
-        .attr("id", "countryTooltip")
-        .style("position", "absolute")
-        .style("border", "solid")
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
-        .style("visibility", "hidden");
 
     lineGroup
       .enter()
@@ -408,21 +422,51 @@ class bigChart {
           // add text to show what country this is
           tooltipContainer
               .style("left", (d3.mouse(this)[0]) + "px")
-              .style("top", (d3.mouse(this)[1] + 50) + "px")
+              .style("top", (d3.mouse(this)[1]) + "px")
               .style("visibility", "visible")
-              .style('color', color(d.key))
+              .style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv")
               .append("text")
               .attr("class", "countryTooltipText")
               .style('color', color(d.key))
-              .text(d.key);
+              .text(d.key)
+          d3.select("#countryTooltipFlagDiv")
+              .append("img")
+              .attr("class", "countryTooltipFlag")
+              .attr("src", () => {
+                var imgName = (d.key).replace(/ /g,"-").replace("\'","-").toLowerCase();
+                return "flags/" + imgName + "-flag.svg";
+              })
+              .attr("width", 60)
+              .attr("height", 40);
         }
         else if (selectedCountry === d.key) {
+          tooltipContainer
+              .style("left", (d3.mouse(this)[0]) + "px")
+              .style("top", (d3.mouse(this)[1]) + "px")
+              .style("visibility", "visible")
+              .style('color', color(d.key));
+          d3.select("#countryTooltipTextDiv")
+              .append("text")
+              .attr("class", "countryTooltipText")
+              .style('color', color(d.key))
+              .text(d.key)
+          d3.select("#countryTooltipFlagDiv")
+              .append("img")
+              .attr("class", "countryTooltipFlag")
+              .attr("src", () => {
+                var imgName = (d.key).replace(/ /g,"-").replace("\'","-").toLowerCase();
+                return "flags/" + imgName + "-flag.svg";
+              })
+              .attr("width", 60)
+              .attr("height", 40);
           d3.select(this)
             .style('stroke', 'black')
         }
       })
       .on("mouseout", function (d) {
         d3.selectAll(".countryTooltipText").remove();
+        d3.selectAll(".countryTooltipFlag").remove();
         d3.selectAll("#countryTooltip").style("visibility", "hidden");
         if (selectedCountry === undefined) {
           d3.selectAll(".line")
@@ -439,9 +483,7 @@ class bigChart {
         }
       })
       .on("click", function (d) {
-
         redrawBigChartClick(d.key, currSport, medalsvg, true)
-
       })
       .transition()
       .duration(1000)
@@ -481,6 +523,9 @@ class bigChart {
 
 function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   // console.log(this);
+  // focus view
+  scrollDown();
+
   if (bigChartClick === true) { // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
   } else {
@@ -488,6 +533,9 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     d3.selectAll(".country-text").remove();
   }
   if (selectedCountry != undefined) { // when a sport is about to be unselectede
+    // update flag image
+    updateCountryFlag(selectedCountry);
+
     d3.selectAll(".line")
       .transition()
       .duration(700)
@@ -508,24 +556,50 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     d3.selectAll(".country-text").remove();
     return;
   }
-  console.log(bigChartInstance.entriesBySportThenCountryThenYear)
-  // console.log(d);
-  console.log("curr sport:", currSport);
   var sportData = _.find(d3.values(bigChartInstance.entriesBySportThenCountryThenYear), function (item) {
-    console.log("searching for ", currSport);
-    // console.log("considering ", item.key);
     return item.key === currSport;
   });
-  console.log(sportData);
   var countryData = _.find(d3.values(sportData.values), function (item) {
-    console.log("searching for ", currCountry);
-    // console.log("considering ", item.key);
     return item.key === currCountry;
   });
-  var country = this.summaryCountry
-  bigChartInstance.summaryCountry.updateChart(countryData.key);
-  console.log("checking countryData", countryData);
+  // var country = this.summaryCountry
+  // bigChartInstance.summaryCountry.updateChart(countryData.key);
   generateMedalChart(countryData.values, medalsvg);
 }
 
+// scroll chart into focus
+function scrollDown() {
+ var elmnt = document.getElementById("main-container");
+ elmnt.scrollIntoView({behavior: "smooth"});
+       // $('html, body').animate({
+       //     scrollTop: $("#main-container").offset().top
+       // }, 1000);
+       //
+       // console.log("animation");
+}
+
+// update the flag image on the side based on current country selection
+function updateCountryFlag(currCountry) {
+  // remove old flag
+  d3.select("#flag-img").remove();
+  var imgcountryName = currCountry.replace(/ /g,"-").replace("\'","-").toLowerCase();
+  // add new flag
+  d3.select("#country-flag").append("img")
+    .attr("src", "flags/" + imgcountryName + "-flag.svg")
+    .attr("id", "flag-img")
+    .attr("width", 90)
+    .attr("height", 60);
+  document.getElementById("country-name").innerHTML = currCountry;
+}
+
+
+// function brushstart() {
+//   // d3.event.
+// }
+
+// function brush() {
+//   var brushRange = this.brushRange;
+//   var actives = dimensions.filter(function(p) { return !brushRange[p].empty()})
+//   console.log(actives);
+// }
 module.exports = { bigChart, redrawBigChartClick };
