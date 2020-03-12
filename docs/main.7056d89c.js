@@ -43433,4 +43433,4 @@ d3.csv('olympics.csv').then(function (data) {
 // the data directly to your JavaScript bundle.
 // const exampleData = require('./example-data.json');
 },{"d3":"UzF0","underscore":"h15N","./search":"zfSF","./bigChart":"FthO","./rankRows":"V6gp","./map":"quTw"}]},{},["epB2"], null)
-//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.13ace2b3.js.map
+//# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/main.7056d89c.js.map

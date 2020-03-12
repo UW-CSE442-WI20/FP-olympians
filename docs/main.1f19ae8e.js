@@ -30839,22 +30839,14 @@ module.exports = function generateMedalChart(data, medalsvg) {
 
   medalsvg.append("text").attr("x", width / 2).attr("y", height + margin["bottom"] + 18) // 11 is r of circle
   //.attr("y", height - innerHeight - 1.3 * margin["top"])
-  .style("text-anchor", "middle").text(function () {
-    if (data.length > 0) return data[0].values[0].Team; // Country Name
-    else return "";
-  }); // add axis groups to medalsvg
+  .style("text-anchor", "middle").text(data[0].values[0].Team); // Country Name
+  // add axis groups to medalsvg
 
   var xSmallAxisGroup = medalsvg.append("g").attr("class", "axis x").attr("id", "xAxisMedals").attr("transform", "translate(0," + innerHeight + ")").call(xSmallAxis);
   var x1 = d3.scaleBand();
-
-  var medalTypes = function medalTypes() {
-    if (data.length > 0) {
-      groupData[0].values.map(function (d) {
-        return d.grpName;
-      });
-    } else return [];
-  };
-
+  var medalTypes = groupData[0].values.map(function (d) {
+    return d.grpName;
+  });
   x1.domain(medalTypes).rangeRound([0, 30]); // 30
 
   var color = function color(medalType) {
@@ -30888,8 +30880,8 @@ module.exports = function generateMedalChart(data, medalsvg) {
   var medalRadius = 8; // radius of medal circles
   /////////////////////////////////// d3.force
 
-  if (nodes.length == 0 && data.length > 0) {
-    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 1.5 + ")").text("No medals to show for " + data[0].values[0].Team).style("fill", "gray").style("font-size", "14px");
+  if (nodes.length == 0) {
+    medalsvg.append("text").attr("id", "medalTooltip").attr("transform", "translate(" + width / 2 + "," + innerHeight / 3 + ")").text("No medals to show for " + data[0].values[0].Team);
   }
 
   var yForceOffset = function yForceOffset(medalType) {
@@ -30919,7 +30911,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
       for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var node = _step.value;
         // If the positions exceed the box, set them to the boundary position.
-        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.6); // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
+        var yearX = xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.5); // xSmallScale.bandwidth() * ((node.year - minYear) / 4 + 0.1)
 
         node.x = Math.max(Math.min(node.x, yearX + xSmallScale.bandwidth() / 2.5 - medalRadius), yearX - xSmallScale.bandwidth() / 2.5 + medalRadius); // console.log("max X = " + (yearX + xSmallScale.bandwidth() - medalRadius) + ", node X = " + node.x + ", min X = " + (yearX - xSmallScale.bandwidth() + medalRadius));
 
@@ -30996,7 +30988,7 @@ module.exports = function generateMedalChart(data, medalsvg) {
   }); // now add titles to the axes
 
   medalsvg.append("text").attr("text-anchor", "middle") // this makes it easy to centre the text as the transform is applied to the anchor
-  .attr("transform", "translate(" + (margin.left + 1.5) + "," + (45 + height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+  .attr("transform", "translate(" + margin.left + "," + height / 2 + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
   .text("Medals Won");
   var tally = medalsvg.selectAll(".tally").data(medalTallies).enter().append("g").attr("class", "g") // .attr("transform", "translate(" + (width / 2) + "," + (height + 0.5 * margin.bottom) + ")")
   .attr("transform", function (d) {
@@ -31197,7 +31189,11 @@ var lineStrokeHover = "4.5px";
 var circleOpacity = '0.85';
 var circleOpacityOnLineHover = "0.25";
 var circleRadius = 3;
-var circleRadiusHover = 6;
+var circleRadiusHover = 6; // Create container for the tooltip but make it invisible until we need it
+
+var tooltipContainer = d3.select('#bigchart').append("div").attr("id", "countryTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
+tooltipContainer.append("div").attr("id", "countryTooltipTextDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+tooltipContainer.append("div").attr("id", "countryTooltipFlagDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
 
 var bigChart =
 /*#__PURE__*/
@@ -31223,8 +31219,8 @@ function () {
     }; // getting scale of graph
     // adding tiny chart
 
-    this.columnNames = ["Year", "Athletes", "Medals"]; // this.summaryCountry = new SummaryCountry(data, this.columnNames);
-    // getting color sceme
+    this.columnNames = ["Year", "Athletes", "Medals"];
+    this.summaryCountry = new SummaryCountry(data, this.columnNames); // getting color sceme
 
     this.color = d3.scaleOrdinal(d3.schemeCategory10); // getting lineScale
 
@@ -31286,8 +31282,8 @@ function () {
       this.height = parseInt(bigsvg.style("height"), 10);
       this.width = this.width - this.margins.left - this.margins.right;
       this.height = this.height - this.margins.top - this.margins.bottom;
-      this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear; //this.summaryCountry.createChart('Afghanistan');
-
+      this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
+      this.summaryCountry.createChart('Afghanistan');
       var minYear = 2000;
       var maxYear = 2020; // from medalchart
 
@@ -31410,11 +31406,10 @@ function () {
       });
       svg.selectAll(".parallelAxis").each(function (d) {
         // add in the rectangle bars
-        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 350).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
+        d3.select(this).append("rect").attr("x", -6).attr("y", -6).attr("width", 14).attr("height", 335).attr("fill", "#525B68").attr("opacity", 0.8); //d3.select(this).call(yAxis);
 
         d3.select(this).transition().duration(500).call(yAxis);
-      }); // generateMedalChart([], medalsvg);
-
+      });
       this.redraw(bigsvg, currSport, medalsvg);
     }
   }, {
@@ -31463,7 +31458,6 @@ function () {
       //   return item.key;
       // })
 
-      generateMedalChart([], medalsvg);
       /* Add line into SVG */
 
       var actualHeight = this.height - this.margins.top - this.margins.bottom;
@@ -31489,15 +31483,11 @@ function () {
       console.log(data);
       var lineGroup = this.lines.selectAll(".line-group").data(data, function (item) {
         return item;
-      }); // var country = this.summaryCountry
-      // reset the selectedCountry as we have changed to a different one
+      });
+      var country = this.summaryCountry; // reset the selectedCountry as we have changed to a different one
 
       selectedCountry = undefined;
-      svg.selectAll(".country-text").remove(); // Create container for the tooltip but make it invisible until we need it
-
-      var tooltipContainer = d3.select('#bigchart').append("div").attr("id", "countryTooltip").style("position", "absolute").style("border", "solid").style("border-width", "1px").style("border-radius", "5px").style("padding", "10px").style("visibility", "hidden");
-      tooltipContainer.append("div").attr("id", "countryTooltipTextDiv").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
-      tooltipContainer.append("div").attr("id", "countryTooltipFlagDiv").style("background-color", "B0C4DE").style("display", "flex").style("flex-direction", "column").style("align-items", "center");
+      svg.selectAll(".country-text").remove();
       lineGroup.enter().append('g').attr('class', 'line-group').append('path').attr('class', 'line').attr('id', function (d) {
         return d.key.replace(/\s+/g, '');
       }).attr('d', function (d) {
@@ -31518,12 +31508,6 @@ function () {
             return "flags/" + imgName + "-flag.svg";
           }).attr("width", 60).attr("height", 40);
         } else if (selectedCountry === d.key) {
-          tooltipContainer.style("left", d3.mouse(this)[0] + "px").style("top", d3.mouse(this)[1] + "px").style("visibility", "visible").style('color', color(d.key));
-          d3.select("#countryTooltipTextDiv").append("text").attr("class", "countryTooltipText").style('color', color(d.key)).text(d.key);
-          d3.select("#countryTooltipFlagDiv").append("img").attr("class", "countryTooltipFlag").attr("src", function () {
-            var imgName = d.key.replace(/ /g, "-").replace("\'", "-").toLowerCase();
-            return "flags/" + imgName + "-flag.svg";
-          }).attr("width", 60).attr("height", 40);
           d3.select(this).style('stroke', 'black');
         }
       }).on("mouseout", function (d) {
@@ -31567,9 +31551,6 @@ function () {
 
 function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
   // console.log(this);
-  // focus view
-  scrollDown();
-
   if (bigChartClick === true) {
     // if we are clicking, we want to figure out if its an on or off toggle
     selectedCountry = selectedCountry === undefined ? currCountry : undefined;
@@ -31581,8 +31562,6 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
 
   if (selectedCountry != undefined) {
     // when a sport is about to be unselectede
-    // update flag image
-    updateCountryFlag(selectedCountry);
     d3.selectAll(".line").transition().duration(700).style('opacity', otherLinesOpacitySelected);
     d3.select("#" + currCountry.replace(/\s+/g, '')) // based on https://stackoverflow.com/questions/5963182/how-to-remove-spaces-from-a-string-using-javascript
     .transition().duration(700).style('opacity', lineOpacityHover).style('stroke-width', lineStrokeHover);
@@ -31611,43 +31590,13 @@ function redrawBigChartClick(currCountry, currSport, medalsvg, bigChartClick) {
     console.log("searching for ", currCountry); // console.log("considering ", item.key);
 
     return item.key === currCountry;
-  }); // var country = this.summaryCountry
-  // bigChartInstance.summaryCountry.updateChart(countryData.key);
+  });
 
-
+  var country = this.summaryCountry;
+  bigChartInstance.summaryCountry.updateChart(countryData.key);
   console.log("checking countryData", countryData);
   generateMedalChart(countryData.values, medalsvg);
-} // scroll chart into focus
-
-
-function scrollDown() {
-  var elmnt = document.getElementById("main-container");
-  elmnt.scrollIntoView({
-    behavior: "smooth"
-  }); // $('html, body').animate({
-  //     scrollTop: $("#main-container").offset().top
-  // }, 1000);
-  //
-  // console.log("animation");
-} // update the flag image on the side based on current country selection
-
-
-function updateCountryFlag(currCountry) {
-  console.log("currCountry", currCountry); // remove old flag
-
-  d3.select("#flag-img").remove();
-  var imgcountryName = currCountry.replace(/ /g, "-").replace("\'", "-").toLowerCase(); // add new flag
-
-  d3.select("#country-flag").append("img").attr("src", "flags/" + imgcountryName + "-flag.svg").attr("id", "flag-img").attr("width", 90).attr("height", 60);
-} // function brushstart() {
-//   // d3.event.
-// }
-// function brush() {
-//   var brushRange = this.brushRange;
-//   var actives = dimensions.filter(function(p) { return !brushRange[p].empty()})
-//   console.log(actives);
-// }
-
+}
 
 module.exports = {
   bigChart: bigChart,
@@ -42202,7 +42151,7 @@ var worldMap = function worldMap(entriesBySportByYearByCountryRatio, data, currS
       });
     },
     fills: {
-      defaultFill: '#5080CE'
+      defaultFill: '#6C8CBF'
     },
     data: {
       'AFG': {
@@ -43365,23 +43314,8 @@ var medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr(
 
 var topRanks = [1, 2, 3]; // Basic Test Example
 // draw the three top rank elements
-//smallChartInstance.drawTopRanks(s
-
-function updateSportIcon() {
-  // remove old image
-  d3.select("#sports-logo").remove(); // get image name
-
-  var sportName = currSport.replace(/ /g, "-").toLowerCase();
-  console.log("sportName", sportName);
-
-  if (sportName === "softball") {
-    sportName = "baseball";
-  } // add new image
-
-
-  d3.select("#sport-text").append("img").attr("src", "sports_logos/" + sportName + ".png").attr("id", "sports-logo").attr("width", 200).attr("height", 200);
-} // Set up year buttons
-
+//smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
+// Set up year buttons
 
 function initializeYearOptions() {
   var leftYear = document.getElementById("left-year");
@@ -43437,7 +43371,6 @@ function initializeDropdowns() {
     medalsvg = d3.select('#medalchart').append('svg').attr("width", "800").attr("height", 380);
     bigChartInstance.redraw(bigsvg, currSport, medalsvg);
     initializeSearch();
-    updateSportIcon();
   });
 }
 
@@ -43671,7 +43604,6 @@ d3.csv('olympics.csv').then(function (data) {
   initializeRankChart();
   initializeYearOptions();
   initializeDropdowns();
-  updateSportIcon();
   initializeSearch(); // Clears the search
 
   document.getElementById("searchbar").value = "";
@@ -43714,7 +43646,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61322" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62194" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
