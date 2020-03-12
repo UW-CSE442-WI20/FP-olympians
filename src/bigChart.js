@@ -6,6 +6,7 @@ const _ = require("underscore");
 const generateMedalChart = require("./medalChart");
 const SummaryCountry = require('./summaryChartCountry');
 var selectedCountry = undefined;
+
 class bigChart {
   constructor(data) {
 
@@ -22,7 +23,7 @@ class bigChart {
 
     // adding tiny chart
     this.columnNames = ["Year", "Athletes", "Medals"];
-    this.summaryCountry = new SummaryCountry(data, this.columnNames);
+    // this.summaryCountry = new SummaryCountry(data, this.columnNames);
 
     // getting color sceme
     this.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -78,7 +79,7 @@ class bigChart {
 
     this.entriesBySportThenCountryThenYear = entriesBySportThenCountryThenYear;
 
-    this.summaryCountry.createChart('Afghanistan');
+    //this.summaryCountry.createChart('Afghanistan');
 
     const minYear = 2000;
     const maxYear = 2020;
@@ -236,6 +237,7 @@ class bigChart {
           d3.select(this).transition().duration(500).call(yAxis);
         })
 
+    // generateMedalChart([], medalsvg);
 
     this.redraw(bigsvg, currSport, medalsvg);
   }
@@ -293,6 +295,8 @@ class bigChart {
     //   return item.key;
     // })
 
+    generateMedalChart([], medalsvg);
+
 
     /* Add line into SVG */
 
@@ -333,7 +337,7 @@ class bigChart {
       })
 
 
-    var country = this.summaryCountry
+    // var country = this.summaryCountry
 
     // reset the selectedCountry as we have changed to a different one
     selectedCountry = undefined;
@@ -389,9 +393,14 @@ class bigChart {
         }
       })
       .on("click", function (d) {
+        // focus view
+        scrollDown();
         // get the data for the selected athlete
         selectedCountry = selectedCountry === undefined ? d : undefined;
         if (selectedCountry != undefined) {
+          // update flag image
+          updateCountryFlag(selectedCountry);
+
           d3.selectAll(".line")
             .style('opacity', otherLinesOpacitySelected)
           d3.select(this)
@@ -420,7 +429,7 @@ class bigChart {
           // console.log("considering ", item.key);
           return item.key === d.key;
         });
-        country.updateChart(countryData.key);
+        // country.updateChart(countryData.key);
         console.log("checking countryData", countryData);
         generateMedalChart(countryData.values, medalsvg);
       })
@@ -492,6 +501,30 @@ class bigChart {
   }
 
 
+}
+
+// scroll chart into focus
+function scrollDown() {
+ var elmnt = document.getElementById("main-container");
+ elmnt.scrollIntoView({behavior: "smooth"});
+       // $('html, body').animate({
+       //     scrollTop: $("#main-container").offset().top
+       // }, 1000);
+       //
+       // console.log("animation");
+}
+
+// update the flag image on the side based on current country selection
+function updateCountryFlag(currCountry) {
+  // remove old flag
+  d3.select("#flag-img").remove();
+  var imgcountryName = currCountry.key.replace(/ /g,"-").replace("\'","-").toLowerCase();
+  // add new flag
+  d3.select("#country-flag").append("img")
+    .attr("src", "flags/" + imgcountryName + "-flag.svg")
+    .attr("id", "flag-img")
+    .attr("width", 90)
+    .attr("height", 60);
 }
 
 

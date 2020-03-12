@@ -48,7 +48,24 @@ let medalsvg = d3.select('#medalchart')
 // draw small chart elements here
 var topRanks = [1, 2, 3];  // Basic Test Example
 // draw the three top rank elements
-//smallChartInstance.drawTopRanks(smallsvg, topRanks); --- SOMETHING WRONG HERE, SMALLCHARTINSTANCE IS NOT DECLARED?
+//smallChartInstance.drawTopRanks(s
+
+function updateSportIcon() {
+  // remove old image
+  d3.select("#sports-logo").remove();
+  // get image name
+  var sportName = currSport.replace(/ /g,"-").toLowerCase();
+  console.log("sportName", sportName);
+  if (sportName === "softball") {
+    sportName = "baseball";
+  }
+  // add new image
+  d3.select("#sport-text").append("img")
+    .attr("src", "sports_logos/" + sportName + ".png")
+    .attr("id", "sports-logo")
+    .attr("width", 200)
+    .attr("height", 200);
+}
 
 // Set up year buttons
 function initializeYearOptions() {
@@ -101,6 +118,7 @@ function initializeDropdowns() {
 		.attr("height", 380);
      bigChartInstance.redraw(bigsvg,  currSport, medalsvg);
      initializeSearch();
+     updateSportIcon();
   })
 }
 
@@ -334,7 +352,9 @@ d3.csv('olympics.csv')
     initializeRankChart();
     initializeYearOptions();
     initializeDropdowns();
+    updateSportIcon();
     initializeSearch();
+    //updateCountryFlag("United States");
 
     bigChartInstance = new BigChart(data);
     bigChartInstance.drawChart(bigsvg, currSport, medalsvg, entriesBySportThenCountryThenYear);

@@ -13,7 +13,7 @@ body {
 
 h1 {
   text-align: left;
-  color: #6C8CBF;
+  color: #5080CE;
   margin-left: 60px;
 }
 
@@ -255,7 +255,7 @@ sidebar {
   width: 90%;
   height: 50px;
   margin-top: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
   font-size: 14px;
   /* padding: 0.5rem; */
 }
@@ -269,9 +269,9 @@ main {
 }
 
 #sport-text {
-  margin-top: 50px;
+  margin-top: 0px;
   width: 200px;
-  background-color: gray;
+  background-color: white;
 }
 
 #map-text {
@@ -358,7 +358,7 @@ main {
   height: 410px;
   padding: 5px;
   padding-top: 0px;
-  margin-top: -140px;
+  margin-top: -130px;
   margin-bottom: 0.25rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -422,9 +422,12 @@ main {
 
 .searchbar {
   z-index: 2;
-  max-height: 0px;
+  /* max-height: 0px; */
   overflow: visible;
   display: flex;
+  height: 20px;
+  margin-bottom: 50px;
+  padding: 0;
 }
 
 .autocomplete {
@@ -487,9 +490,9 @@ input[type=submit] {
 }
 
 
-footer {
+/* footer {
   grid-area: footer;
   background-color: white;
   z-index: 1;
   height: 120px;
-}
+} */
