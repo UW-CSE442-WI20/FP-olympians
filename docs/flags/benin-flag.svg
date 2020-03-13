@@ -3,6 +3,7 @@
 
 <svg
    xmlns:i="&amp;ns_ai;"
+   xmlns:ns="&amp;ns_sfw;"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -14,17 +15,14 @@
    id="Countryflags.com"
    x="0px"
    y="0px"
-   viewBox="194.5 646.5 225 150"
-   enable-background="new 194.5 646.5 300 150"
+   viewBox="444.5 896.5 300 200"
+   enable-background="new 444.5 896.5 300 200"
    xml:space="preserve"
-   sodipodi:docname="south-sudan-flag.svg"
-   width="225"
-   height="150"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
-   id="metadata19"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs17" /><sodipodi:namedview
+   sodipodi:docname="benin-flag.svg"
+   width="300"
+   height="200"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><defs
+   id="defs16" /><sodipodi:namedview
    pagecolor="#ffffff"
    bordercolor="#666666"
    borderopacity="1"
@@ -35,7 +33,7 @@
    inkscape:pageshadow="2"
    inkscape:window-width="1920"
    inkscape:window-height="1017"
-   id="namedview15"
+   id="namedview14"
    showgrid="false"
    fit-margin-top="0"
    fit-margin-left="0"
@@ -43,15 +41,28 @@
    fit-margin-bottom="0"
    inkscape:zoom="0.94666667"
    inkscape:cx="39.084507"
-   inkscape:cy="75"
+   inkscape:cy="100"
    inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:window-maximized="1"
    inkscape:current-layer="Countryflags.com" />
+<metadata
+   id="metadata2">
+	<ns:sfw>
+		<ns:slices />
+		<ns:sliceSourceBounds
+   height="200"
+   width="300"
+   bottomLeftOrigin="true"
+   y="-200"
+   x="0" />
+	</ns:sfw>
+<rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
 <g
-   id="g30"
-   transform="matrix(0.75,0,0,1,48.625,0)"><switch
-     id="switch12">
+   id="g24"><switch
+     id="switch11">
 	<foreignObject
    height="1"
    width="1"
@@ -61,45 +72,31 @@
 		
 	</foreignObject>
 	<g
-   id="g10"
+   id="g9"
    i:extraneous="self">
 		<g
-   id="g8">
+   id="g7">
 			<rect
-   height="45"
+   height="200"
    width="300"
-   y="751.5"
-   x="194.5"
-   id="_x36_"
-   style="fill:#078930" />
-			<rect
-   height="60"
-   width="300"
-   y="691.5"
-   x="194.5"
-   id="_x35_"
-   style="fill:#ffffff" />
-			<rect
-   height="45"
-   width="300"
-   y="646.5"
-   x="194.5"
-   id="_x34_" />
-			<rect
-   height="45"
-   width="300"
-   y="699"
-   x="194.5"
+   y="896.5"
+   x="444.5"
    id="_x33_"
-   style="fill:#da121a" />
-			<polygon
-   points="194.5,646.5 324.404,721.5 194.5,796.5 "
+   style="fill:#fcd116" />
+			<rect
+   height="100"
+   width="300"
+   y="996.5"
+   x="444.5"
    id="_x32_"
-   style="fill:#0f47af" />
-			<polygon
-   points="230.385,744.325 257.218,707.393 213.801,721.5 257.218,735.607 230.385,698.675 "
+   style="fill:#e8112d" />
+			<rect
+   height="200"
+   width="120"
+   y="896.5"
+   x="444.5"
    id="_x31_"
-   style="fill:#fcdd09" />
+   style="fill:#008751" />
 		</g>
 	</g>
 </switch></g>
