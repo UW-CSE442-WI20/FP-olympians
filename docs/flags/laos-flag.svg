@@ -14,17 +14,17 @@
    id="Countryflags.com"
    x="0px"
    y="0px"
-   viewBox="294 0 225 150"
-   enable-background="new 294 0 300 200"
+   viewBox="-5.5 596.5 225 150"
+   enable-background="new -5.5 596.5 300 200"
    xml:space="preserve"
-   sodipodi:docname="somalia-flag.svg"
+   sodipodi:docname="laos-flag.svg"
    width="225"
    height="150"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
-   id="metadata15"><rdf:RDF><cc:Work
+   id="metadata16"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
          rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs13" /><sodipodi:namedview
+   id="defs14" /><sodipodi:namedview
    pagecolor="#ffffff"
    bordercolor="#666666"
    borderopacity="1"
@@ -35,23 +35,23 @@
    inkscape:pageshadow="2"
    inkscape:window-width="1920"
    inkscape:window-height="1017"
-   id="namedview11"
+   id="namedview12"
    showgrid="false"
    fit-margin-top="0"
    fit-margin-left="0"
    fit-margin-right="0"
    fit-margin-bottom="0"
-   inkscape:zoom="1.2958333"
-   inkscape:cx="112.00788"
-   inkscape:cy="-90.735431"
+   inkscape:zoom="0.94666667"
+   inkscape:cx="39.084507"
+   inkscape:cy="100"
    inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:window-maximized="1"
    inkscape:current-layer="Countryflags.com" />
 <g
-   id="g22"
-   transform="matrix(0.75,0,0,0.75,73.5,0)"><switch
-     id="switch8">
+   id="g24"
+   transform="matrix(0.75,0,0,0.75,-1.375,149.125)"><switch
+     id="switch9">
 	<foreignObject
    height="1"
    width="1"
@@ -61,19 +61,28 @@
 		
 	</foreignObject>
 	<g
-   id="g6"
+   id="g7"
    i:extraneous="self">
 		<g
-   id="g4">
+   id="g5">
 			<rect
    height="200"
    width="300"
-   x="294"
+   y="596.5"
+   x="-5.5"
+   id="_x33_"
+   style="fill:#ce1126" />
+			<rect
+   height="100"
+   width="300"
+   y="646.5"
+   x="-5.5"
    id="_x32_"
-   y="0"
-   style="fill:#4189dd" />
-			<polygon
-   points="461.491,105.683 489.792,85.122 454.81,85.122 444,51.852 433.19,85.122 398.208,85.122 426.509,105.683 415.699,138.953 444,118.391 472.301,138.953 "
+   style="fill:#002868" />
+			<circle
+   r="40"
+   cy="696.5"
+   cx="144.5"
    id="_x31_"
    style="fill:#ffffff" />
 		</g>
