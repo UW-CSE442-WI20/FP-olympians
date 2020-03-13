@@ -176,6 +176,7 @@ var countries = {
     "Malawi": "Malawi",
     "Malaysia": "Malaysia",
     "Maldives": "Maldives",
+    "Republic of Serbia": "Serbia",
     "Saint Kitts and Nevis": "Saint Kitts and Nevis",
     "Saint Lucia": "Saint Lucia",
     "Saint Vincent and the Grenadines": "Saint Vincent and the Grenadines",
