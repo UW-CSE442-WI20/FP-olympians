@@ -250,7 +250,7 @@ class worldMap {
       scope: 'world',
       responsive: true,
       geographyConfig: {
-        highlightBorderColor: '#bada55',
+        // highlightBorderColor: '#bada55',
         popupOnHover: true,
         highlightOnHover: true,
         highlightBorderWidth: 1,
