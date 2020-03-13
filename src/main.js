@@ -35,8 +35,8 @@ function initializePage() {
   // add in olympic rings here oops
   d3.select("#header-logo").append("img")
     .attr("src", "olympic_logos/olympic_rings.svg")
-    .attr("width", 100)
-    .attr("height", 100);
+    .style("padding-top", 23)
+    .attr("width", 100);
 
   // add in explanation text here
   document.getElementById("explore-countries").innerHTML =
