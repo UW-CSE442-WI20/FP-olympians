@@ -279,7 +279,7 @@ class worldMap {
             // alert(geography.properties.name);
             var name = countries[geography.properties.name];
             medalsvg = d3.select('#medalchart').select("svg")
-           
+
             redrawBigChartClick(name, false);
         });
       },
@@ -1109,7 +1109,7 @@ class worldMap {
         },
         'SRB': {
           first: data[166].values[0].Sport + ", ",
-          second: data[166].values[1].Sport + ", ",
+          second: data[166].values[2].Sport + ", ",
           third: data[166].values[3].Sport
         },
         'SYC': {
