@@ -1,0 +1,600 @@
+html {
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 1em;
+    line-height: 1.5;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #E85F5A;
+  margin-left: 60px;
+  font-stretch: extra-expanded;
+  text-shadow: 1px 1px #525B68;
+  letter-spacing: 5;
+  transform: scale(1, 1.25);
+}
+
+#header-logo {
+  width: 10%;
+}
+
+#dashboard-title {
+  width: 90%;
+}
+
+p.title {
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  margin: 0.5rem;
+  padding: 0;
+}
+
+p.selector {
+  text-align: center;
+  color: #FFFAFA;
+  font-weight: bold;
+}
+
+.parallelAxis path {
+  stroke: none;
+}
+
+.parallelAxis text {
+  color: white;
+  font-weight: bold;
+  text-align: left;
+}
+
+.dashboard {
+  display: grid;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+
+  grid-template-areas:
+    "header sidebar"
+    "maparea sidebar"
+    "content sidebar"
+    "footer sidebar";
+
+  grid-template-columns: 1fr 210px;
+  grid-template-rows: 90px auto 1fr 1fr;
+  /* grid-template-rows: 90px 800px 320px 1fr; */
+  /* grid-template-rows: auto 1fr auto; */
+  grid-gap: 1px;
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  /* background-color: rgba(28, 22, 43, 0.65); */
+  /* background-image: linear-gradient(to bottom, rgba(82, 91, 104, 1), rgba(82, 91, 104, 0.6)); */
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+}
+
+header {
+  grid-area: header;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  margin-left: 50px;
+  z-index: 2;
+}
+
+maparea {
+  grid-area: maparea;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  z-index: -1;
+  height: 320px;
+}
+
+sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 210px;
+  overflow-y: scroll;
+  grid-area: sidebar;
+  /* background-color: #F9ECEC; */
+  background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%);
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+
+/* #scrollmenu {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+#scrollmenu option {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+#scrollmenu option:hover {
+  background-color: #777;
+} */
+#rankingheader {
+  /* height: 95px; */
+  padding: 0px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0rem;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
+}
+
+#rank-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  height: 20px;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #FAF1F1;
+  color: black;
+  text-align: left;
+  font-size: 0.85em;
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  top: -5px;
+  right: 105%;
+  /* box-shadow: 4px 2px 2px #6C8CBF; */
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 2;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 8%;
+  left: 100%; /* To the right of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent #FAF1F1;
+}
+
+#year-selector {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: flex-start;
+}
+
+#year-window {
+  padding-top: 7px;
+}
+
+.button {
+  display: block;
+  width: 40%;
+  background-color: #6C8CBF;
+  border: none;
+  border-radius: 4px;
+  color: #FFFAFA;
+  padding: 2px 2px;
+  margin: 24px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  transition-duration: 0.4s;
+  opacity: 0.9;
+}
+
+.button:hover {
+  background-color: #FC8D59;
+  /* background-color: #F9ECEC; */
+  color: black;
+  opacity: 1;
+}
+
+#rankings {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+  /* width: 1000px; */
+  height: 700px;
+  /* position: relative; */
+  position: absolute;
+  top: 150px;
+  padding: 1px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background: none;
+  /* background: linear-gradient(to bottom, #525B68 0%, #ADB1BA 100%); */
+  /* background-color: #F9ECEC; */
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin: 0.5rem;
+	padding: 0.5rem;
+  color: black;
+  z-index: 2;
+}
+
+.dropdown select{
+  position: relative;
+	/* width: fill; */
+  width: 95%;
+  height: 50px;
+  margin-top: 0.5rem;
+  margin-bottom: 0rem;
+  font-size: 14px;
+  /* padding: 0.5rem; */
+}
+
+main {
+  grid-area: content;
+  background-color: none;
+  /* background-image: linear-gradient(to bottom, rgba(28, 22, 43, 0.65), rgba(20, 14, 36, 0.31)); */
+  margin: 0;
+  padding: 0;
+}
+
+#sport-text {
+  margin-top: 0px;
+  width: 200px;
+  background-color: white;
+}
+
+#map-text {
+  /* margin-top: 320px; */
+  margin-top: 150px;
+  margin-left: 14px;
+  width: 200px;
+  height: 320px;
+  background-color: white;
+  padding: 10px;
+  text-align: left;
+  color: gray;
+}
+
+#map-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  justify-content: center;
+  align-content: center;
+  margin-top: -150px;
+  margin-bottom: -300px;
+  /* margin-top: -320px;
+  margin-bottom: -250px; */
+  margin-right: 15px;
+  /* width: 1000px;
+  height: 50%; */
+  z-index: 0;
+  width:100%;
+  height: 320px;
+}
+
+.datamap {
+  background-color: #E0EAF0;
+}
+
+#map-btn {
+  background-color: #6C8CBF;
+  margin: 30px;
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  z-index: 2;
+}
+
+#map-btn:hover {
+  background-color: #FC8D59; /* Green */
+  color: white;
+  z-index: 2;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  padding: 0;
+  background-color: white;
+  z-index: 2;
+}
+
+#left-container {
+  height: 740px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 60px;
+}
+
+#country-selected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  color: black;
+  background-color: #E9EEF6;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+#explain-interaction {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#explore-countries {
+  color: gray;
+  font-size: 14px;
+}
+
+#explore-medals {
+  color: gray;
+  font-size: 14px;
+}
+
+#chart-container {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  height: 800px;
+}
+
+#bigchart {
+  display: inline-block;
+  width: 800px;
+  height: 420px;
+  padding: 5px;
+  padding-bottom: 0px;
+  margin-top: 0.5rem;
+  margin-bottom: 0rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background: none;
+  position: relative;
+  z-index: 3;
+}
+
+#medalChart {
+  display: inline-block;
+  width: 800px;
+  height: 410px;
+  padding: 5px;
+  padding-top: 0px;
+  /* margin-top: -130px; */
+  margin-top: -50px;
+  margin-bottom: 0.25rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: none;
+  position: relative;
+}
+
+#xAxisMedals path {
+  stroke: none;
+}
+
+#xAxisMedals text {
+  color: gray;
+  font-size: 14px;
+  font-weight: lighter;
+}
+
+.line {
+  stroke-width: 3;
+  fill: none;
+}
+
+
+#country_table {
+  width: 200px;
+  height: 100px;
+  min-width: 40px;
+  margin-right: 3px;
+  position: absolute;
+}
+
+#table_wrap {
+  width: 200px;
+  margin-right: 5px;
+  position: relative;
+}
+
+#map {
+  padding: 0;
+}
+
+#xAxisMedals .tick.label line {
+    display: none;
+}
+
+#xAxisMedals .tick.mark text {
+    display: none;
+}
+
+#medalTooltip {
+  text-anchor: middle;
+  font-family: sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: white;
+  pointer-events: none;
+  position: relative;
+  text-align: center;
+  color: gray;
+}
+
+#countryTooltip {
+  text-anchor: middle;
+  font-family: sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: white;
+  pointer-events: none;
+  position: relative;
+  text-align: center;
+  color: black;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.searchbar {
+  z-index: 2;
+  /* max-height: 0px; */
+  overflow: visible;
+  display: flex;
+  height: 20px;
+  margin-bottom: 70px;
+  padding: 0;
+  width: 80%;
+}
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#searchbarautocomplete-list {
+  overflow: scroll;
+  max-height: 250px;
+  text-align: left;
+}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 14px;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+
+.autocomplete-items {
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  font-size: 14px;
+  /*position the autocomplete items to be the same width as the container:*/
+  width: 100%;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #6C8CBF;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #F9ECEC;
+}
+
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+#country-name {
+  margin: 10px;
+}
+
+#bigchartlabels {
+  max-height: 40px;
+  overflow: visible;
+  display: flex;
+  flex-direction: row;
+}
+
+.yearLogoLabel {
+  width: 15.75%;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+footer {
+  grid-area: footer;
+  background-color: white;
+  z-index: 1;
+  height: 30px;
+  margin: 5px;
+  margin-left: 10px;
+  font-size: 11px;
+  color: gray;
+}
+
+
+/*# sourceMappingURL=https://uw-cse442-wi20.github.io/FP-olympians/styles.76892074.css.map */
