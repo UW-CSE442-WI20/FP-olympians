@@ -14,7 +14,7 @@
     "parcel-plugin-static-files-copy": "^2.3.1"
   },
   "dependencies": {
-    "d3": "^5.15.0",
+    "d3": "^7.6.1",
     "datamaps": "^0.5.9",
     "main": "^1000.0.1",
     "underscore": "^1.12.1"
